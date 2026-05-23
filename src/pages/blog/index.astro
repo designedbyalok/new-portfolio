@@ -1,0 +1,182 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+---
+
+<Layout title="Blog — Alok Kumar" description="Notes from the desk.">
+  <div class="container-edge container-content blog-index">
+    <header class="blog-index-header">
+      <p class="eyebrow">Notes</p>
+      <h1 class="display display-lg text-balance">Things I've been writing about.</h1>
+    </header>
+
+    <ul class="post-list">
+      {
+        posts.map((post) => (
+          <li class="post-item">
+            <a href={`/blog/${post.id}`} class="post-link">
+              <div class="post-text">
+                <p class="eyebrow">
+                  {fmtDate(post.data.date)}
+                  {post.data.readTime && ` · ${post.data.readTime}`}
+                </p>
+                <h2
+                  class="post-title text-balance"
+                  transition:name={`post-title-${post.id}`}
+                >
+                  {post.data.title}
+                </h2>
+                <p class="post-description text-pretty">{post.data.description}</p>
+                {post.data.tags.length > 0 && (
+                  <ul class="post-tags">
+                    {post.data.tags.map((tag) => (
+                      <li class="post-tag">{tag}</li>
+                    ))}
+                  </ul>
+                )}
+                <span class="post-cta">Read on →</span>
+              </div>
+              <div class="post-thumb">
+                {post.data.thumbnail ? (
+                  <img
+                    src={post.data.thumbnail}
+                    alt={post.data.title}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="post-thumb-placeholder">
+                    <span class="eyebrow">thumbnail</span>
+                  </div>
+                )}
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>
+
+<style>
+  .blog-index {
+    padding-block: clamp(4rem, 8vw, 7rem) clamp(4rem, 8vw, 7rem);
+  }
+  .blog-index-header {
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .post-item {
+    border-top: 1px solid var(--rule);
+  }
+  .post-item:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .post-link {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-block: 2.5rem;
+    color: var(--ink);
+    transition: opacity 200ms ease;
+  }
+  @media (min-width: 880px) {
+    .post-link {
+      grid-template-columns: 58% 42%;
+      gap: 2.5rem;
+      align-items: start;
+    }
+  }
+  .post-link:hover .post-title {
+    color: var(--accent);
+  }
+  .post-link:hover .post-cta {
+    color: var(--accent);
+    padding-inline-start: 0.25rem;
+  }
+
+  .post-title {
+    margin: 0.6rem 0 0.7rem;
+    font-family: var(--font-serif);
+    font-weight: 420;
+    font-size: clamp(1.75rem, 2.8vw, 2.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    transition: color 200ms ease;
+  }
+  .post-description {
+    margin: 0;
+    color: var(--ink-muted);
+    max-width: 55ch;
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+  .post-tags {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+  }
+  .post-tag {
+    font-size: var(--text-2xs);
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+  .post-cta {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    transition: color 200ms ease, padding-inline-start 320ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .post-thumb {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--paper-deep);
+    border-radius: 4px;
+    border: 1px solid var(--rule);
+  }
+  .post-thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .post-link:hover .post-thumb :global(img) {
+    transform: scale(1.02);
+  }
+  .post-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+  .post-thumb-placeholder .eyebrow {
+    color: var(--ink-faint);
+  }
+  @media (max-width: 879px) {
+    .post-thumb {
+      max-width: 480px;
+    }
+  }
+</style>

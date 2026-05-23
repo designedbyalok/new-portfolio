@@ -1,0 +1,128 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const entries = (await getCollection("work")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Layout
+  title="Work — Alok Kumar"
+  description="Six years across studios, an early-stage startup, and a healthtech company."
+>
+  <div class="container-edge container-content work-index">
+    <header class="work-header">
+      <p class="eyebrow">Work, 2020 — present</p>
+      <h1 class="display display-lg text-balance">Places I've worked.</h1>
+    </header>
+
+    <ul class="work-list">
+      {
+        entries.map((entry) => (
+          <li class="work-item">
+            <div class="work-period">
+              <p class="eyebrow">{entry.data.period}</p>
+            </div>
+            <div class="work-body">
+              <h2
+                class="work-company"
+                transition:name={`work-title-${entry.id}`}
+              >
+                <a href={`/work/${entry.id}`} class="work-company-link">
+                  {entry.data.company}
+                </a>
+              </h2>
+              <p class="work-role">{entry.data.role}</p>
+              <p class="work-summary text-pretty">{entry.data.summary}</p>
+              <p class="work-links">
+                <a href={`/work/${entry.id}`} class="link link-accent">
+                  Read more →
+                </a>
+                <span aria-hidden="true">·</span>
+                <a
+                  href={entry.data.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link"
+                >
+                  Visit {entry.data.company} ↗
+                </a>
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>
+
+<style>
+  .work-index {
+    padding-block: clamp(4rem, 8vw, 7rem) clamp(4rem, 8vw, 7rem);
+  }
+  .work-header {
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .work-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .work-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding-block: 2.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .work-item:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 720px) {
+    .work-item {
+      grid-template-columns: 30% 70%;
+      gap: 2rem;
+    }
+  }
+
+  .work-company {
+    font-family: var(--font-serif);
+    font-weight: 420;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .work-company-link {
+    color: var(--ink);
+    transition: color 200ms ease;
+  }
+  .work-company-link:hover {
+    color: var(--accent);
+  }
+  .work-role {
+    margin: 0.4rem 0 0;
+    color: var(--ink-muted);
+    font-size: var(--text-base);
+  }
+  .work-summary {
+    margin: 1rem 0 0;
+    max-width: 55ch;
+    color: var(--ink);
+    font-size: var(--text-base);
+    line-height: 1.55;
+  }
+  .work-links {
+    margin: 1.2rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.8rem;
+    align-items: center;
+    font-size: var(--text-sm);
+  }
+  .work-links span[aria-hidden] {
+    color: var(--ink-faint);
+  }
+</style>

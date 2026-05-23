@@ -1,0 +1,460 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+type Photo = { src: string; aspect: string; caption: string; alt?: string };
+
+const portrait: Photo = {
+  src: "https://picsum.photos/seed/alok-portrait/900/1100",
+  aspect: "4 / 5",
+  caption: "Pune, 2024.",
+};
+
+const friends: Photo[] = [
+  {
+    src: "https://picsum.photos/seed/about-friends-1/900/1100",
+    aspect: "4 / 5",
+    caption: "Coffee with Adi, 2024",
+  },
+  {
+    src: "https://picsum.photos/seed/about-trip-vagamon/1200/800",
+    aspect: "3 / 2",
+    caption: "Vagamon, Kerala — 2023",
+  },
+  {
+    src: "https://picsum.photos/seed/about-fold-offsite/1000/1000",
+    aspect: "1 / 1",
+    caption: "At the Fold offsite, 2024",
+  },
+  {
+    src: "https://picsum.photos/seed/about-bdw/1200/800",
+    aspect: "3 / 2",
+    caption: "Bangalore design week",
+  },
+  {
+    src: "https://picsum.photos/seed/about-himachal/900/1100",
+    aspect: "4 / 5",
+    caption: "Trekking in Himachal",
+  },
+  {
+    src: "https://picsum.photos/seed/about-desk/1000/1000",
+    aspect: "1 / 1",
+    caption: "Sketching at the desk",
+  },
+];
+
+const music = [
+  { label: "On repeat", value: "Tycho — Awake" },
+  { label: "All-time", value: "Stranger in the Alps — Phoebe Bridgers" },
+  { label: "Live, recently", value: "Bonobo, Pune, 2024" },
+];
+
+const movies = [
+  { label: "Recently loved", value: "Past Lives (2023)" },
+  { label: "Forever", value: "In the Mood for Love (2000)" },
+  { label: "Comfort rewatch", value: "Before Sunrise (1995)" },
+];
+
+const books = [
+  { label: "Reading now", value: "The Design of Everyday Things — Don Norman" },
+  { label: "Recently", value: "Four Thousand Weeks — Oliver Burkeman" },
+  { label: "Reread", value: "Steal Like an Artist — Austin Kleon" },
+];
+
+const legos: Photo = {
+  src: "https://picsum.photos/seed/about-legos/900/1100",
+  aspect: "4 / 5",
+  caption: "Eiffel Tower, in pieces on the dining table.",
+};
+
+const art: Photo[] = [
+  { src: "https://picsum.photos/seed/about-art-1/1000/1000", aspect: "1 / 1", caption: "Ink, 2024" },
+  { src: "https://picsum.photos/seed/about-art-2/1000/1000", aspect: "1 / 1", caption: "Pen on Moleskine, 2023" },
+  { src: "https://picsum.photos/seed/about-art-3/1000/1000", aspect: "1 / 1", caption: "Watercolor study, 2024" },
+  { src: "https://picsum.photos/seed/about-art-4/1000/1000", aspect: "1 / 1", caption: "Charcoal, 2022" },
+];
+
+const photography: Photo[] = [
+  { src: "https://picsum.photos/seed/photo-pune/1200/800", aspect: "3 / 2", caption: "Pune morning, 2024" },
+  { src: "https://picsum.photos/seed/photo-goa/900/1100", aspect: "4 / 5", caption: "Goa, 2023" },
+  { src: "https://picsum.photos/seed/photo-kerala/1000/1000", aspect: "1 / 1", caption: "Backwaters, Kerala" },
+  { src: "https://picsum.photos/seed/photo-street/1000/1000", aspect: "1 / 1", caption: "Streetlight study" },
+  { src: "https://picsum.photos/seed/photo-mumbai/1200/800", aspect: "3 / 2", caption: "Window, Mumbai" },
+  { src: "https://picsum.photos/seed/photo-delhi/900/1100", aspect: "4 / 5", caption: "Old Delhi" },
+];
+---
+
+<Layout
+  title="About — Alok Kumar"
+  description="The things I think about when I'm not designing."
+>
+  <div class="container-edge container-content about">
+    <header class="about-header">
+      <p class="eyebrow">About</p>
+      <h1 class="display display-lg text-balance">Off-screen.</h1>
+      <p class="lede text-pretty">
+        The things I think about when I'm not designing. The photos, the music,
+        the books, the small obsessions.
+      </p>
+    </header>
+
+    <section class="section section-me">
+      <p class="eyebrow">Me</p>
+      <div class="me-grid">
+        <figure class="photo-frame" style={`aspect-ratio: ${portrait.aspect};`}>
+          <img
+            src={portrait.src}
+            alt="Portrait of Alok Kumar"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+        <div class="me-text">
+          <p>
+            Born in Bokaro Steel City. Studied Computer Science but the design
+            bug bit harder. Now in Pune, designing care software at Fold Health —
+            and trying to remember to leave the desk once in a while.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="eyebrow">In the world</p>
+      <ul class="gallery gallery-3">
+        {
+          friends.map((item) => (
+            <li>
+              <figure>
+                <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
+                  <img
+                    src={item.src}
+                    alt={item.alt ?? item.caption}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <figcaption class="gallery-caption">{item.caption}</figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="section section-prose">
+      <p class="eyebrow">Music</p>
+      <p class="section-lede">
+        Mostly post-rock and instrumental at the desk — Tycho, Mogwai, Nils Frahm.
+        Anything with mood and few words.
+      </p>
+      <dl class="dlist">
+        {
+          music.map((item) => (
+            <div class="dlist-row">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="section section-prose">
+      <p class="eyebrow">Movies</p>
+      <p class="section-lede">
+        I prefer the long, slow ones — directors who trust the audience to sit
+        with a frame.
+      </p>
+      <dl class="dlist">
+        {
+          movies.map((item) => (
+            <div class="dlist-row">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="section section-prose">
+      <p class="eyebrow">Books</p>
+      <p class="section-lede">
+        Nonfiction-heavy, a little philosophy, the occasional novel.
+      </p>
+      <dl class="dlist">
+        {
+          books.map((item) => (
+            <div class="dlist-row">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="section section-legos">
+      <p class="eyebrow">Legos</p>
+      <div class="me-grid">
+        <figure class="photo-frame" style={`aspect-ratio: ${legos.aspect};`}>
+          <img
+            src={legos.src}
+            alt={legos.caption}
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+        <div class="me-text">
+          <p>
+            I collect a few sets a year — usually architecture or technic. The
+            Eiffel Tower is currently in pieces on the dining table.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="eyebrow">Art</p>
+      <ul class="gallery gallery-4">
+        {
+          art.map((item) => (
+            <li>
+              <figure>
+                <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
+                  <img
+                    src={item.src}
+                    alt={item.caption}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <figcaption class="gallery-caption">{item.caption}</figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="section">
+      <p class="eyebrow">Photography</p>
+      <ul class="gallery gallery-3">
+        {
+          photography.map((item) => (
+            <li>
+              <figure>
+                <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
+                  <img
+                    src={item.src}
+                    alt={item.caption}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <figcaption class="gallery-caption">{item.caption}</figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <footer class="about-footer">
+      <hr />
+      <p class="eyebrow">Reach me</p>
+      <p class="footer-lede">
+        Always up to talk — design, music, books, or whatever else.
+      </p>
+      <p class="footer-links">
+        <a href="mailto:designedbyalok@gmail.com" class="link link-accent"
+          >designedbyalok@gmail.com</a
+        >
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://x.com/designedbyalok"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">Twitter</a
+        >
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://www.linkedin.com/in/designedbyalok/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">LinkedIn</a
+        >
+      </p>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  .about {
+    padding-block: clamp(4rem, 8vw, 7rem) clamp(4rem, 8vw, 6rem);
+  }
+
+  .about-header {
+    max-width: 60ch;
+    margin-bottom: clamp(4rem, 8vw, 6rem);
+  }
+  .about-header .lede {
+    margin-top: 1.5rem;
+  }
+
+  .section {
+    margin-top: clamp(4rem, 8vw, 6rem);
+  }
+  .section-prose {
+    max-width: 65ch;
+  }
+  .section > .eyebrow {
+    margin-bottom: 1.25rem;
+  }
+  .section-lede {
+    margin: 0 0 1.75rem;
+    font-family: var(--font-serif);
+    font-weight: 380;
+    font-size: var(--text-xl);
+    line-height: 1.45;
+    color: var(--ink-muted);
+    max-width: 50ch;
+  }
+
+  /* Photo frames — used everywhere on this page */
+  figure {
+    margin: 0;
+  }
+  .photo-frame {
+    overflow: hidden;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    display: block;
+  }
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .gallery li:hover .photo-frame img,
+  .section-me .photo-frame:hover img,
+  .section-legos .photo-frame:hover img {
+    transform: scale(1.02);
+  }
+
+  /* Side-by-side blocks (Me, Legos) */
+  .me-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 720px) {
+    .me-grid {
+      grid-template-columns: 40% 1fr;
+      gap: clamp(2rem, 5vw, 4rem);
+    }
+  }
+  .me-text p {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 380;
+    font-size: var(--text-xl);
+    line-height: 1.45;
+    max-width: 45ch;
+    color: var(--ink);
+  }
+
+  /* Galleries */
+  .gallery {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+  .gallery-3 {
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .gallery-3 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 960px) {
+    .gallery-3 { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  }
+  .gallery-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 720px) {
+    .gallery-4 { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+  }
+  .gallery-caption {
+    margin-top: 0.6rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  /* Description lists */
+  .dlist {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .dlist-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .dlist-row dt {
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin: 0;
+  }
+  .dlist-row dd {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-base);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* Footer */
+  .about-footer {
+    margin-top: clamp(4rem, 8vw, 6rem);
+  }
+  .about-footer hr {
+    margin-bottom: 2.5rem;
+  }
+  .about-footer .eyebrow {
+    margin-bottom: 1rem;
+  }
+  .footer-lede {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--ink);
+    font-weight: 380;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.8rem;
+    align-items: center;
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+  .footer-links span[aria-hidden] {
+    color: var(--ink-faint);
+  }
+</style>

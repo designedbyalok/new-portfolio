@@ -1,0 +1,296 @@
+--- 
+import type { Photo, Props } from './PhotoCarousel.types';
+
+const { items, ariaLabel = "Photo carousel" } = Astro.props;
+
+if (items.length === 0) {
+  return <figure />;
+}
+---
+
+<figure class="carousel" aria-roledescription="carousel" aria-label={ariaLabel}>
+  <div class="carousel-track" tabindex="0">
+    {items.map((item, i) => (
+      <div class="carousel-slide" data-slide-index={i} style={`scroll-snap-align: start;`}>
+        <div class="slide-frame" style={`aspect-ratio: ${item.aspect ?? "3 / 2"};`}>
+          <img src={item.src} alt={item.caption ?? ""} loading="lazy" decoding="async" />
+        </div>
+        {item.caption && <figcaption class="slide-caption">{item.caption}</figcaption>}
+      </div>
+    ))}
+  </div>
+
+  {items.length > 1 && (
+    <div class="carousel-controls">
+      <button type="button" class="carousel-btn carousel-prev" aria-label="Previous photo">‹</button>
+      <ol class="carousel-dots" role="tablist">
+        {items.map((_, i) => (
+          <li>
+            <button class="carousel-dot" data-dot-index={i} aria-label={`Go to photo ${i+1}`}></button>
+          </li>
+        ))}
+      </ol>
+      <button type="button" class="carousel-btn carousel-next" aria-label="Next photo">›</button>
+    </div>
+  )}
+</figure>
+
+<script>
+  const { items } = Astro.props;
+  const carousel = document.querySelector('.carousel');
+  if (carousel.dataset.bound) return;
+  carousel.dataset.bound = 'true';
+
+  const track = carousel.querySelector('.carousel-track');
+  const slides = Array.from(carousel.querySelectorAll('.carousel-slide'));
+  const dots = Array.from(carousel.querySelectorAll('.carousel-dot'));
+  const prevBtn = carousel.querySelector('.carousel-prev');
+  const nextBtn = carousel.querySelector('.carousel-next');
+
+  let slideWidth = 0;
+  let currentSlide = 0;
+  let observer = null;
+
+  const updateSlideWidth = () => {
+    if (slides.length > 0) {
+      slideWidth = slides[0].offsetWidth;
+    }
+  };
+
+  const updateCurrentSlide = (index) => {
+    currentSlide = index;
+    dots.forEach((dot, i) => {
+      dot.setAttribute('aria-current', i === index ? 'true' : 'false');
+    });
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === slides.length - 1;
+  };
+
+  const scrollToSlide = (index) => {
+    const slide = slides[index];
+    if (!slide) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+
+    slide.scrollIntoView({ behavior, inline: 'start', block: 'nearest' });
+  };
+
+  const handlePrev = () => {
+    if (currentSlide > 0) {
+      scrollToSlide(currentSlide - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentSlide < slides.length - 1) {
+      scrollToSlide(currentSlide + 1);
+    }
+  };
+
+  const handleDotClick = (e) => {
+    const index = parseInt(e.target.dataset.dotIndex);
+    scrollToSlide(index);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!track.matches(':focus-within')) return;
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        handlePrev();
+        break;
+      case 'ArrowRight':
+        handleNext();
+        break;
+      case 'Home':
+        scrollToSlide(0);
+        break;
+      case 'End':
+        scrollToSlide(slides.length - 1);
+        break;
+    }
+  };
+
+  const setupIntersectionObserver = () => {
+    const threshold = 0.6;
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.dataset.slideIndex);
+          updateCurrentSlide(index);
+        }
+      });
+    }, { threshold });
+    slides.forEach((slide) => observer.observe(slide));
+  };
+
+  const init = () => {
+    updateSlideWidth();
+    setupIntersectionObserver();
+    updateCurrentSlide(0);
+
+    prevBtn.addEventListener('click', handlePrev);
+    nextBtn.addEventListener('click', handleNext);
+    dots.forEach((dot) => dot.addEventListener('click', handleDotClick));
+    track.addEventListener('keydown', handleKeyDown);
+
+    window.addEventListener('resize', () => {
+      updateSlideWidth();
+    });
+  };
+
+  document.addEventListener('astro:after-swap', init);
+  init();
+</script>
+
+<style>
+  .carousel {
+    margin: 0;
+    position: relative;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 1rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .carousel-track::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: 999px;
+  }
+
+  .carousel-track:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .carousel-slide {
+    flex: 0 0 88%;
+    max-width: 880px;
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 720px) {
+    .carousel-slide {
+      flex: 0 0 70%;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .carousel-slide {
+      flex: 0 0 60%;
+    }
+  }
+
+  .slide-frame {
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .slide-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .slide-caption {
+    margin-top: 0.7rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.4;
+    max-width: 60ch;
+  }
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .carousel-btn {
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-muted);
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 180ms ease, border-color 180ms ease;
+    line-height: 1;
+  }
+
+  .carousel-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-muted);
+  }
+
+  .carousel-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .carousel-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .carousel-dots {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .carousel-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    border: 0;
+    background: var(--ink-faint);
+    padding: 0;
+    cursor: pointer;
+    transition: background 200ms ease, transform 200ms ease;
+  }
+
+  .carousel-dot[aria-current="true"] {
+    background: var(--accent);
+    transform: scale(1.3);
+  }
+
+  .carousel-dot:hover {
+    background: var(--ink-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+      scroll-behavior: auto;
+    }
+
+    .slide-frame img {
+      transition: none;
+    }
+  }
+</style>

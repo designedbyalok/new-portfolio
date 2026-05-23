@@ -1,0 +1,131 @@
+---
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<button
+  type="button"
+  class="like-button"
+  data-like-slug={slug}
+  aria-label="Like this post"
+>
+  <svg
+    class="heart"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path
+      class="heart-fill"
+      d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"
+    ></path>
+  </svg>
+  <span class="like-count">0</span>
+</button>
+
+<script>
+  function bindLikeButtons() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(
+      "button[data-like-slug]:not([data-bound])",
+    );
+
+    buttons.forEach((btn) => {
+      btn.dataset.bound = "true";
+      const slug = btn.dataset.likeSlug ?? "";
+      const key = `like-${slug}`;
+      const countEl = btn.querySelector<HTMLElement>(".like-count");
+      if (!countEl) return;
+
+      const render = (n: number) => {
+        countEl.textContent = n > 99 ? "99+" : String(n);
+        btn.classList.toggle("is-liked", n > 0);
+      };
+
+      let count = 0;
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) count = parseInt(raw, 10) || 0;
+      } catch {}
+      render(count);
+
+      btn.addEventListener("click", () => {
+        count += 1;
+        try {
+          localStorage.setItem(key, String(count));
+        } catch {}
+        render(count);
+        btn.classList.add("just-clicked");
+        setTimeout(() => btn.classList.remove("just-clicked"), 420);
+      });
+    });
+  }
+
+  bindLikeButtons();
+  document.addEventListener("astro:after-swap", bindLikeButtons);
+</script>
+
+<style>
+  .like-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition:
+      color 200ms ease,
+      border-color 200ms ease,
+      background 200ms ease;
+  }
+  .like-button:hover {
+    color: var(--ink);
+    border-color: var(--ink-muted);
+  }
+  .like-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .heart {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 320ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .heart-fill {
+    fill: transparent;
+    transition: fill 200ms ease;
+  }
+
+  .like-button.is-liked {
+    color: var(--accent);
+    border-color: var(--accent-soft);
+  }
+  .like-button.is-liked .heart-fill {
+    fill: var(--accent);
+  }
+
+  .like-button.just-clicked .heart {
+    animation: like-pulse 420ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  @keyframes like-pulse {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.3) rotate(-6deg); }
+    70% { transform: scale(0.92); }
+    100% { transform: scale(1); }
+  }
+
+  .like-count {
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+</style>

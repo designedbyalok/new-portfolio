@@ -1,0 +1,258 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects");
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+type Props = { entry: CollectionEntry<"projects"> };
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout
+  title={`${entry.data.title} — Alok Kumar`}
+  description={entry.data.tagline}
+>
+  <article>
+    <header class="container-edge container-content project-header">
+      <p class="eyebrow">Project — {entry.data.period}</p>
+      <h1
+        class="display display-lg text-balance"
+        transition:name={`project-title-${entry.id}`}
+      >
+        {entry.data.title}
+      </h1>
+      <p class="lede">{entry.data.tagline}</p>
+
+      {
+        entry.data.tags.length > 0 && (
+          <ul class="project-tags">
+            {entry.data.tags.map((tag) => (
+              <li class="project-tag">{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+
+      <div class="project-meta">
+        {
+          entry.data.external && (
+            <a
+              href={entry.data.external}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link link-accent"
+            >
+              Visit project ↗
+            </a>
+          )
+        }
+        {entry.data.external && entry.data.role && <span aria-hidden="true">·</span>}
+        {entry.data.role && <span class="project-role">Role: {entry.data.role}</span>}
+      </div>
+    </header>
+
+    {
+      entry.data.hero && (
+        <div class="container-edge container-wide project-hero">
+          <img
+            src={entry.data.hero}
+            alt={`${entry.data.title} — hero image`}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      )
+    }
+
+    <section class="container-edge container-prose project-frame">
+      <div class="frame-block">
+        <p class="eyebrow">The idea</p>
+        <p class="frame-text">{entry.data.idea}</p>
+      </div>
+      <div class="frame-block">
+        <p class="eyebrow">The problem</p>
+        <p class="frame-text">{entry.data.problem}</p>
+      </div>
+      <div class="frame-block">
+        <p class="eyebrow">The solution</p>
+        <p class="frame-text">{entry.data.solution}</p>
+      </div>
+      <div class="frame-block">
+        <p class="eyebrow">Why this is unique</p>
+        <p class="frame-text">{entry.data.whyUnique}</p>
+      </div>
+    </section>
+
+    <div class="container-edge container-prose project-body">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    {
+      entry.data.photos.length > 0 && (
+        <section class="container-edge container-wide project-photos">
+          <ul class="proj-photo-grid">
+            {entry.data.photos.map((photo) => (
+              <li>
+                <figure>
+                  <div class="proj-photo-frame" style={`aspect-ratio: ${photo.aspect};`}>
+                    <img
+                      src={photo.src}
+                      alt={photo.caption ?? ""}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  {photo.caption && (
+                    <figcaption class="proj-photo-caption">{photo.caption}</figcaption>
+                  )}
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <footer class="container-edge container-content project-footer">
+      <hr />
+      <p class="project-next">
+        <span class="eyebrow">Next</span>
+        <a href="/projects" class="link link-accent project-next-link">Back to projects →</a>
+      </p>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .project-header {
+    padding-block: clamp(4rem, 9vw, 7.5rem) clamp(3rem, 6vw, 5rem);
+  }
+  .project-header .lede {
+    margin-top: 2rem;
+  }
+
+  .project-tags {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+  }
+  .project-tag {
+    font-size: var(--text-2xs);
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .project-meta {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.8rem;
+    align-items: center;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+  .project-meta span[aria-hidden] {
+    color: var(--ink-faint);
+  }
+
+  .project-frame {
+    padding-block: clamp(2rem, 4vw, 4rem) clamp(2rem, 4vw, 4rem);
+  }
+  .frame-block + .frame-block {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+  .frame-text {
+    margin: 1rem 0 0;
+    font-family: var(--font-serif);
+    font-weight: 380;
+    font-size: clamp(1.25rem, 1.9vw, 1.5rem);
+    line-height: 1.45;
+    color: var(--ink);
+    max-width: 60ch;
+  }
+
+  .project-hero {
+    margin-block: 2rem 3rem;
+  }
+  .project-hero img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--rule);
+    display: block;
+  }
+
+  .project-body {
+    padding-block: 2rem;
+  }
+
+  .project-photos {
+    padding-block: clamp(2rem, 4vw, 4rem) clamp(2rem, 4vw, 4rem);
+  }
+  .proj-photo-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem 2rem;
+  }
+  .proj-photo-frame {
+    overflow: hidden;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .proj-photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .proj-photo-caption {
+    margin-top: 0.7rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.4;
+    max-width: 60ch;
+  }
+  figure {
+    margin: 0;
+  }
+
+  .project-footer {
+    padding-block: 3rem 5rem;
+  }
+  .project-next {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .project-next-link {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+title: What two years of maintaining an open-source design system taught me
+description: Building Roots was the easy part. Living with it was the education — and the part the conference talks tend to skip.
+date: 2026-03-04
+readTime: 8 min
+tags: ["design systems", "product design", "open source"]
+thumbnail: "https://picsum.photos/seed/blog-design-system/1200/800"
+---
+
+The first time someone outside Banyan opened a PR against Roots, I felt like I’d been caught in a lie. Not because the PR was bad — it was a thoughtful fix to a small issue in a component I’d built — but because it felt like the system had finally stopped being mine. I’d built it with the assumption that it would be used by the team, and that we’d all be in the same room, talking about it. But now, someone else was making changes to it, and I had to ask: was I still the one in charge?
+
+That was 2021. I was the founding designer for Banyan Cloud, and I’d been tasked with building a design system from scratch. We had no legacy UI, no existing patterns, and no time to waste on perfection. I called it Roots, because it was supposed to be the foundation of everything we’d build. It was a good name, and it felt right. It was also, as I learned, a name that would come to feel like a burden.
+
+## There is a difference between adoption and use
+
+We told ourselves we were building a system that would be used across the company. We said it would be adopted by every team, and that it would be the single source of truth for our UI. In practice, adoption was a different thing entirely.
+
+We had teams that said they were using Roots, and that they were happy with it. But when I looked at their screens, I saw a lot of inconsistency. A lot of custom overrides. A lot of “we’re using the component, but we’re not really using it.” It was like they were using a recipe book, but only following the parts that suited them.
+
+We tried to detect this honestly. We built a dashboard that tracked component usage, but it was hard to tell if someone was using a component or just copying it. We had to learn to trust the data, but also to question it. The numbers were only a proxy for what was really happening.
+
+One of my teammates once said, “You can’t force people to use something. You can only make it easy for them to use it.” That was a good reminder. We had to stop trying to make it *look* like everyone was using it, and start trying to make it *feel* like everyone was using it.
+
+## Every change is a six-week change
+
+We built Roots with the idea that it would be fast and flexible. We wanted to be able to ship updates quickly, and we did. A component update could land in code in a day. But getting it into every product surface took weeks. Sometimes months.
+
+We had to learn to be patient. We had to learn that a change that felt small in the code was actually a big deal in the real world. It was like changing a tire on a car that was already in motion — you had to account for the momentum, the people who were already driving it, the routes they had already taken.
+
+We built tooling to help with this. We had a changelog that auto-generated from PRs, and a Slack bot that notified teams when a component was updated. But even with all that, it was still a slow process. The discipline of patience became a core part of how we worked.
+
+## Documentation that matches the code drifts the day you ship it
+
+We built our documentation in Figma, and we kept it in sync with the code. It was a good idea, but it was also a constant battle. The design tool and the code drifted. The code changed, and the documentation didn’t. The documentation changed, and the code didn’t.
+
+We tried to automate it, but it was hard. We had to make tradeoffs. We decided to keep the documentation in sync with the code, but to let it be a bit behind. We also decided to make the documentation more of a living thing — not a static reference, but a place where people could ask questions and get answers.
+
+We used tools like Storybook and Chromatic to help with this, but they were only part of the solution. The real work was in the discipline of keeping it honest. It was easy to let the docs get stale, but it was harder to keep them relevant.
+
+## The hardest review is your own past self
+
+There’s a component I built in the first year that I look at now and cringe. It was a good idea at the time — it was supposed to be a flexible button that could be used in a lot of places. But it was also overly complex. It had too many props, too many variants, and too little clarity.
+
+I had to go back and refactor it. It was hard. It was like trying to fix a car that had been driven for years. You have to be careful not to break anything, but you also have to make it better. It was a reminder that the best design is not the one that looks good today, but the one that works well tomorrow.
+
+We had to learn to be honest with ourselves. We had to be willing to say, “This was a good idea at the time, but it’s not the right idea now.” It was a hard lesson, but it was also a necessary one.
+
+## Why open-sourcing was worth it anyway
+
+We open-sourced Roots in 2022. It was a decision that came with a lot of risk — we were giving away something that we had built with a lot of care, and we were putting it out into the world. But it was also a decision that taught us a lot.
+
+It forced us to be more disciplined. It forced us to be more honest. It forced us to think about what we were building, not just how we were building it.
+
+We didn’t get a lot of attention. We didn’t get a lot of stars. But we did get a lot of feedback. We got to see how people used it, how they adapted it, and how they made it their own. It was a humbling experience, and it was also a rewarding one.
+
+Sometimes I think the hardest part of building a design system isn’t the building — it’s the living with it. It’s the constant work of making sure it’s still useful, still relevant, still worth using. It’s the quiet, slow work of keeping it honest.
+
+And that’s what I learned. Not the glitz, not the hype, but the discipline. The kind that comes from publishing something and having to live with it.

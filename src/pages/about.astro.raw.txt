@@ -1,0 +1,170 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "About — Alok Kumar";
+const description = "The things I think about when I'm not designing.";
+---
+
+<Layout title={title} description={description}>
+<div class="container-edge container-content" style="padding-top: 5rem;">
+  <div class="eyebrow">About</div>
+  <h1 class="display">Off-screen.</h1>
+  <p class="lede font-serif" style="font-weight: 380; max-width: 50ch; color: var(--ink-muted);">The things I think about when I'm not designing. The photos, the music, the books, the small obsessions.</p>
+</div>
+
+<div class="container-content">
+  <div class="eyebrow">Me</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="photo-ph aspect-[4/5]"></div>
+    <p class="font-serif" style="font-weight: 380; max-width: 45ch; color: var(--ink-muted);">Born in Bokaro Steel City. Studied Computer Science but the design bug bit harder. Now in Pune, designing care software at Fold Health — and trying to remember to leave the desk once in a while.</p>
+  </div>
+</div>
+
+<div class="container-content">
+  <div class="eyebrow">In the world</div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div class="photo-ph aspect-[4/5]"></div>
+    <div class="photo-ph aspect-[3/2]"></div>
+    <div class="photo-ph aspect-[1/1]"></div>
+    <div class="photo-ph aspect-[3/2]"></div>
+    <div class="photo-ph aspect-[4/5]"></div>
+    <div class="photo-ph aspect-[1/1]"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4 text-sm text-ink-muted font-serif">
+    <p>Coffee with Adi, 2024</p>
+    <p>Vagamon, Kerala — 2023</p>
+    <p>At the Fold offsite, 2024</p>
+    <p>Bangalore design week</p>
+    <p>Trekking in Himachal</p>
+    <p>Sketching at the desk</p>
+  </div>
+</div>
+
+<div class="container-prose">
+  <div class="eyebrow">Music</div>
+  <p class="font-serif" style="color: var(--ink-muted);">Mostly post-rock and instrumental at the desk — Tycho, Mogwai, Nils Frahm. Anything with mood and few words.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+    <div>
+      <div class="font-serif text-sm text-ink-muted">On repeat</div>
+      <div class="font-serif">Tycho, Awake</div>
+    </div>
+    <div>
+      <div class="font-serif text-sm text-ink-muted">All-time</div>
+      <div class="font-serif">Stranger in the Alps — Phoebe Bridgers</div>
+    </div>
+    <div>
+      <div class="font-serif text-sm text-ink-muted">Live, recently</div>
+      <div class="font-serif">Bonobo, Pune, 2024</div>
+    </div>
+  </div>
+</div>
+
+<div class="container-prose">
+  <div class="eyebrow">Movies</div>
+  <p class="font-serif" style="color: var(--ink-muted);">I prefer the long, slow ones — directors who trust the audience to sit with a frame.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+    <div>
+      <div class="font-serif text-sm text-ink-muted">Recently loved</div>
+      <div class="font-serif">Past Lives (2023)</div>
+    </div>
+    <div>
+      <div class="font-serif text-sm text-ink-muted">Forever</div>
+      <div class="font-serif">In the Mood for Love (2000)</div>
+    </div>
+    <div>
+      <div class="font-serif text-sm text-ink-muted">Comfort rewatch</div>
+      <div class="font-serif">Before Sunrise (1995)</div>
+    </div>
+  </div>
+</div>
+
+<div class="container-prose">
+  <div class="eyebrow">Books</div>
+  <p class="font-serif" style="color: var(--ink-muted);">Nonfiction-heavy, a little philosophy, the occasional novel.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+    <div>
+      <div class="font-serif text-sm text-ink-muted">Reading now</div>
+      <div class="font-serif">The Design of Everyday Things — Don Norman</div>
+    </div>
+    <div>
+      <div class="font-serif text-sm text-ink-muted">Recently</div>
+      <div class="font-serif">Four Thousand Weeks — Oliver Burkeman</div>
+    </div>
+    <div>
+      <div class="font-serif text-sm text-ink-muted">Reread</div>
+      <div class="font-serif">Steal Like an Artist — Austin Kleon</div>
+    </div>
+  </div>
+</div>
+
+<div class="container-content">
+  <div class="eyebrow">Legos</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="photo-ph aspect-[4/5]"></div>
+    <p class="font-serif" style="color: var(--ink-muted);">I collect a few sets a year — usually architecture or technic. The Eiffel Tower is currently in pieces on the dining table.</p>
+  </div>
+</div>
+
+<div class="container-content">
+  <div class="eyebrow">Art</div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="photo-ph aspect-[1/1]"></div>
+    <div class="photo-ph aspect-[1/1]"></div>
+    <div class="photo-ph aspect-[1/1]"></div>
+    <div class="photo-ph aspect-[1/1]"></div>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 text-sm text-ink-muted font-serif">
+    <p>Ink, 2024</p>
+    <p>Pen on Moleskine, 2023</p>
+    <p>Watercolor study, 2024</p>
+    <p>Charcoal, 2022</p>
+  </div>
+</div>
+
+<div class="container-content">
+  <div class="eyebrow">Photography</div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div class="photo-ph aspect-[3/2]"></div>
+    <div class="photo-ph aspect-[4/5]"></div>
+    <div class="photo-ph aspect-[1/1]"></div>
+    <div class="photo-ph aspect-[1/1]"></div>
+    <div class="photo-ph aspect-[3/2]"></div>
+    <div class="photo-ph aspect-[4/5]"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4 text-sm text-ink-muted font-serif">
+    <p>Pune morning, 2024</p>
+    <p>Goa, 2023</p>
+    <p>Backwaters, Kerala</p>
+    <p>Streetlight study</p>
+    <p>Window, Mumbai</p>
+    <p>Old Delhi</p>
+  </div>
+</div>
+
+<div class="container-content">
+  <hr />
+  <div class="eyebrow">Reach me</div>
+  <p class="font-serif" style="color: var(--ink-muted);">Always up to talk — design, music, books, or whatever else.</p>
+  <div class="flex flex-wrap gap-4 mt-4">
+    <a href="mailto:designedbyalok@gmail.com" class="link link-accent">designedbyalok@gmail.com</a>
+    <a href="https://twitter.com" class="link link-accent">Twitter</a>
+    <a href="https://linkedin.com" class="link link-accent">LinkedIn</a>
+  </div>
+  <div style="padding-bottom: 6rem;"></div>
+</div>
+
+<style>
+  .photo-ph {
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-faint);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+</style>
+</Layout>

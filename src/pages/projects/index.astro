@@ -1,0 +1,137 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const entries = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Layout
+  title="Projects — Alok Kumar"
+  description="Projects worth telling you about: idea, problem, solution, and why it was unique."
+>
+  <div class="container-edge container-content projects-index">
+    <header class="projects-header">
+      <p class="eyebrow">Projects</p>
+      <h1 class="display display-lg text-balance">
+        Projects worth telling you about.
+      </h1>
+    </header>
+
+    <ul class="project-list">
+      {
+        entries.map((entry) => (
+          <li class="project-item">
+            <div class="project-period">
+              <p class="eyebrow">{entry.data.period}</p>
+            </div>
+            <div class="project-body">
+              <h2
+                class="project-title"
+                transition:name={`project-title-${entry.id}`}
+              >
+                <a href={`/projects/${entry.id}`} class="project-title-link">
+                  {entry.data.title}
+                </a>
+              </h2>
+              <p class="project-tagline text-pretty">{entry.data.tagline}</p>
+              {entry.data.tags.length > 0 && (
+                <ul class="project-tags">
+                  {entry.data.tags.map((tag) => (
+                    <li class="project-tag">{tag}</li>
+                  ))}
+                </ul>
+              )}
+              {entry.data.external && (
+                <a
+                  href={entry.data.external}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link link-accent project-external"
+                >
+                  Live ↗
+                </a>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>
+
+<style>
+  .projects-index {
+    padding-block: clamp(4rem, 8vw, 7rem) clamp(4rem, 8vw, 7rem);
+  }
+  .projects-header {
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .project-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .project-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding-block: 2.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .project-item:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 720px) {
+    .project-item {
+      grid-template-columns: 30% 70%;
+      gap: 2rem;
+    }
+  }
+
+  .project-title {
+    font-family: var(--font-serif);
+    font-weight: 420;
+    font-size: clamp(1.625rem, 2.6vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .project-title-link {
+    color: var(--ink);
+    transition: color 200ms ease;
+  }
+  .project-title-link:hover {
+    color: var(--accent);
+  }
+  .project-tagline {
+    margin: 0.6rem 0 0;
+    color: var(--ink-muted);
+    max-width: 55ch;
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+  .project-tags {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+  }
+  .project-tag {
+    font-size: var(--text-2xs);
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+  .project-external {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: var(--text-sm);
+  }
+</style>

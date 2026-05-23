@@ -1,0 +1,295 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("work");
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+type Props = { entry: CollectionEntry<"work"> };
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout
+  title={`${entry.data.company} — Alok Kumar`}
+  description={entry.data.summary}
+>
+  <article>
+    <header class="container-edge container-content work-header">
+      <p class="eyebrow">Work — {entry.data.period}</p>
+      <h1
+        class="display display-lg text-balance"
+        transition:name={`work-title-${entry.id}`}
+      >
+        {entry.data.company}
+      </h1>
+      <p class="work-role">{entry.data.role}</p>
+      <p class="lede">{entry.data.summary}</p>
+      <p class="work-meta-links">
+        <a
+          href={entry.data.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">Visit {entry.data.company} ↗</a
+        >
+        <span aria-hidden="true">·</span>
+        <a href="/work" class="link">Back to work</a>
+      </p>
+    </header>
+
+    {
+      entry.data.hero && (
+        <div class="container-edge container-wide work-hero">
+          <img
+            src={entry.data.hero}
+            alt={`${entry.data.company} — hero image`}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      )
+    }
+
+    <div class="container-edge container-prose work-body">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    {
+      entry.data.photos.length > 0 && (
+        <section class="container-edge container-wide work-photos">
+          <p class="eyebrow">From the room</p>
+          <ul class="photo-grid">
+            {entry.data.photos.map((photo) => (
+              <li class="photo-cell">
+                <figure>
+                  <div class="photo-frame" style={`aspect-ratio: ${photo.aspect};`}>
+                    <img
+                      src={photo.src}
+                      alt={photo.caption ?? ""}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  {photo.caption && (
+                    <figcaption class="photo-caption">{photo.caption}</figcaption>
+                  )}
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      entry.data.projects.length > 0 && (
+        <section class="container-edge container-prose work-projects">
+          <p class="eyebrow">Selected projects</p>
+          <ul class="project-list">
+            {entry.data.projects.map((project) => (
+              <li class="project-item">
+                <h3 class="project-title">{project.title}</h3>
+                <p class="project-desc">{project.description}</p>
+                {project.href && (
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link link-accent project-link"
+                  >
+                    Read more ↗
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      entry.data.testimonial && (
+        <section class="container-edge container-content work-testimonial">
+          <blockquote class="display-italic testimonial-quote text-balance">
+            “{entry.data.testimonial.quote}”
+          </blockquote>
+          <p class="testimonial-author">
+            — {entry.data.testimonial.author}
+            {entry.data.testimonial.role && `, ${entry.data.testimonial.role}`}
+          </p>
+        </section>
+      )
+    }
+
+    <footer class="container-edge container-content work-footer">
+      <hr />
+      <p class="work-next">
+        <span class="eyebrow">Next</span>
+        <a href="/work" class="link link-accent work-next-link">Back to work →</a>
+      </p>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .work-header {
+    padding-block: clamp(4rem, 8vw, 7rem) clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .work-role {
+    margin-top: 0.5rem;
+    color: var(--ink-muted);
+    font-size: var(--text-base);
+  }
+  .lede {
+    margin-top: 2.5rem;
+  }
+  .work-meta-links {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.7rem;
+    align-items: center;
+    font-size: var(--text-sm);
+  }
+  .work-meta-links span[aria-hidden] { color: var(--ink-faint); }
+
+  .work-hero {
+    margin-block: 2rem 3rem;
+  }
+  .work-hero img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--rule);
+    display: block;
+  }
+
+  .work-body {
+    padding-block: 1rem;
+  }
+
+  .work-photos {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .work-photos > .eyebrow {
+    margin-bottom: 2rem;
+  }
+  .photo-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem 1.5rem;
+  }
+  @media (min-width: 720px) {
+    .photo-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .photo-cell figure {
+    margin: 0;
+  }
+  .photo-frame {
+    overflow: hidden;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .photo-cell:hover .photo-frame img {
+    transform: scale(1.02);
+  }
+  .photo-caption {
+    margin-top: 0.7rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  .work-projects {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .project-list {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+  }
+  .project-item {
+    padding-block: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+  .project-item:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  .project-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 440;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .project-desc {
+    margin: 0.6rem 0 0;
+    color: var(--ink-muted);
+    max-width: 55ch;
+  }
+  .project-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: var(--text-sm);
+  }
+
+  .work-testimonial {
+    padding-block: clamp(4rem, 8vw, 7rem);
+    text-align: center;
+  }
+  .testimonial-quote {
+    font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+    line-height: 1.2;
+    max-width: 32ch;
+    margin: 0 auto;
+    color: var(--ink);
+  }
+  .testimonial-author {
+    margin-top: 1.2rem;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+
+  .work-footer {
+    padding-block: 2.5rem 5rem;
+  }
+  .work-next {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .work-next-link {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+  }
+</style>

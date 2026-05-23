@@ -1,0 +1,445 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Alok Kumar — Product Designer"
+  description="Product Designer at Fold Health. Six years designing systems and interactions at the intersection of design and engineering."
+>
+  <div class="container-edge container-content landing">
+    <canvas id="hero-canvas"></canvas>
+
+    <section class="lead" aria-label="Lead statement">
+      <p class="display display-lg text-balance animate-fade-in">
+        Alok Kumar designs at Fold Health — building
+        <span class="display-italic">Primary and Chronic Care</span>
+        for clinicians and patients.
+      </p>
+      <p class="lead-meta animate-fade-in-delayed">
+        Pune, Maharashtra · Six years at the intersection of design and engineering.
+      </p>
+    </section>
+
+    <section class="block" aria-label="Currently">
+      <p class="eyebrow">Currently</p>
+      <ul class="block-list">
+        <li>Designing Fold's care platform and design system.</li>
+        <li>
+          Listening to <em class="display-italic">Tycho — Awake</em>.
+          <!-- placeholder: wire to Spotify Now-Playing API later -->
+        </li>
+      </ul>
+    </section>
+
+    <section class="block" aria-label="Find me">
+      <p class="eyebrow">Find me</p>
+      <p class="links-row">
+        <a
+          href="https://github.com/designedbyalok"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">GitHub</a
+        >
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://x.com/designedbyalok"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">Twitter</a
+        >
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://www.linkedin.com/in/designedbyalok/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">LinkedIn</a
+        >
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://dribbble.com/designedbyalok"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">Dribbble</a
+        >
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://peerlist.io/designedbyalok"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link link-accent">Peerlist</a
+        >
+      </p>
+    </section>
+
+    <section class="block read-on" aria-label="Read on">
+      <p class="eyebrow">Read on</p>
+      <ul class="read-list">
+        <li>
+          <a href="/work" class="read-link link">
+            <span>The work I've shipped</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a href="/projects" class="read-link link">
+            <span>Projects worth telling you about</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a href="/blog" class="read-link link">
+            <span>Notes from the desk</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about" class="read-link link">
+            <span>More about me, off-screen</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .landing {
+    position: relative;
+    padding-block: clamp(4rem, 9vw, 8rem) clamp(4rem, 8vw, 8rem);
+  }
+
+  #hero-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.95;
+    mix-blend-mode: multiply;
+  }
+
+  :root[data-theme="dark"] #hero-canvas {
+    mix-blend-mode: screen;
+    opacity: 0.55;
+  }
+
+  .lead,
+  .block {
+    position: relative;
+    z-index: 10;
+  }
+
+  .lead {
+    max-width: 32ch;
+  }
+  @media (min-width: 720px) {
+    .lead { max-width: 28ch; }
+  }
+  @media (min-width: 1100px) {
+    .lead { max-width: 24ch; }
+  }
+  .lead-meta {
+    margin-top: 1.5rem;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    max-width: 50ch;
+  }
+
+  .block {
+    margin-top: clamp(3.5rem, 7vw, 6rem);
+    max-width: 56ch;
+  }
+
+  .block-list {
+    list-style: none;
+    margin: 0.9rem 0 0;
+    padding: 0;
+  }
+  .block-list li {
+    padding-block: 0.45rem;
+    color: var(--ink);
+    font-size: var(--text-base);
+  }
+  .block-list li + li {
+    border-top: 1px solid var(--rule);
+  }
+
+  .links-row {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem 0.7rem;
+    font-size: var(--text-sm);
+  }
+  .links-row span[aria-hidden] {
+    color: var(--ink-faint);
+  }
+
+  .read-list {
+    list-style: none;
+    margin: 1.4rem 0 0;
+    padding: 0;
+  }
+  .read-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.25rem, 2vw, 1.625rem);
+    color: var(--ink);
+    background-image: none;
+    transition: color 200ms ease, padding-inline 320ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .read-list li:last-child .read-link {
+    border-bottom: 1px solid var(--rule);
+  }
+  .read-link .arrow {
+    color: var(--ink-faint);
+    transition: transform 320ms cubic-bezier(0.2, 0, 0, 1), color 200ms ease;
+  }
+  .read-link:hover {
+    color: var(--accent);
+    padding-inline-start: 0.4rem;
+  }
+  .read-link:hover .arrow {
+    color: var(--accent);
+    transform: translateX(0.35rem);
+  }
+
+  .animate-fade-in {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: reveal 1000ms cubic-bezier(0.2, 0, 0, 1) forwards;
+    animation-delay: 150ms;
+  }
+
+  .animate-fade-in-delayed {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: reveal 1000ms cubic-bezier(0.2, 0, 0, 1) forwards;
+    animation-delay: 450ms;
+  }
+
+  @keyframes reveal {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  function initHeroCanvas() {
+    const canvas = document.getElementById("hero-canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = 0;
+    let height = 0;
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    let mouse = { x: width / 2, y: height / 2 };
+    let targetMouse = { x: width / 2, y: height / 2 };
+    let hasMoved = false;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      targetMouse.x = e.clientX - rect.left;
+      targetMouse.y = e.clientY - rect.top;
+      hasMoved = true;
+    };
+
+    const landing = canvas.closest(".landing");
+    if (landing) {
+      landing.addEventListener("mousemove", handleMouseMove as EventListener);
+      landing.addEventListener("mouseleave", () => {
+        hasMoved = false;
+      });
+    }
+
+    interface Orb {
+      x: number;
+      y: number;
+      targetX: number;
+      targetY: number;
+      radius: number;
+      angle: number;
+      speed: number;
+    }
+
+    const orbs: Orb[] = [
+      {
+        x: width * 0.2,
+        y: height * 0.3,
+        targetX: width * 0.2,
+        targetY: height * 0.3,
+        radius: 280,
+        angle: 0,
+        speed: 0.0006,
+      },
+      {
+        x: width * 0.7,
+        y: height * 0.6,
+        targetX: width * 0.7,
+        targetY: height * 0.6,
+        radius: 380,
+        angle: Math.PI * 0.5,
+        speed: 0.0004,
+      },
+      {
+        x: width * 0.4,
+        y: height * 0.8,
+        targetX: width * 0.4,
+        targetY: height * 0.8,
+        radius: 320,
+        angle: Math.PI,
+        speed: 0.0005,
+      },
+    ];
+
+    let animationFrameId: number;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const draw = () => {
+      if (prefersReducedMotion.matches) {
+        ctx.clearRect(0, 0, width, height);
+        drawOrbs();
+        return;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      mouse.x += (targetMouse.x - mouse.x) * 0.08;
+      mouse.y += (targetMouse.y - mouse.y) * 0.08;
+
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark" || 
+        (!document.documentElement.hasAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+      orbs.forEach((orb) => {
+        orb.angle += orb.speed;
+        
+        const baseOffsetX = Math.cos(orb.angle) * 35;
+        const baseOffsetY = Math.sin(orb.angle * 1.5) * 35;
+
+        if (hasMoved) {
+          orb.targetX = mouse.x + baseOffsetX;
+          orb.targetY = mouse.y + baseOffsetY;
+        } else {
+          const centerX = orb === orbs[0] ? width * 0.3 : orb === orbs[1] ? width * 0.7 : width * 0.5;
+          const centerY = orb === orbs[0] ? height * 0.3 : orb === orbs[1] ? height * 0.5 : height * 0.7;
+          orb.targetX = centerX + baseOffsetX;
+          orb.targetY = centerY + baseOffsetY;
+        }
+
+        orb.x += (orb.targetX - orb.x) * 0.03;
+        orb.y += (orb.targetY - orb.y) * 0.03;
+
+        const grad = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.radius);
+        
+        if (isDark) {
+          if (orb === orbs[0]) {
+            grad.addColorStop(0, "rgba(232, 121, 79, 0.09)");
+            grad.addColorStop(1, "rgba(14, 13, 11, 0)");
+          } else if (orb === orbs[1]) {
+            grad.addColorStop(0, "rgba(74, 43, 31, 0.45)");
+            grad.addColorStop(1, "rgba(14, 13, 11, 0)");
+          } else {
+            grad.addColorStop(0, "rgba(218, 140, 80, 0.06)");
+            grad.addColorStop(1, "rgba(14, 13, 11, 0)");
+          }
+        } else {
+          if (orb === orbs[0]) {
+            grad.addColorStop(0, "rgba(232, 197, 182, 0.55)");
+            grad.addColorStop(1, "rgba(250, 248, 244, 0)");
+          } else if (orb === orbs[1]) {
+            grad.addColorStop(0, "rgba(242, 238, 229, 0.9)");
+            grad.addColorStop(1, "rgba(250, 248, 244, 0)");
+          } else {
+            grad.addColorStop(0, "rgba(177, 74, 47, 0.1)");
+            grad.addColorStop(1, "rgba(250, 248, 244, 0)");
+          }
+        }
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    const drawOrbs = () => {
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark" || 
+        (!document.documentElement.hasAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+      orbs.forEach((orb, i) => {
+        const centerX = i === 0 ? width * 0.3 : i === 1 ? width * 0.7 : width * 0.5;
+        const centerY = i === 0 ? height * 0.3 : i === 1 ? height * 0.5 : height * 0.7;
+
+        const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, orb.radius);
+        
+        if (isDark) {
+          if (i === 0) {
+            grad.addColorStop(0, "rgba(232, 121, 79, 0.09)");
+            grad.addColorStop(1, "rgba(14, 13, 11, 0)");
+          } else if (i === 1) {
+            grad.addColorStop(0, "rgba(74, 43, 31, 0.45)");
+            grad.addColorStop(1, "rgba(14, 13, 11, 0)");
+          } else {
+            grad.addColorStop(0, "rgba(218, 140, 80, 0.06)");
+            grad.addColorStop(1, "rgba(14, 13, 11, 0)");
+          }
+        } else {
+          if (i === 0) {
+            grad.addColorStop(0, "rgba(232, 197, 182, 0.55)");
+            grad.addColorStop(1, "rgba(250, 248, 244, 0)");
+          } else if (i === 1) {
+            grad.addColorStop(0, "rgba(242, 238, 229, 0.9)");
+            grad.addColorStop(1, "rgba(250, 248, 244, 0)");
+          } else {
+            grad.addColorStop(0, "rgba(177, 74, 47, 0.1)");
+            grad.addColorStop(1, "rgba(250, 248, 244, 0)");
+          }
+        }
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, orb.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+
+    draw();
+
+    document.addEventListener("astro:before-swap", () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", resize);
+    }, { once: true });
+  }
+
+  initHeroCanvas();
+  document.addEventListener("astro:after-swap", initHeroCanvas);
+</script>

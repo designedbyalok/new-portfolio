@@ -1,0 +1,36 @@
+---
+title: Why I still write CSS, even though I'm a designer
+description: On the fuzzy line between the design tool and the browser — what writing your own front-end gets you, and what it quietly costs.
+date: 2026-05-15
+readTime: 6 min
+tags: ["product design", "design + engineering", "essays"]
+thumbnail: "https://picsum.photos/seed/blog-css-designer/1200/800"
+---
+
+I was looking at a Figma file the other day, trying to figure out why a button’s hover state didn’t feel right in the browser. I opened DevTools and saw that the `box-shadow` was rendering at 0.5px less blur than I had set in the design. It was a small difference, but it felt like a betrayal. The file was open on one side, the browser on the other. I had designed it, but I hadn’t built it. And now I was trying to bridge the gap between what I saw and what I saw in the browser.
+
+## The Figma → engineering hand-off lies a little
+
+The hand-off between design and engineering is always a little dishonest. Prototypes are **overpromising** and builds are **under-delivering**. It’s not malicious — it’s just that the tools don’t speak the same language. I remember working on a project where the line-height in Figma was set to 1.5, but in the browser it rendered at 1.49. It was a tiny difference, but it made the text feel off. I had to go back and tweak it in code, which meant I had to **rebuild** the component in the browser, not just in the design tool.
+
+Font weights are another one. Figma renders `font-weight: 380` as a bold, but in the browser it’s a **light** weight. It’s not a huge deal, but it’s the kind of thing that makes you question whether you’re designing for the browser or for the tool. Hover states are another area where the gap is visible. The way a button reacts to hover in Figma is often more **dramatic** than what can be achieved in code. It’s not that the design is wrong — it’s just that the medium is different.
+
+## The shortest distance between a design and a shipped product is the same person doing both
+
+I built the Roots Design System at Banyan Cloud, and I did it in code — not just in Figma. I was both the designer and the engineer. It was a strange, **satisfying** kind of responsibility. I had to think about how a component would behave in the browser, not just how it would look. It forced me to **think more deeply** about the constraints of the medium.
+
+There was a moment when I was building a dropdown component and realized that I had to **account for the height of the scrollbar** in the design. I had to think about how the component would behave when it was open, and how it would interact with the rest of the page. It was a small thing, but it changed how I approached the design. I had to **build it first**, then **design it**.
+
+## The cost: you become harder to work with
+
+Writing code makes you **more opinionated** about engineering decisions. It’s not a bad thing — it’s just that it changes how you interact with others. I’ve found that I’m more likely to **push back** on a solution that doesn’t work in the browser. It’s not that I’m being difficult — it’s that I **know** what’s possible and what isn’t.
+
+It’s a quiet cost. You become more **critical** of the work, and that can make you harder to collaborate with. It’s not that I don’t trust engineers — it’s that I **know** what’s possible, and I **know** what’s not. It’s a kind of **overconfidence** that can be off-putting.
+
+## What I still bring back to the design tool
+
+The code work changes how I approach design. I’m more **pragmatic** now. I think about how a component will behave in the browser, and I **design with that in mind**. I’ve learned to **test** my designs in code before I hand them off. It’s not a perfect solution, but it’s better than nothing.
+
+There’s a button I designed last week that I knew would be tricky to implement. I built a quick prototype in code to see how it would behave. It was a small thing, but it saved me from a lot of back-and-forth with the engineering team. I **still** write CSS, even though I’m a designer. It’s not about being a developer — it’s about **understanding the medium**.
+
+I still open Figma and DevTools side-by-side, and I still feel that quiet tension between what I see and what I see in the browser. But now I know how to **bridge** it.

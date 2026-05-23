@@ -1,0 +1,72 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects");
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+type Props = { entry: CollectionEntry<"projects"> };
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout title={`${entry.data.title} — Alok Kumar`} description={entry.data.tagline}>
+<div class="container-edge container-content">
+  <div class="py-16">
+    <div class="eyebrow">Project — {entry.data.period}</div>
+    <h1 class="display mt-4 mb-6">{entry.data.title}</h1>
+    <p class="font-serif lede text-2xl max-w-40ch text-balance leading-150 font-380 mb-6">{entry.data.tagline}</p>
+    <div class="flex flex-wrap gap-4 mb-6">
+      {entry.data.tags.map((tag) => (
+        <span class="text-xs px-2 py-0.5 rounded-full border border-solid border-rule text-ink-muted">{tag}</span>
+      ))}
+    </div>
+    {entry.data.external && (
+      <a href={entry.data.external} class="link link-accent text-sm inline-block mb-4">Visit project ↗</a>
+    )}
+    {entry.data.role && (
+      <p class="text-sm text-ink-muted font-sans mb-8">Role: {entry.data.role}</p>
+    )}
+  </div>
+</div>
+
+<div class="container-prose">
+  <div class="py-12">
+    <div class="eyebrow mb-4">The Idea</div>
+    <p class="font-serif text-xl max-w-60ch leading-150 font-380 mb-12">{entry.data.idea}</p>
+  </div>
+
+  <div class="py-12">
+    <div class="eyebrow mb-4">The Problem</div>
+    <p class="font-serif text-xl max-w-60ch leading-150 font-380 mb-12">{entry.data.problem}</p>
+  </div>
+
+  <div class="py-12">
+    <div class="eyebrow mb-4">The Solution</div>
+    <p class="font-serif text-xl max-w-60ch leading-150 font-380 mb-12">{entry.data.solution}</p>
+  </div>
+
+  <div class="py-12">
+    <div class="eyebrow mb-4">Why this is unique</div>
+    <p class="font-serif text-xl max-w-60ch leading-150 font-380 mb-12">{entry.data.whyUnique}</p>
+  </div>
+</div>
+
+<div class="container-prose prose prose-lg">
+  <Content />
+</div>
+
+<div class="container-edge container-content py-16">
+  <hr />
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 gap-4">
+    <div class="eyebrow">Next</div>
+    <a href="/projects" class="link link-accent font-serif text-sm">Back to projects →</a>
+  </div>
+</div>
+</Layout>

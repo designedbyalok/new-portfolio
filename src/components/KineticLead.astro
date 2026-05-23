@@ -1,0 +1,190 @@
+---
+const phrase = "Primary and Chronic Care";
+let letterCount = 0;
+const items = phrase.split("").map((char) => {
+  if (char === " ") {
+    return { char, isSpace: true, index: -1 };
+  } else {
+    const index = letterCount++;
+    return { char, isSpace: false, index };
+  }
+});
+---
+
+<section class="lead" aria-label="Lead statement">
+  <p class="display display-lg text-balance">
+    Alok Kumar designs at Fold Health — building <span class="display-italic kinetic-phrase">{
+      items.map((item) => {
+        if (item.isSpace) {
+          return " ";
+        }
+        return <span class="kinetic-letter" data-i={item.index}>{item.char}</span>;
+      })
+    }</span> for clinicians and patients.
+  </p>
+  <p class="lead-meta">Pune, Maharashtra · Six years at the intersection of design and engineering.</p>
+</section>
+
+<style>
+  .kinetic-phrase {
+    display: inline;
+  }
+  
+  .kinetic-letter {
+    display: inline-block;
+    font-variation-settings: "wght" 380, "opsz" 144, "SOFT" 50;
+    will-change: font-variation-settings;
+    transform-origin: baseline;
+  }
+</style>
+
+<script>
+  function initKinetic() {
+    // Clean up any existing instance first
+    if (typeof (window as any).__cleanupKinetic === 'function') {
+      (window as any).__cleanupKinetic();
+    }
+
+    const root = document.querySelector('section.lead');
+    if (!root || root.getAttribute('data-bound') === 'true') return;
+
+    // Accessibility/device capability guards
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    root.setAttribute('data-bound', 'true');
+
+    const letters = Array.from(root.querySelectorAll('.kinetic-letter')) as HTMLElement[];
+    if (letters.length === 0) return;
+
+    interface LetterCache {
+      el: HTMLElement;
+      x: number;
+      y: number;
+      currentWght: number;
+      targetWght: number;
+    }
+
+    let letterCache: LetterCache[] = letters.map((el) => ({
+      el,
+      x: 0,
+      y: 0,
+      currentWght: 380,
+      targetWght: 380,
+    }));
+
+    function updateCache() {
+      letterCache.forEach((item) => {
+        const rect = item.el.getBoundingClientRect();
+        // Cache center positions in absolute page coordinates to remain resilient against scrolls
+        item.x = rect.left + window.scrollX + rect.width / 2;
+        item.y = rect.top + window.scrollY + rect.height / 2;
+      });
+    }
+
+    // Lazily update positions on first animation frame after mount
+    let needsCacheUpdate = true;
+    requestAnimationFrame(() => {
+      updateCache();
+    });
+
+    const handleResize = () => {
+      needsCacheUpdate = true;
+    };
+    window.addEventListener('resize', handleResize);
+
+    let lastPointerTime = 0;
+    let mouseX = -1000;
+    let mouseY = -1000;
+    let isRunning = false;
+    let rafId: number | null = null;
+
+    function handlePointerMove(e: PointerEvent) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      lastPointerTime = performance.now();
+
+      if (!isRunning) {
+        isRunning = true;
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    function tick(now: number) {
+      if (needsCacheUpdate) {
+        updateCache();
+        needsCacheUpdate = false;
+      }
+
+      const timeSinceLastMove = now - lastPointerTime;
+      const isIdle = timeSinceLastMove > 1500;
+
+      let allAtRest = true;
+
+      // Translate mouse viewport coordinates to absolute page coordinates
+      const currentScrollX = window.scrollX;
+      const currentScrollY = window.scrollY;
+
+      letterCache.forEach((item) => {
+        if (isIdle) {
+          item.targetWght = 380;
+        } else {
+          const mousePageX = mouseX + currentScrollX;
+          const mousePageY = mouseY + currentScrollY;
+
+          const dx = mousePageX - item.x;
+          const dy = mousePageY - item.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 140) {
+            const factor = 1 - dist / 140;
+            const weightDelta = 520 - 380;
+            item.targetWght = 380 + weightDelta * (factor * factor); // squared falloff
+          } else {
+            item.targetWght = 380;
+          }
+        }
+
+        // Lerp weight (factor ~0.12 per frame)
+        item.currentWght += (item.targetWght - item.currentWght) * 0.12;
+
+        // Check if within 1.5 units of rest
+        if (Math.abs(item.currentWght - 380) > 1.5) {
+          allAtRest = false;
+        }
+
+        // Apply weight while preserving opsz: 144 and SOFT: 50
+        item.el.style.fontVariationSettings = `"wght" ${item.currentWght.toFixed(2)}, "opsz" 144, "SOFT" 50`;
+      });
+
+      if (isIdle && allAtRest) {
+        // Clamp exactly to rest and cancel loop
+        letterCache.forEach((item) => {
+          item.currentWght = 380;
+          item.el.style.fontVariationSettings = `"wght" 380, "opsz" 144, "SOFT" 50`;
+        });
+        isRunning = false;
+        rafId = null;
+      } else {
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    document.addEventListener('pointermove', handlePointerMove);
+
+    // Setup cleanup function
+    (window as any).__cleanupKinetic = () => {
+      document.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('resize', handleResize);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      root.removeAttribute('data-bound');
+    };
+  }
+
+  // Initial load
+  initKinetic();
+  // Support Astro View Transitions
+  document.addEventListener('astro:after-swap', initKinetic);
+</script>
