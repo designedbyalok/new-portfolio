@@ -6,7 +6,7 @@ summary: Founding designer at an enterprise cloud security SaaS. Built the MVP a
 website: https://banyancloud.io
 order: 2
 hero: https://picsum.photos/seed/banyan-hero/1600/900
-logo: https://picsum.photos/seed/banyan-logo/200/200
+logo: /banyan.svg
 photos:
   - src: https://picsum.photos/seed/banyan-screen-1/1400/900
     caption: The posture-management dashboard — what we hung our credibility on in the first demos.

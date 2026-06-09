@@ -5,10 +5,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resume — Alok Kumar</title>
+<title>Alok - Designer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #F5F5F0;
@@ -37,7 +37,7 @@
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg);
     color: var(--fg);
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -153,10 +153,10 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 10px;
+    padding: 10px 16px;
     background: var(--tag-bg);
-    border-radius: 5px;
-    font-size: 11px;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: 400;
     color: var(--fg-secondary);
     text-decoration: none;
@@ -370,13 +370,13 @@
 
   /* ── Animations ── */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
 
   .animate {
     opacity: 0;
-    animation: fadeUp 0.5s ease forwards;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .a1  { animation-delay: 0.04s; }

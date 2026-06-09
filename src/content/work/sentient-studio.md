@@ -6,7 +6,7 @@ summary: My first role out of engineering school. Designed digital presences —
 website: https://www.designsentient.com
 order: 3
 hero: https://picsum.photos/seed/sentient-hero/1600/900
-logo: https://picsum.photos/seed/sentient-logo/200/200
+logo: /sentient.svg
 photos:
   - src: https://picsum.photos/seed/sentient-work-1/1200/800
     caption: A client engagement that taught me how short the design-to-deadline window really is.

@@ -2,9 +2,9 @@
 @import "@fontsource/jetbrains-mono";
 
 @theme {
-  --font-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-serif: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-serif: "Instrument Serif", "Playfair Display", Georgia, serif;
 
   /* Aliasing old tokens to new ones to prevent breaking existing pages that haven't been refactored yet */
   --color-paper: var(--bg);
@@ -14,6 +14,22 @@
   --color-ink-faint: var(--fg-tertiary);
   --color-rule: var(--border);
   --color-accent: var(--accent);
+
+  /* Fluid Typography Scale */
+  --text-xs: clamp(0.6875rem, 0.65rem + 0.2vw, 0.75rem); /* 11px -> 12px */
+  --text-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem); /* 12px -> 14px */
+  --text-base: clamp(0.875rem, 0.85rem + 0.25vw, 1rem); /* 14px -> 16px */
+  --text-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem); /* 16px -> 18px */
+  --text-xl: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem); /* 18px -> 20px */
+  --text-2xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem); /* 20px -> 24px */
+  --text-3xl: clamp(1.5rem, 1.3rem + 1vw, 2rem); /* 24px -> 32px */
+  --text-4xl: clamp(1.75rem, 1.5rem + 1.5vw, 2.5rem); /* 28px -> 40px */
+  --text-5xl: clamp(2rem, 1.5rem + 2.5vw, 3.5rem); /* 32px -> 56px */
+
+  /* Layout Spacing */
+  --page-pad-top: clamp(80px, 8vh, 120px);
+  --page-pad-bottom: clamp(60px, 6vh, 80px);
+  --container-pad-x: clamp(24px, 4vw, 32px);
 }
 
 @layer base {
@@ -73,8 +89,7 @@
     transition: background-color 0.3s ease, color 0.3s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    min-height: 100dvh;
-    font-size: 14px;
+    font-size: var(--text-base);
     line-height: 1.6;
   }
 
@@ -92,24 +107,28 @@
   /* Minimal Prose for markdown content */
   .prose {
     max-width: 65ch;
-    font-size: 14px;
+    font-family: var(--font-sans);
+  }
+  .prose p {
+    margin: 1.2em 0;
     line-height: 1.6;
     color: var(--fg);
   }
   .prose h1, .prose h2, .prose h3 {
-    margin-top: 2.5em;
-    margin-bottom: 0.6em;
+    font-family: var(--font-sans);
+    color: var(--fg);
+    margin: 1.5em 0 0.5em;
     font-weight: 500;
-    line-height: 1.2;
   }
-  .prose h1 { font-size: 24px; }
-  .prose h2 { font-size: 18px; }
-  .prose h3 { font-size: 16px; }
-  .prose p { margin: 0 0 1.2em; }
+  .prose h1 { font-size: var(--text-2xl); }
+  .prose h2 { font-size: var(--text-xl); }
+  .prose h3 { font-size: var(--text-lg); }
   .prose a {
+    color: var(--fg);
     text-decoration: underline;
+    text-decoration-color: var(--border);
     text-underline-offset: 4px;
-    transition: opacity 0.15s;
+    transition: all 0.15s ease;
   }
   .prose a:hover { opacity: 0.7; }
   .prose img {
@@ -149,12 +168,13 @@
 
   /* Animations for alok-cv layout */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
+
   .animate {
     opacity: 0;
-    animation: fadeUp 0.5s ease forwards;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
   .a1 { animation-delay: 0.05s; }
   .a2 { animation-delay: 0.1s; }
@@ -186,7 +206,8 @@
 
 @layer utilities {
   .container-edge {
-    padding-inline: 24px;
+    width: 100%;
+    padding-inline: var(--container-pad-x);
   }
   .container-prose {
     max-width: 65ch;
@@ -236,21 +257,17 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 80px 24px 60px;
-  }
-  @media (min-width: 768px) {
-    .page {
-      padding: 120px 32px 80px;
-    }
+    padding-top: var(--page-pad-top);
+    padding-bottom: var(--page-pad-bottom);
+    padding-inline: var(--container-pad-x);
   }
 
-  .work-list, .nav-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 36px; width: 100%; }
-  .work-item, .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: var(--fg); transition: all 0.15s ease; cursor: pointer; }
-  .work-item:first-child, .nav-item:first-child { border-top: 1px solid var(--border); }
-  .work-item:hover, .nav-item:hover { background-color: var(--hover-bg); padding-left: 4px; padding-right: 4px; margin-left: -4px; margin-right: -4px; }
+  .work-list, .nav-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 36px; width: 100%; }
+  .work-item, .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; margin: 0 -12px; border-radius: 8px; text-decoration: none; color: var(--fg); transition: all 0.15s ease; cursor: pointer; }
+  .work-item:hover, .nav-item:hover { background-color: var(--hover-bg); }
   .work-left { display: flex; align-items: baseline; gap: 16px; }
-  .work-company, .nav-label { font-size: 14px; font-weight: 500; min-width: 110px; }
-  .work-years { font-size: 12px; color: var(--fg-secondary); font-weight: 400; letter-spacing: 0.02em; }
-  .work-icon, .nav-icon { font-size: 13px; color: var(--fg-secondary); flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.15s ease; }
+  .work-company, .nav-label { font-size: var(--text-sm); font-weight: 500; min-width: 110px; }
+  .work-years { font-size: var(--text-xs); color: var(--fg-secondary); font-weight: 400; letter-spacing: 0.02em; }
+  .work-icon, .nav-icon { font-size: var(--text-sm); color: var(--fg-secondary); flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.15s ease; }
   .work-item:hover .work-icon, .nav-item:hover .nav-icon { color: var(--fg); }
 }

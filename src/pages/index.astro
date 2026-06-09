@@ -5,15 +5,7 @@ import Layout from "../layouts/Layout.astro";
 <Layout>
   <div class="container">
     <!-- Logo -->
-    <div class="logo animate a1">A.K</div>
-
-    <!-- Avatar -->
-    <img
-      class="avatar animate"
-      src="https://www.designedbyalok.com/Alok.jpeg"
-      alt="Alok Kumar"
-      onerror="this.style.display='none'"
-    />
+    <img src="/favicon.svg" alt="Alok Logo" class="logo-avatar animate a1" />
 
     <!-- Name -->
     <h1 class="name animate a2">
@@ -31,7 +23,7 @@ import Layout from "../layouts/Layout.astro";
     <div class="work-list animate a5">
       <a class="work-item" href="/work/fold-health">
         <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
-          <img src="https://picsum.photos/seed/fold-logo/200/200" alt="Fold Health logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
+          <img src="/foldhealth.svg" alt="Fold Health logo" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border);" />
           <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
             <span class="work-company">Fold Health</span>
             <span class="work-years">Jun 2023 → <span class="work-dots">····</span></span>
@@ -41,7 +33,7 @@ import Layout from "../layouts/Layout.astro";
       </a>
       <a class="work-item" href="/work/banyan-cloud">
         <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
-          <img src="https://picsum.photos/seed/banyan-logo/200/200" alt="Banyan Cloud logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
+          <img src="/banyan.svg" alt="Banyan Cloud logo" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border);" />
           <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
             <span class="work-company">Banyan Cloud</span>
             <span class="work-years">Aug 2021 → Jun 2023</span>
@@ -51,7 +43,7 @@ import Layout from "../layouts/Layout.astro";
       </a>
       <a class="work-item" href="/work/sentient-studio">
         <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
-          <img src="https://picsum.photos/seed/sentient-logo/200/200" alt="Sentient Studio logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
+          <img src="/sentient.svg" alt="Sentient Studio logo" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border);" />
           <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
             <span class="work-company">Sentient Studio</span>
             <span class="work-years">Oct 2020 → Jul 2021</span>
@@ -59,16 +51,6 @@ import Layout from "../layouts/Layout.astro";
         </div>
         <span class="work-icon">→</span>
       </a>
-      <div class="work-item">
-        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
-          <img src="https://picsum.photos/seed/doortask-logo/200/200" alt="Doortask logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
-          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-            <span class="work-company">Doortask</span>
-            <span class="work-years">Jun 2018 → Jan 2020</span>
-          </div>
-        </div>
-        <span class="work-icon">↗</span>
-      </div>
     </div>
 
     <!-- Pages -->
@@ -159,14 +141,14 @@ import Layout from "../layouts/Layout.astro";
     max-width: 960px;
   }
 
-  /* Logo */
-  .logo {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    color: var(--fg-secondary);
-    margin-bottom: 48px;
-    text-transform: uppercase;
+  /* Logo Avatar */
+  .logo-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
   }
 
   /* Avatar */
@@ -181,7 +163,9 @@ import Layout from "../layouts/Layout.astro";
 
   /* Name */
   .name {
-    font-size: 28px;
+    font-size: var(--text-3xl);
+    font-family: var(--font-serif);
+    font-style: italic;
     font-weight: 500;
     line-height: 1.15;
     letter-spacing: -0.02em;
@@ -194,7 +178,7 @@ import Layout from "../layouts/Layout.astro";
 
   /* Title */
   .title {
-    font-size: 14px;
+    font-size: var(--text-base);
     font-weight: 400;
     color: var(--fg-secondary);
     margin-top: 12px;
@@ -203,7 +187,7 @@ import Layout from "../layouts/Layout.astro";
 
   /* Bio */
   .bio {
-    font-size: 12px;
+    font-size: var(--text-sm);
     font-weight: 400;
     color: var(--fg-tertiary);
     line-height: 1.6;
@@ -211,126 +195,9 @@ import Layout from "../layouts/Layout.astro";
   }
 
   /* Work Section */
-  .work-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin-bottom: 36px;
-  }
-
-  .work-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    text-decoration: none;
-    color: var(--fg);
-    transition: all 0.15s ease;
-  }
-
-  a.work-item {
-    cursor: pointer;
-  }
-
-  .work-item:first-child {
-    border-top: 1px solid var(--border);
-  }
-
-  a.work-item:hover {
-    background-color: var(--hover-bg);
-    padding-left: 4px;
-    padding-right: 4px;
-    margin-left: -4px;
-    margin-right: -4px;
-  }
-
-  .work-left {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-  }
-
-  .work-company {
-    font-size: 14px;
-    font-weight: 500;
-    min-width: 110px;
-  }
-
-  .work-years {
-    font-size: 12px;
-    color: var(--fg-secondary);
-    font-weight: 400;
-    letter-spacing: 0.02em;
-  }
-
   .work-dots {
     color: var(--fg-tertiary);
     letter-spacing: 0.1em;
-  }
-
-  .work-icon {
-    font-size: 13px;
-    color: var(--fg-secondary);
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: all 0.15s ease;
-  }
-
-  a.work-item:hover .work-icon {
-    color: var(--fg);
-  }
-
-  /* Nav Row */
-  .nav-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin-bottom: 24px;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    text-decoration: none;
-    color: var(--fg);
-    transition: all 0.15s ease;
-    cursor: pointer;
-  }
-
-  .nav-item:first-child {
-    border-top: 1px solid var(--border);
-  }
-
-  .nav-item:hover {
-    background-color: var(--hover-bg);
-    padding-left: 4px;
-    padding-right: 4px;
-    margin-left: -4px;
-    margin-right: -4px;
-  }
-
-  .nav-label {
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  .nav-icon {
-    font-size: 13px;
-    color: var(--fg-secondary);
-    transition: color 0.15s ease;
-  }
-
-  .nav-item:hover .nav-icon {
-    color: var(--fg);
   }
 
   /* Links Section */
@@ -345,10 +212,10 @@ import Layout from "../layouts/Layout.astro";
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
+    padding: 10px 16px;
     background: var(--tag-bg);
     border-radius: 6px;
-    font-size: 12px;
+    font-size: var(--text-sm);
     font-weight: 400;
     color: var(--fg);
     text-decoration: none;
@@ -363,7 +230,7 @@ import Layout from "../layouts/Layout.astro";
   }
 
   .link-pill .pill-icon {
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--fg-secondary);
     line-height: 1;
   }
@@ -377,7 +244,7 @@ import Layout from "../layouts/Layout.astro";
   }
 
   .theme-label {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--fg-secondary);
     font-weight: 400;
   }
@@ -413,9 +280,6 @@ import Layout from "../layouts/Layout.astro";
 
   /* Responsive */
   @media (max-width: 480px) {
-    .name {
-      font-size: 24px;
-    }
     .container {
       max-width: 100%;
     }

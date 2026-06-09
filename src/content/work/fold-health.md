@@ -6,7 +6,7 @@ summary: Redesigning Primary & Chronic Care for clinicians and patients. Buildin
 website: https://fold.health
 order: 1
 hero: https://picsum.photos/seed/fold-hero/1600/900
-logo: https://picsum.photos/seed/fold-logo/200/200
+logo: /foldhealth.svg
 photos:
   - src: https://picsum.photos/seed/fold-team-1/1200/800
     caption: A walkthrough with the care-ops team after a workflow review, late 2024.
