@@ -1,4 +1,6 @@
---
+---
+import { Image } from "astro:assets";
+
 interface Photo {
   src: string;
   caption?: string;
@@ -19,7 +21,7 @@ const { items = [], ariaLabel = "Photo carousel" } = Astro.props;
       {items.map((item, i) => (
         <div class="carousel-slide" data-slide-index={i}>
           <div class="slide-frame" style={`aspect-ratio: ${item.aspect ?? "3 / 2"};`}>
-            <img src={item.src} alt={item.caption ?? ""} loading="lazy" decoding="async" />
+            <Image src={item.src} alt={item.caption ?? ""} width={1200} height={1200} loading="lazy" decoding="async" />
           </div>
           {item.caption && <figcaption class="slide-caption">{item.caption}</figcaption>}
         </div>

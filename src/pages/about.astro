@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
 
 type Photo = { src: string; aspect: string; caption: string; alt?: string };
 
@@ -101,9 +102,10 @@ const photography: Photo[] = [
       <p class="eyebrow">Me</p>
       <div class="me-grid">
         <figure class="photo-frame" style={`aspect-ratio: ${portrait.aspect};`}>
-          <img
+          <Image
             src={portrait.src}
             alt="Portrait of Alok Kumar"
+            width={1200} height={1200}
             loading="lazy"
             decoding="async"
           />
@@ -126,9 +128,10 @@ const photography: Photo[] = [
             <li>
               <figure>
                 <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
-                  <img
+                  <Image
                     src={item.src}
                     alt={item.alt ?? item.caption}
+                    width={1200} height={1200}
                     loading="lazy"
                     decoding="async"
                   />
@@ -198,9 +201,10 @@ const photography: Photo[] = [
       <p class="eyebrow">Legos</p>
       <div class="me-grid">
         <figure class="photo-frame" style={`aspect-ratio: ${legos.aspect};`}>
-          <img
+          <Image
             src={legos.src}
             alt={legos.caption}
+            width={1200} height={1200}
             loading="lazy"
             decoding="async"
           />
@@ -222,9 +226,10 @@ const photography: Photo[] = [
             <li>
               <figure>
                 <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
-                  <img
+                  <Image
                     src={item.src}
                     alt={item.caption}
+                    width={1200} height={1200}
                     loading="lazy"
                     decoding="async"
                   />
@@ -245,9 +250,10 @@ const photography: Photo[] = [
             <li>
               <figure>
                 <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
-                  <img
+                  <Image
                     src={item.src}
                     alt={item.caption}
+                    width={1200} height={1200}
                     loading="lazy"
                     decoding="async"
                   />

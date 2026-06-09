@@ -2,49 +2,50 @@
 import Layout from "../../layouts/Layout.astro";
 import LikeButton from "../../components/LikeButton.astro";
 import Comments from "../../components/Comments.astro";
-import { getCollection, render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import { getAllPosts } from "../../lib/cms";
+import type { CMSPost } from "../../lib/cms";
+import { marked } from "marked";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const posts = await getAllPosts();
   return posts.map((post) => ({
-    params: { slug: post.id },
+    params: { slug: post.slug },
     props: { post },
   }));
 }
 
-type Props = { post: CollectionEntry<"blog"> };
+type Props = { post: CMSPost };
 const { post } = Astro.props;
-const { Content } = await render(post);
 
-const formattedDate = post.data.date.toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+const htmlContent = marked.parse(post.markdownContent);
+
+const formattedDate = post.date
+  ? new Date(post.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+  : "Recently";
 ---
 
 <Layout
-  title={`${post.data.title} — Alok Kumar`}
-  description={post.data.description}
+  title={`${post.title} — Alok Kumar`}
+  description={post.description || ""}
 >
   <article>
     <header class="container-edge container-prose post-header">
       <p class="eyebrow post-meta">
         Blog · {formattedDate}
-        {post.data.readTime && ` · ${post.data.readTime}`}
+        {post.readTime && ` · ${post.readTime}`}
       </p>
       <h1
         class="display display-lg post-title text-balance"
-        transition:name={`post-title-${post.id}`}
+        transition:name={`post-title-${post.slug}`}
       >
-        {post.data.title}
+        {post.title}
       </h1>
-      <p class="post-lede text-pretty">{post.data.description}</p>
+      <p class="post-lede text-pretty">{post.description || ""}</p>
       {
-        post.data.tags.length > 0 && (
+        post.tags && post.tags.length > 0 && (
           <ul class="post-tags">
-            {post.data.tags.map((tag) => (
+            {post.tags.map((tag) => (
               <li class="post-tag">{tag}</li>
             ))}
           </ul>
@@ -53,11 +54,12 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     </header>
 
     {
-      post.data.thumbnail && (
+      post.thumbnail && (
         <div class="container-edge container-content post-hero-image">
-          <img
-            src={post.data.thumbnail}
-            alt={post.data.title}
+          <Image
+            src={post.thumbnail}
+            alt={post.title}
+            width={1200} height={1200}
             loading="eager"
             decoding="async"
           />
@@ -66,17 +68,15 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     }
 
     <div class="container-edge container-prose post-body">
-      <div class="prose">
-        <Content />
-      </div>
+      <div class="prose" set:html={htmlContent}></div>
     </div>
 
     <div class="container-edge container-prose post-actions">
-      <LikeButton slug={post.id} />
+      <LikeButton slug={post.slug} />
     </div>
 
     <div class="container-edge container-prose">
-      <Comments slug={post.id} />
+      <Comments slug={post.slug} />
     </div>
 
     <footer class="container-edge container-prose post-footer">
