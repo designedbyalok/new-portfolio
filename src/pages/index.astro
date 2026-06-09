@@ -5,7 +5,7 @@ import Layout from "../layouts/Layout.astro";
 <Layout>
   <div class="container">
     <!-- Logo -->
-    <img src="/favicon.svg" alt="Alok Logo" class="logo-avatar animate a1" />
+    <a href="/" aria-label="Home"><img src="/favicon.svg" alt="Alok Logo" class="logo-avatar animate a1" /></a>
 
     <!-- Name -->
     <h1 class="name animate a2">
@@ -139,16 +139,6 @@ import Layout from "../layouts/Layout.astro";
   .container {
     width: 100%;
     max-width: 960px;
-  }
-
-  /* Logo Avatar */
-  .logo-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
-    object-fit: cover;
-    margin-bottom: 24px;
-    border: 1px solid var(--border);
   }
 
   /* Avatar */
