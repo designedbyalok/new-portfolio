@@ -3,7 +3,11 @@ import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import { getAllPosts } from "../../lib/cms";
 
-const posts = await getAllPosts();
+const posts = (await getAllPosts()).sort((a, b) => {
+  const dateA = a.date ? new Date(a.date).getTime() : 0;
+  const dateB = b.date ? new Date(b.date).getTime() : 0;
+  return dateB - dateA;
+});
 
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "short" });

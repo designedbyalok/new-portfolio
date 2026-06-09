@@ -4,7 +4,7 @@ import TopBar from "../../components/TopBar.astro";
 import { getCollection } from "astro:content";
 
 const entries = (await getCollection("work")).sort(
-  (a, b) => a.data.order - b.data.order,
+  (a, b) => b.data.order - a.data.order,
 );
 
 const getImages = (entry: any) => {
