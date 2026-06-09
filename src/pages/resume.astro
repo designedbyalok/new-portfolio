@@ -1,50 +1,9 @@
 ---
+import Layout from "../layouts/Layout.astro";
 ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alok - Designer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<Layout title="Resume — Alok - Designer" description="Alok Kumar's Resume">
 <style>
-  :root {
-    --bg: #F5F5F0;
-    --fg: #1a1a1a;
-    --fg-secondary: #888888;
-    --fg-tertiary: #b0b0b0;
-    --border: #e0e0dc;
-    --hover-bg: rgba(0,0,0,0.04);
-    --tag-bg: rgba(0,0,0,0.05);
-    --accent: #1a1a1a;
-  }
-
-  [data-theme="dark"] {
-    --bg: #121212;
-    --fg: #e0e0e0;
-    --fg-secondary: #777777;
-    --fg-tertiary: #555555;
-    --border: #2a2a2a;
-    --hover-bg: rgba(255,255,255,0.05);
-    --tag-bg: rgba(255,255,255,0.08);
-    --accent: #e0e0e0;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg);
-    color: var(--fg);
-    transition: background-color 0.3s ease, color 0.3s ease;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
   .page {
     display: flex;
     flex-direction: column;
@@ -613,33 +572,4 @@
 
     </div>
   </div>
-
-  <script>
-    const toggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (savedTheme) {
-      html.setAttribute('data-theme', savedTheme);
-    } else if (prefersDark) {
-      html.setAttribute('data-theme', 'dark');
-    }
-
-    toggle.addEventListener('click', () => {
-      const current = html.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch(e) {}
-    });
-
-    toggle.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggle.click();
-      }
-    });
-  </script>
-</body>
-</html>
+</Layout>

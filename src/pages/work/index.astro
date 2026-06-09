@@ -51,12 +51,12 @@ const getImages = (entry: any) => {
                 <div class="card-stack">
                   {imgs.length >= 3 ? (
                     <>
-                      <img src={imgs[2]} alt="" class="card card-bottom" />
-                      <img src={imgs[1]} alt="" class="card card-middle" />
-                      <img src={imgs[0]} alt="" class="card card-top" />
+                      <img src={imgs[2]} alt="" class="card card-bottom" loading="lazy" decoding="async" />
+                      <img src={imgs[1]} alt="" class="card card-middle" loading="lazy" decoding="async" />
+                      <img src={imgs[0]} alt="" class="card card-top" loading="lazy" decoding="async" />
                     </>
                   ) : entry.data.logo ? (
-                    <img src={entry.data.logo} alt="" class="card card-top" />
+                    <img src={entry.data.logo} alt="" class="card card-top" loading="lazy" decoding="async" />
                   ) : (
                     <div class="card card-top" style="background: var(--border);"></div>
                   )}
