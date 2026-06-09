@@ -33,9 +33,9 @@ const { Content } = await render(entry);
     </div>
 
     <header class="post-header">
-      <h1 class="name animate a1" style="margin-bottom: 8px;">{entry.data.company}</h1>
-      <p class="title animate a2">{entry.data.role} · {entry.data.period}</p>
-      <p class="bio animate a3" style="margin-top: 16px;">{entry.data.summary}</p>
+      <h1 class="post-title animate a1">{entry.data.company}</h1>
+      <p class="post-date animate a2">{entry.data.role} · {entry.data.period}</p>
+      <p class="post-summary animate a3">{entry.data.summary}</p>
       
       {entry.data.website && (
         <a class="link-pill animate a4" href={entry.data.website} target="_blank" rel="noopener noreferrer">
@@ -128,3 +128,38 @@ const { Content } = await render(entry);
     }
   </div>
 </Layout>
+
+<style>
+  .post-header {
+    margin-bottom: 40px;
+  }
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--fg);
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .post-date {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--fg-secondary);
+    margin-bottom: 0;
+  }
+  .post-summary {
+    margin-top: 16px;
+    font-size: var(--text-base);
+    color: var(--fg-secondary);
+    line-height: 1.6;
+    max-width: 60ch;
+  }
+
+  /* Allow prose to go full-width on work pages so tables/code don't clip */
+  .prose {
+    max-width: 100% !important;
+  }
+</style>

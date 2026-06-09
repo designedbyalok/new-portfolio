@@ -177,7 +177,7 @@
     color: var(--fg);
   }
 
-  /* Code blocks */
+  /* Code blocks — full width scroll, no max-width clipping */
   .prose pre {
     margin: 1.75em 0;
     padding: 1.25em 1.5em;
@@ -185,9 +185,12 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: var(--text-sm);
     line-height: 1.7;
+    max-width: 100%;
+    white-space: pre;
   }
   .prose pre code {
     background: none;
@@ -210,11 +213,12 @@
     color: var(--fg);
   }
   .prose ul > li::before {
-    content: "–";
+    content: "\2022"; /* proper bullet • */
     position: absolute;
     left: 0;
-    color: var(--fg-tertiary);
-    font-weight: 400;
+    color: var(--fg);
+    font-size: 0.85em;
+    top: 0.15em;
   }
 
   /* Nested unordered lists */
@@ -223,9 +227,9 @@
     padding-left: 1em;
   }
   .prose ul ul > li::before {
-    content: "·";
-    font-size: 1.1em;
-    top: -0.05em;
+    content: "\25E6"; /* hollow bullet ◦ */
+    font-size: 0.85em;
+    top: 0.15em;
   }
 
   /* Ordered lists */
@@ -264,25 +268,30 @@
   .prose strong { font-weight: 600; color: var(--fg); }
   .prose em { font-style: italic; color: var(--fg); }
 
-  /* Tables */
+  /* Tables — scrollable container */
   .prose table {
     width: 100%;
     border-collapse: collapse;
     margin: 2em 0;
     font-size: var(--text-sm);
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .prose th {
     text-align: left;
-    padding: 0.5em 0.75em;
+    padding: 0.6em 1em;
     background: var(--tag-bg);
     border: 1px solid var(--border);
     font-weight: 600;
     color: var(--fg);
+    white-space: nowrap;
   }
   .prose td {
-    padding: 0.5em 0.75em;
+    padding: 0.6em 1em;
     border: 1px solid var(--border);
     color: var(--fg-secondary);
+    vertical-align: top;
   }
   .prose tr:nth-child(even) td { background: var(--tag-bg); }
 
