@@ -27,7 +27,7 @@
   --text-5xl: clamp(2.5rem, 2rem + 3vw, 4rem); /* 40px -> 64px */
 
   /* Layout Spacing */
-  --page-pad-top: clamp(80px, 8vh, 120px);
+  --page-pad-top: 32px;
   --page-pad-bottom: clamp(60px, 6vh, 80px);
   --container-pad-x: clamp(24px, 4vw, 32px);
 }
@@ -71,7 +71,13 @@
     }
   }
 
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
   html, body {
+    margin: 0;
+    padding: 0;
     min-height: 100vh;
   }
   

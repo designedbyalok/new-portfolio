@@ -1,14 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import TopBar from "../components/TopBar.astro";
 ---
 
-<Layout>
-  <div class="container-content container-edge" style="padding-top: var(--page-pad-top); padding-bottom: 80px;">
-    <!-- Logo -->
-    <a href="/" aria-label="Home"><img src="/favicon.svg" alt="Alok Logo" class="logo-avatar animate a1" /></a>
+<Layout bodyClass="homepage-body">
+  <div class="container-content container-edge index-layout">
+    <!-- Top Bar -->
+    <TopBar />
 
-    <!-- Name -->
-    <h1 class="name animate a2">Alok Kumar</h1>
+    <div class="index-main">
+      <!-- Name -->
+      <h1 class="name animate a2">Alok Kumar</h1>
 
     <!-- Title -->
     <p class="title animate a3">Product Designer</p>
@@ -50,87 +52,86 @@ import Layout from "../layouts/Layout.astro";
       </a>
     </div>
 
-    <!-- Pages -->
-    <div class="nav-list animate a6">
+    <!-- Nav Links -->
+    <div class="nav-links animate a7">
       <a class="nav-item" href="/work">
-        <span class="nav-label">Works</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+          <span class="nav-label">Works</span>
+        </div>
         <span class="nav-icon">→</span>
       </a>
       <a class="nav-item" href="/blog">
-        <span class="nav-label">Blog</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+          <span class="nav-label">Blog</span>
+        </div>
         <span class="nav-icon">→</span>
       </a>
       <a class="nav-item" href="/resume">
-        <span class="nav-label">Resume</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span class="nav-label">Resume</span>
+        </div>
         <span class="nav-icon">→</span>
       </a>
       <a class="nav-item" href="/about">
-        <span class="nav-label">About</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="nav-label">About</span>
+        </div>
         <span class="nav-icon">→</span>
       </a>
     </div>
+    </div>
 
     <!-- Social Links -->
-    <div class="links-section animate a8">
+    <footer class="links-section animate a8" style="margin-top: auto;">
       <a class="link-pill" href="https://www.linkedin.com/in/designedbyalok/" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
         LinkedIn <span class="pill-icon">↗</span>
       </a>
       <a class="link-pill" href="https://dribbble.com/designedbyalok" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><circle cx="12" cy="12" r="10"></circle><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.65-.53-13.94 8.6"></path></svg>
         Dribbble <span class="pill-icon">↗</span>
       </a>
       <a class="link-pill" href="https://x.com/designedbyalok" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
         Twitter <span class="pill-icon">↗</span>
       </a>
       <a class="link-pill" href="https://github.com/designedbyalok" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
         GitHub <span class="pill-icon">↗</span>
       </a>
-    </div>
+    </footer>
 
-    <!-- Theme Toggle -->
-    <div class="theme-section animate a9">
-      <span class="theme-label">Theme</span>
-      <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="Toggle theme"></div>
-    </div>
   </div>
 </Layout>
 
-<script>
-  // Setup theme toggle
-  function setupTheme() {
-    const toggle = document.getElementById("themeToggle");
-    const html = document.documentElement;
-
-    if (!toggle) return;
-
-    // Reset old listeners if running multiple times (view transitions)
-    const newToggle = toggle.cloneNode(true);
-    toggle.parentNode?.replaceChild(newToggle, toggle);
-
-    newToggle.addEventListener("click", () => {
-      const current = html.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
-      html.setAttribute("data-theme", next);
-      try {
-        localStorage.setItem("theme", next);
-      } catch (e) {}
-    });
-
-    newToggle.addEventListener("keydown", (e: any) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        newToggle.click();
-      }
-    });
+<style>
+  :global(body.homepage-body) {
+    height: 100dvh !important;
+    overflow: hidden !important;
   }
 
-  // Run on first load
-  setupTheme();
+  .index-layout {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100dvh;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    gap: 40px;
+  }
 
-  // Run after view transitions
-  document.addEventListener("astro:after-swap", setupTheme);
-</script>
-
-<style>
+  .index-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 
 
 
@@ -187,7 +188,7 @@ import Layout from "../layouts/Layout.astro";
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 40px;
+    margin-bottom: 0;
   }
 
   .link-pill {
@@ -215,49 +216,6 @@ import Layout from "../layouts/Layout.astro";
     font-size: var(--text-xs);
     color: var(--fg-secondary);
     line-height: 1;
-  }
-
-  /* Theme Toggle */
-  .theme-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 8px;
-  }
-
-  .theme-label {
-    font-size: var(--text-xs);
-    color: var(--fg-secondary);
-    font-weight: 400;
-  }
-
-  .theme-toggle {
-    position: relative;
-    width: 36px;
-    height: 20px;
-    background: var(--tag-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    flex-shrink: 0;
-  }
-
-  .theme-toggle::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 14px;
-    height: 14px;
-    background: var(--fg-secondary);
-    border-radius: 50%;
-    transition: all 0.25s ease;
-  }
-
-  :global([data-theme="dark"]) .theme-toggle::after {
-    left: 18px;
-    background: var(--fg);
   }
 
   /* Responsive */
