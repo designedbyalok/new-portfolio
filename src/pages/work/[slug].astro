@@ -39,7 +39,7 @@ const { Content } = await render(entry);
       
       {entry.data.website && (
         <a class="link-pill animate a4" href={entry.data.website} target="_blank" rel="noopener noreferrer">
-          Visit {entry.data.company} <span class="pill-icon">↗</span>
+          View project <span class="pill-icon">↗</span>
         </a>
       )}
     </header>
@@ -66,7 +66,7 @@ const { Content } = await render(entry);
     {
       entry.data.photos.length > 0 && (
         <section class="animate a6" style="margin-top: 60px; width: 100%;">
-          <p class="eyebrow" style="margin-bottom: 16px;">From the room</p>
+          <p class="eyebrow" style="margin-bottom: 16px;">Visuals</p>
           <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
             {entry.data.photos.map((photo) => (
               <figure style="margin: 0;">
@@ -95,7 +95,7 @@ const { Content } = await render(entry);
     {
       entry.data.projects.length > 0 && (
         <section class="animate a7" style="margin-top: 60px; width: 100%;">
-          <p class="eyebrow" style="margin-bottom: 16px;">Selected projects</p>
+          <p class="eyebrow" style="margin-bottom: 16px;">Key metrics</p>
           <div class="work-list">
             {entry.data.projects.map((project) => (
               <div class="work-item" style="flex-direction: column; align-items: flex-start; padding: 16px 0; gap: 8px;">
