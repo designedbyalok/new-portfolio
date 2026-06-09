@@ -2,7 +2,6 @@
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import LikeButton from "../../components/LikeButton.astro";
-import Comments from "../../components/Comments.astro";
 import { Image } from "astro:assets";
 import { getAllPosts } from "../../lib/cms";
 import type { CMSPost } from "../../lib/cms";
@@ -63,10 +62,6 @@ const formattedDate = post.date
     <div class="post-actions animate a5" style="margin-top: 40px; display: flex; justify-content: center; width: 100%;">
       <LikeButton slug={post.slug} />
     </div>
-
-    <div class="post-comments animate a6" style="margin-top: 40px; width: 100%;">
-      <Comments slug={post.slug} />
-    </div>
   </div>
 </Layout>
 
@@ -77,15 +72,21 @@ const formattedDate = post.date
   }
 
   .top-bar-wrapper {
-    margin-bottom: 32px;
+    position: sticky;
+    top: 32px;
+    z-index: 100;
+    width: fit-content;
   }
 
   @media (min-width: 1024px) {
     .top-bar-wrapper {
-      position: absolute;
+      position: sticky;
+      top: 32px;
       left: -60px;
-      top: 32px; /* Align with the top padding */
+      width: 0;
+      height: 0;
       margin-bottom: 0;
+      z-index: 100;
     }
   }
 

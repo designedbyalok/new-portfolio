@@ -270,6 +270,10 @@
     color: var(--fg);
     transition: all 0.2s ease;
     text-decoration: none;
+    position: sticky;
+    top: 32px;
+    z-index: 100;
+    background: var(--bg);
   }
   .back-link-circle:hover {
     background: var(--hover-bg);
