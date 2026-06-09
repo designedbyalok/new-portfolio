@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-  <div class="container">
+  <div class="container-content container-edge" style="padding-top: var(--page-pad-top); padding-bottom: 80px;">
     <!-- Logo -->
     <a href="/" aria-label="Home"><img src="/favicon.svg" alt="Alok Logo" class="logo-avatar animate a1" /></a>
 
@@ -136,10 +136,7 @@ import Layout from "../layouts/Layout.astro";
 <style>
 
 
-  .container {
-    width: 100%;
-    max-width: 640px;
-  }
+
 
   /* Avatar */
   .avatar {
