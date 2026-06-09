@@ -1,188 +1,426 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import HeroGrain from "../components/HeroGrain.astro";
-import KineticLead from "../components/KineticLead.astro";
 ---
 
-<Layout
-  title="Alok Kumar — Product Designer"
-  description="Product Designer at Fold Health. Six years designing systems and interactions at the intersection of design and engineering."
->
-  <div class="container-edge container-content landing">
-    <HeroGrain />
+<Layout>
+  <div class="container">
+    <!-- Logo -->
+    <div class="logo animate a1">A.K</div>
 
-    <KineticLead />
+    <!-- Avatar -->
+    <img
+      class="avatar animate"
+      src="https://www.designedbyalok.com/Alok.jpeg"
+      alt="Alok Kumar"
+      onerror="this.style.display='none'"
+    />
 
-    <section class="block" aria-label="Currently">
-      <p class="eyebrow">Currently</p>
-      <ul class="block-list">
-        <li>Designing Fold's care platform and design system.</li>
-        <li>
-          Listening to <em class="display-italic">Tycho — Awake</em>.
-          <!-- placeholder: wire to Spotify Now-Playing API later -->
-        </li>
-      </ul>
-    </section>
+    <!-- Name -->
+    <h1 class="name animate a2">
+      <span>Alok</span>
+      <span>Kumar</span>
+    </h1>
 
-    <section class="block" aria-label="Find me">
-      <p class="eyebrow">Find me</p>
-      <p class="links-row">
-        <a
-          href="https://github.com/designedbyalok"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link link-accent">GitHub</a
-        >
-        <span aria-hidden="true">·</span>
-        <a
-          href="https://x.com/designedbyalok"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link link-accent">Twitter</a
-        >
-        <span aria-hidden="true">·</span>
-        <a
-          href="https://www.linkedin.com/in/designedbyalok/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link link-accent">LinkedIn</a
-        >
-        <span aria-hidden="true">·</span>
-        <a
-          href="https://dribbble.com/designedbyalok"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link link-accent">Dribbble</a
-        >
-        <span aria-hidden="true">·</span>
-        <a
-          href="https://peerlist.io/designedbyalok"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link link-accent">Peerlist</a
-        >
-      </p>
-    </section>
+    <!-- Title -->
+    <p class="title animate a3">Product Designer</p>
 
-    <section class="block read-on" aria-label="Read on">
-      <p class="eyebrow">Read on</p>
-      <ul class="read-list">
-        <li>
-          <a href="/work" class="read-link link">
-            <span>The work I've shipped</span>
-            <span class="arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-        <li>
-          <a href="/projects" class="read-link link">
-            <span>Projects worth telling you about</span>
-            <span class="arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-        <li>
-          <a href="/blog" class="read-link link">
-            <span>Notes from the desk</span>
-            <span class="arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-        <li>
-          <a href="/about" class="read-link link">
-            <span>More about me, off-screen</span>
-            <span class="arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-      </ul>
-    </section>
+    <!-- Bio -->
+    <p class="bio animate a4">Simplifying Digital Healthcare<br />for all end-users</p>
+
+    <!-- Work History -->
+    <div class="work-list animate a5">
+      <a class="work-item" href="/work/fold-health">
+        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
+          <img src="https://picsum.photos/seed/fold-logo/200/200" alt="Fold Health logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+            <span class="work-company">Fold Health</span>
+            <span class="work-years">Jun 2023 → <span class="work-dots">····</span></span>
+          </div>
+        </div>
+        <span class="work-icon">→</span>
+      </a>
+      <a class="work-item" href="/work/banyan-cloud">
+        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
+          <img src="https://picsum.photos/seed/banyan-logo/200/200" alt="Banyan Cloud logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+            <span class="work-company">Banyan Cloud</span>
+            <span class="work-years">Aug 2021 → Jun 2023</span>
+          </div>
+        </div>
+        <span class="work-icon">→</span>
+      </a>
+      <a class="work-item" href="/work/sentient-studio">
+        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
+          <img src="https://picsum.photos/seed/sentient-logo/200/200" alt="Sentient Studio logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+            <span class="work-company">Sentient Studio</span>
+            <span class="work-years">Oct 2020 → Jul 2021</span>
+          </div>
+        </div>
+        <span class="work-icon">→</span>
+      </a>
+      <div class="work-item">
+        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
+          <img src="https://picsum.photos/seed/doortask-logo/200/200" alt="Doortask logo" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border);" />
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+            <span class="work-company">Doortask</span>
+            <span class="work-years">Jun 2018 → Jan 2020</span>
+          </div>
+        </div>
+        <span class="work-icon">↗</span>
+      </div>
+    </div>
+
+    <!-- Pages -->
+    <div class="nav-list animate a6">
+      <a class="nav-item" href="/work">
+        <span class="nav-label">Works</span>
+        <span class="nav-icon">→</span>
+      </a>
+      <a class="nav-item" href="/blog">
+        <span class="nav-label">Blog</span>
+        <span class="nav-icon">→</span>
+      </a>
+      <a class="nav-item" href="/resume">
+        <span class="nav-label">Resume</span>
+        <span class="nav-icon">→</span>
+      </a>
+      <a class="nav-item" href="/about">
+        <span class="nav-label">About</span>
+        <span class="nav-icon">→</span>
+      </a>
+    </div>
+
+    <!-- Social Links -->
+    <div class="links-section animate a8">
+      <a class="link-pill" href="https://www.linkedin.com/in/designedbyalok/" target="_blank" rel="noopener">
+        LinkedIn <span class="pill-icon">↗</span>
+      </a>
+      <a class="link-pill" href="https://dribbble.com/designedbyalok" target="_blank" rel="noopener">
+        Dribbble <span class="pill-icon">↗</span>
+      </a>
+      <a class="link-pill" href="https://x.com/designedbyalok" target="_blank" rel="noopener">
+        Twitter <span class="pill-icon">↗</span>
+      </a>
+      <a class="link-pill" href="https://github.com/designedbyalok" target="_blank" rel="noopener">
+        GitHub <span class="pill-icon">↗</span>
+      </a>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-section animate a9">
+      <span class="theme-label">Theme</span>
+      <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="Toggle theme"></div>
+    </div>
   </div>
 </Layout>
 
+<script>
+  // Setup theme toggle
+  function setupTheme() {
+    const toggle = document.getElementById("themeToggle");
+    const html = document.documentElement;
+
+    if (!toggle) return;
+
+    // Reset old listeners if running multiple times (view transitions)
+    const newToggle = toggle.cloneNode(true);
+    toggle.parentNode?.replaceChild(newToggle, toggle);
+
+    newToggle.addEventListener("click", () => {
+      const current = html.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", next);
+      try {
+        localStorage.setItem("theme", next);
+      } catch (e) {}
+    });
+
+    newToggle.addEventListener("keydown", (e: any) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        newToggle.click();
+      }
+    });
+  }
+
+  // Run on first load
+  setupTheme();
+
+  // Run after view transitions
+  document.addEventListener("astro:after-swap", setupTheme);
+</script>
+
 <style>
-  .landing {
-    position: relative;
-    padding-block: clamp(4rem, 9vw, 8rem) clamp(4rem, 8vw, 8rem);
+
+
+  .container {
+    width: 100%;
+    max-width: 960px;
   }
 
-  .lead {
-    max-width: 32ch;
-  }
-  @media (min-width: 720px) {
-    .lead { max-width: 28ch; }
-  }
-  @media (min-width: 1100px) {
-    .lead { max-width: 24ch; }
-  }
-  .lead-meta {
-    margin-top: 1.5rem;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-    max-width: 50ch;
+  /* Logo */
+  .logo {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--fg-secondary);
+    margin-bottom: 48px;
+    text-transform: uppercase;
   }
 
-  .block {
-    position: relative;
-    z-index: 10;
-    margin-top: clamp(3.5rem, 7vw, 6rem);
-    max-width: 56ch;
+  /* Avatar */
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    animation-delay: 0.05s;
   }
 
-  .block-list {
-    list-style: none;
-    margin: 0.9rem 0 0;
-    padding: 0;
-  }
-  .block-list li {
-    padding-block: 0.45rem;
-    color: var(--ink);
-    font-size: var(--text-base);
-  }
-  .block-list li + li {
-    border-top: 1px solid var(--rule);
+  /* Name */
+  .name {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 2px;
   }
 
-  .links-row {
-    margin-top: 0.9rem;
+  .name span {
+    display: block;
+  }
+
+  /* Title */
+  .title {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    margin-top: 12px;
+    margin-bottom: 6px;
+  }
+
+  /* Bio */
+  .bio {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--fg-tertiary);
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+
+  /* Work Section */
+  .work-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 36px;
+  }
+
+  .work-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--fg);
+    transition: all 0.15s ease;
+  }
+
+  a.work-item {
+    cursor: pointer;
+  }
+
+  .work-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  a.work-item:hover {
+    background-color: var(--hover-bg);
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .work-left {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .work-company {
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 110px;
+  }
+
+  .work-years {
+    font-size: 12px;
+    color: var(--fg-secondary);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  .work-dots {
+    color: var(--fg-tertiary);
+    letter-spacing: 0.1em;
+  }
+
+  .work-icon {
+    font-size: 13px;
+    color: var(--fg-secondary);
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  a.work-item:hover .work-icon {
+    color: var(--fg);
+  }
+
+  /* Nav Row */
+  .nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 24px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--fg);
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+
+  .nav-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-item:hover {
+    background-color: var(--hover-bg);
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .nav-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .nav-icon {
+    font-size: 13px;
+    color: var(--fg-secondary);
+    transition: color 0.15s ease;
+  }
+
+  .nav-item:hover .nav-icon {
+    color: var(--fg);
+  }
+
+  /* Links Section */
+  .links-section {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.2rem 0.7rem;
-    font-size: var(--text-sm);
-  }
-  .links-row span[aria-hidden] {
-    color: var(--ink-faint);
+    gap: 8px;
+    margin-bottom: 40px;
   }
 
-  .read-list {
-    list-style: none;
-    margin: 1.4rem 0 0;
-    padding: 0;
-  }
-  .read-link {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    padding-block: 1rem;
-    border-top: 1px solid var(--rule);
-    font-family: var(--font-serif);
+  .link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--tag-bg);
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: 400;
-    font-size: clamp(1.25rem, 2vw, 1.625rem);
-    color: var(--ink);
-    background-image: none;
-    transition: color 200ms ease, padding-inline 320ms cubic-bezier(0.2, 0, 0, 1);
+    color: var(--fg);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
   }
-  .read-list li:last-child .read-link {
-    border-bottom: 1px solid var(--rule);
+
+  .link-pill:hover {
+    border-color: var(--border);
+    background: var(--hover-bg);
   }
-  .read-link .arrow {
-    color: var(--ink-faint);
-    transition: transform 320ms cubic-bezier(0.2, 0, 0, 1), color 200ms ease;
+
+  .link-pill .pill-icon {
+    font-size: 11px;
+    color: var(--fg-secondary);
+    line-height: 1;
   }
-  .read-link:hover {
-    color: var(--accent);
-    padding-inline-start: 0.4rem;
+
+  /* Theme Toggle */
+  .theme-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
   }
-  .read-link:hover .arrow {
-    color: var(--accent);
-    transform: translateX(0.35rem);
+
+  .theme-label {
+    font-size: 12px;
+    color: var(--fg-secondary);
+    font-weight: 400;
+  }
+
+  .theme-toggle {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: var(--fg-secondary);
+    border-radius: 50%;
+    transition: all 0.25s ease;
+  }
+
+  :global([data-theme="dark"]) .theme-toggle::after {
+    left: 18px;
+    background: var(--fg);
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .name {
+      font-size: 24px;
+    }
+    .container {
+      max-width: 100%;
+    }
+    .work-company {
+      min-width: 80px;
+    }
   }
 </style>

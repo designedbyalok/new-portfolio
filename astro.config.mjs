@@ -7,6 +7,10 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://www.designedbyalok.com',
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
   image: {
     domains: ['picsum.photos', 'fastly.picsum.photos'],
   },

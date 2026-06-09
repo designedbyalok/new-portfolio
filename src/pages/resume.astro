@@ -1,0 +1,645 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume — Alok Kumar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F5F0;
+    --fg: #1a1a1a;
+    --fg-secondary: #888888;
+    --fg-tertiary: #b0b0b0;
+    --border: #e0e0dc;
+    --hover-bg: rgba(0,0,0,0.04);
+    --tag-bg: rgba(0,0,0,0.05);
+    --accent: #1a1a1a;
+  }
+
+  [data-theme="dark"] {
+    --bg: #121212;
+    --fg: #e0e0e0;
+    --fg-secondary: #777777;
+    --fg-tertiary: #555555;
+    --border: #2a2a2a;
+    --hover-bg: rgba(255,255,255,0.05);
+    --tag-bg: rgba(255,255,255,0.08);
+    --accent: #e0e0e0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background-color: var(--bg);
+    color: var(--fg);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px 80px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 960px;
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 48px;
+  }
+
+  .back-link {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s ease;
+  }
+
+  .back-link:hover { color: var(--fg); }
+
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .download-link {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.15s ease;
+  }
+
+  .download-link:hover { color: var(--fg); }
+
+  .theme-toggle-sm {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle-sm::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background: var(--fg-secondary);
+    border-radius: 50%;
+    transition: all 0.25s ease;
+  }
+
+  [data-theme="dark"] .theme-toggle-sm::after {
+    left: 16px;
+    background: var(--fg);
+  }
+
+  /* ── Header ── */
+  .header { margin-bottom: 40px; }
+
+  .name {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .title-line {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    margin-bottom: 16px;
+  }
+
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .contact-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: var(--tag-bg);
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+  }
+
+  .contact-pill:hover {
+    border-color: var(--border);
+    color: var(--fg);
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--fg-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Summary ── */
+  .summary-text {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── Experience ── */
+  .exp-block {
+    margin-bottom: 28px;
+  }
+
+  .exp-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .exp-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+
+  .exp-company {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  .exp-date {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--fg-tertiary);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  .exp-role {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    margin-bottom: 10px;
+  }
+
+  .exp-location {
+    color: var(--fg-tertiary);
+  }
+
+  .exp-bullets {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .exp-bullets li {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    line-height: 1.6;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .exp-bullets li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--fg-tertiary);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  /* Sub-role inside same company */
+  .sub-role {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .sub-role .exp-role {
+    margin-bottom: 8px;
+  }
+
+  /* ── Skills ── */
+  .skill-group {
+    margin-bottom: 16px;
+  }
+
+  .skill-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .skill-category {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .skill-tag {
+    padding: 4px 10px;
+    background: var(--tag-bg);
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+  }
+
+  .skill-tag:hover {
+    border-color: var(--border);
+    color: var(--fg);
+  }
+
+  /* ── Projects ── */
+  .project-block {
+    margin-bottom: 20px;
+  }
+
+  .project-block:last-child { margin-bottom: 0; }
+
+  /* ── Education ── */
+  .edu-block {
+    margin-bottom: 16px;
+  }
+
+  .edu-block:last-child { margin-bottom: 0; }
+
+  .edu-degree {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg);
+    margin-bottom: 2px;
+  }
+
+  .edu-school {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+  }
+
+  .edu-date {
+    font-size: 11px;
+    color: var(--fg-tertiary);
+  }
+
+  /* ── Interests ── */
+  .interests-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .interest-tag {
+    padding: 5px 12px;
+    background: var(--tag-bg);
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+  }
+
+  /* ── Divider ── */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 40px;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate {
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .a1  { animation-delay: 0.04s; }
+  .a2  { animation-delay: 0.09s; }
+  .a3  { animation-delay: 0.14s; }
+  .a4  { animation-delay: 0.19s; }
+  .a5  { animation-delay: 0.24s; }
+  .a6  { animation-delay: 0.29s; }
+  .a7  { animation-delay: 0.34s; }
+  .a8  { animation-delay: 0.39s; }
+  .a9  { animation-delay: 0.44s; }
+  .a10 { animation-delay: 0.49s; }
+  .a11 { animation-delay: 0.54s; }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .name { font-size: 24px; }
+    .container { max-width: 100%; }
+    .exp-header { flex-direction: column; gap: 2px; }
+  }
+
+  ::selection {
+    background: var(--fg);
+    color: var(--bg);
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+
+      <!-- Top bar -->
+      <div class="top-bar animate a1">
+        <a class="back-link-circle" href="/" aria-label="Back Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </a>
+        <div class="top-right">
+          <a class="download-link" href="/Alok_Kumar_Resume.pdf" target="_blank" rel="noopener">Download PDF ↗</a>
+          <div class="theme-toggle-sm" id="themeToggle" role="button" tabindex="0" aria-label="Toggle theme"></div>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="header animate a2">
+        <h1 class="name">Alok Kumar</h1>
+        <p class="title-line">Product Designer</p>
+        <div class="contact-row">
+          <a class="contact-pill" href="tel:+918709237633">+91-8709237633</a>
+          <a class="contact-pill" href="mailto:designedbyalok@gmail.com">designedbyalok@gmail.com</a>
+          <a class="contact-pill" href="https://www.designedbyalok.com" target="_blank" rel="noopener">designedbyalok.com ↗</a>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="section animate a3">
+        <div class="section-label">Summary</div>
+        <p class="summary-text">
+          0→1 Product Designer with a background in Computer Science and a knack for creative problem solving. Integrating design & development to create delightful experiences. Driven by curiosity and a keen eye for detail. Competent across the entire design process, delivering holistic, impactful solutions.
+        </p>
+      </div>
+
+      <!-- Experience -->
+      <div class="section animate a4">
+        <div class="section-label">Experience</div>
+
+        <!-- Fold Health -->
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Fold Health</span>
+            <span class="exp-date">Jun 2023 → ····</span>
+          </div>
+          <div class="exp-role">Product Designer · <span class="exp-location">Pune</span></div>
+          <ul class="exp-bullets">
+            <li>Redesigned the platform for Primary & Chronic Care, improving efficiency</li>
+            <li>Simplified workflows, reducing task completion time for healthcare providers and patients</li>
+            <li>Revamped automation & rule-builder to automate redundant tasks</li>
+            <li>Developed new Design System, improving efficiency & consistency</li>
+          </ul>
+        </div>
+
+        <!-- Banyan Cloud -->
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Banyan Cloud</span>
+            <span class="exp-date">Aug 2021 → Jun 2023</span>
+          </div>
+          <div class="exp-role">UX Designer · <span class="exp-location">Bengaluru</span></div>
+          <ul class="exp-bullets">
+            <li>Founding designer, built the MVP of enterprise cloud security SaaS suite</li>
+            <li>Conceived multiple services from concept to implementation</li>
+            <li>Closely worked with developers to ensure accurate translation of design</li>
+            <li>Created new Design System and open-sourced it (Roots Design System)</li>
+          </ul>
+        </div>
+
+        <!-- Sentient Studio -->
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Sentient Studio</span>
+            <span class="exp-date">Oct 2020 → Jul 2021</span>
+          </div>
+          <div class="exp-role">User Interface Designer · <span class="exp-location">Remote</span></div>
+          <ul class="exp-bullets">
+            <li>Created digital presence for 4–5 startups including apps and websites</li>
+            <li>Conducted ideation & research, reducing project turnaround time</li>
+            <li>Created high-fidelity prototypes, improving design approval rates</li>
+            <li>Worked on SEO & optimisation to enhance performance and engagement</li>
+          </ul>
+        </div>
+
+        <!-- Doortask -->
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Doortask</span>
+            <span class="exp-date">Jun 2018 → Jan 2020</span>
+          </div>
+          <div class="exp-role">UI/UX Designer · <span class="exp-location">Bengaluru</span></div>
+          <ul class="exp-bullets">
+            <li>Led mobile app and website redesign, boosting user engagement</li>
+            <li>Owned UX/UI process, from research to high-fidelity mockups</li>
+            <li>Ensured design consistency throughout website development</li>
+          </ul>
+
+          <div class="sub-role">
+            <div class="exp-role">UI/UX Design Intern <span class="exp-date" style="margin-left:4px">Sep 2018 → Nov 2018</span></div>
+            <ul class="exp-bullets">
+               <li>Redesigned company's website from scratch, increasing traffic</li>
+               <li>Designed user journey & interface, boosting conversions</li>
+               <li>Created wireframes & functional prototypes for user testing</li>
+            </ul>
+          </div>
+
+          <div class="sub-role">
+            <div class="exp-role">UI/UX Design Intern <span class="exp-date" style="margin-left:4px">Jun 2018 → Jul 2018</span></div>
+            <ul class="exp-bullets">
+               <li>Initiated design process and developed company's first website</li>
+               <li>Established brand identity (pitch deck & marketing assets), increasing qualified leads</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects -->
+      <div class="section animate a5">
+        <div class="section-label">Projects</div>
+        <div class="project-block">
+          <div class="exp-header">
+            <span class="exp-company">Roots Design System</span>
+            <span class="exp-date">Oct 2021 → Jun 2023</span>
+          </div>
+          <ul class="exp-bullets" style="margin-top:8px;">
+            <li>Designed and open-sourced Banyan Cloud's design system (code, tools, & guidelines) in collaboration with the development team</li>
+            <li>Boosted developer & designer efficiency</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="section animate a6">
+        <div class="section-label">Skills</div>
+
+        <div class="skill-group">
+          <div class="skill-category">Design & Research</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Design Research</span>
+            <span class="skill-tag">Wireframing</span>
+            <span class="skill-tag">UI/UX Design</span>
+            <span class="skill-tag">Interaction Design</span>
+            <span class="skill-tag">Rapid Prototyping</span>
+            <span class="skill-tag">Design Systems</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-category">Software</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Figma</span>
+            <span class="skill-tag">Sketch</span>
+            <span class="skill-tag">Adobe XD</span>
+            <span class="skill-tag">InVision</span>
+            <span class="skill-tag">Framer</span>
+            <span class="skill-tag">Photoshop</span>
+            <span class="skill-tag">Illustrator</span>
+            <span class="skill-tag">InDesign</span>
+            <span class="skill-tag">After Effects</span>
+            <span class="skill-tag">Final Cut Pro</span>
+            <span class="skill-tag">Cinema4D</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-category">Programming</div>
+          <div class="skill-tags">
+            <span class="skill-tag">HTML</span>
+            <span class="skill-tag">CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">MySQL</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">C++</span>
+            <span class="skill-tag">Java</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="section animate a7">
+        <div class="section-label">Education</div>
+
+        <div class="edu-block">
+          <div class="edu-degree">B.E. in Computer Science</div>
+          <div class="edu-school">Anna University, Chennai</div>
+          <div class="edu-date">2016 → 2020</div>
+        </div>
+
+        <div class="edu-block">
+          <div class="edu-degree">Higher Secondary</div>
+          <div class="edu-school">The Pentecostal Assembly School, Bokaro Steel City</div>
+          <div class="edu-date">2014 → 2016</div>
+        </div>
+      </div>
+
+      <!-- Interests -->
+      <div class="section animate a8">
+        <div class="section-label">More about me</div>
+        <div class="interests-row">
+          <span class="interest-tag">Music & Spotify</span>
+          <span class="interest-tag">Movies</span>
+          <span class="interest-tag">Cycling</span>
+          <span class="interest-tag">Video Games</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme) {
+      html.setAttribute('data-theme', savedTheme);
+    } else if (prefersDark) {
+      html.setAttribute('data-theme', 'dark');
+    }
+
+    toggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch(e) {}
+    });
+
+    toggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle.click();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -11,6 +11,7 @@ const work = defineCollection({
     website: z.string().url(),
     order: z.number().default(0),
     hero: z.string().url().optional(),
+    logo: z.string().url().optional(),
     photos: z
       .array(
         z.object({

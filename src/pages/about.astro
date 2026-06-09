@@ -88,8 +88,14 @@ const photography: Photo[] = [
   title="About — Alok Kumar"
   description="The things I think about when I'm not designing."
 >
-  <div class="container-edge container-content about">
-    <header class="about-header">
+  <div class="container-edge container-content about" style="padding-top: 120px; padding-bottom: 80px;">
+    <div class="top-bar animate a1" style="margin-bottom: 24px;">
+      <a class="back-link-circle" href="/" aria-label="Back Home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </a>
+    </div>
+
+    <header class="about-header" style="margin-top: 1rem; margin-bottom: 4rem;">
       <p class="eyebrow">About</p>
       <h1 class="display display-lg text-balance">Off-screen.</h1>
       <p class="lede text-pretty">
@@ -98,24 +104,42 @@ const photography: Photo[] = [
       </p>
     </header>
 
-    <section class="section section-me">
-      <p class="eyebrow">Me</p>
-      <div class="me-grid">
-        <figure class="photo-frame" style={`aspect-ratio: ${portrait.aspect};`}>
+    <section class="section animate a2">
+      <div class="hero-card">
+        <div class="hero-image-wrapper">
           <Image
             src={portrait.src}
             alt="Portrait of Alok Kumar"
-            width={1200} height={1200}
-            loading="lazy"
+            width={800} height={1000}
+            class="hero-image"
+            loading="eager"
             decoding="async"
           />
-        </figure>
-        <div class="me-text">
-          <p>
-            Born in Bokaro Steel City. Studied Computer Science but the design
-            bug bit harder. Now in Pune, designing care software at Fold Health —
-            and trying to remember to leave the desk once in a while.
+        </div>
+        <div class="hero-content">
+          <h1>Hey, I'm Alok<span style="color: var(--accent);">.</span></h1>
+          <p class="bio-text">
+            I've been designing websites and apps for years, working with startups and small teams to deliver holistic, impactful solutions. With a background in Computer Science, product design has become a fast and flexible part of my work — allowing for efficient projects that contribute to increased visibility and better user experiences. Further I'm driven by a broad interest in creative fields like architecture, photography, branding, and digital products.
           </p>
+          <p class="bio-text bio-cta">
+            So if you're looking for a product designer <span class="highlight">for fast, high-quality, and distinctive experiences,</span> drop me a mail or reach out via my socials.
+          </p>
+          
+          <div class="hero-socials">
+            <h2>Contact & Socials</h2>
+            <div class="social-links">
+              <a href="mailto:designedbyalok@gmail.com" class="social-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><path d="M3 8l9 6 9-6"></path></svg>
+                designedbyalok@gmail.com
+              </a>
+              <a href="https://x.com/designedbyalok" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+              </a>
+              <a href="https://www.linkedin.com/in/designedbyalok/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -351,27 +375,114 @@ const photography: Photo[] = [
     transform: scale(1.02);
   }
 
-  /* Side-by-side blocks (Me, Legos) */
-  .me-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    align-items: center;
+  /* Hero Section (New Design) */
+  .hero-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    margin-top: 2rem;
   }
-  @media (min-width: 720px) {
-    .me-grid {
-      grid-template-columns: 40% 1fr;
-      gap: clamp(2rem, 5vw, 4rem);
+  [data-theme="dark"] .hero-card {
+    /* No background or shadow */
+  }
+
+  @media (min-width: 768px) {
+    .hero-card {
+      flex-direction: row;
+      align-items: center;
+      gap: 4rem;
     }
   }
-  .me-text p {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-weight: 380;
-    font-size: var(--text-xl);
-    line-height: 1.45;
-    max-width: 45ch;
-    color: var(--ink);
+
+  .hero-image-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 280px; /* Allow shrinking on very small screens */
+    margin: 0 auto;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 24px 48px -12px rgba(0,0,0,0.15);
+    transform: rotate(-3deg);
+    transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
+    z-index: 2;
+    box-sizing: border-box;
+  }
+  @media (min-width: 768px) {
+    .hero-image-wrapper {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+  [data-theme="dark"] .hero-image-wrapper {
+    background: #2a2a2a;
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5);
+  }
+  .hero-image-wrapper:hover {
+    transform: rotate(0deg) scale(1.02);
+  }
+  .hero-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .hero-content {
+    flex: 1;
+  }
+  .hero-content h1 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    color: var(--fg);
+  }
+  .hero-content .bio-text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--fg-secondary);
+    margin-bottom: 20px;
+  }
+  .hero-content .bio-cta {
+    margin-bottom: 32px;
+  }
+  .hero-content .highlight {
+    color: var(--fg);
+    font-weight: 500;
+  }
+
+  .hero-socials {
+    margin-top: 16px;
+  }
+  .hero-socials h2 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--fg);
+  }
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .social-link:hover {
+    color: var(--fg);
   }
 
   /* Galleries */
@@ -402,8 +513,31 @@ const photography: Photo[] = [
     font-family: var(--font-serif);
     font-style: italic;
     font-size: var(--text-sm);
-    color: var(--ink-muted);
+    color: var(--fg-secondary);
     line-height: 1.4;
+  }
+
+  /* Side-by-side blocks (Legos) */
+  .me-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 720px) {
+    .me-grid {
+      grid-template-columns: 40% 1fr;
+      gap: clamp(2rem, 5vw, 4rem);
+    }
+  }
+  .me-text p {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 380;
+    font-size: var(--text-xl);
+    line-height: 1.45;
+    max-width: 45ch;
+    color: var(--fg);
   }
 
   /* Description lists */

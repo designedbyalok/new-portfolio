@@ -5,124 +5,163 @@ import { getCollection } from "astro:content";
 const entries = (await getCollection("work")).sort(
   (a, b) => a.data.order - b.data.order,
 );
+
+const getImages = (entry: any) => {
+  const images = [];
+  if (entry.data.hero) images.push(entry.data.hero);
+  if (entry.data.photos && entry.data.photos.length > 0) {
+    images.push(entry.data.photos[0].src);
+    if (entry.data.photos.length > 1) {
+      images.push(entry.data.photos[1].src);
+    }
+  }
+  if (entry.data.logo) images.push(entry.data.logo);
+  
+  // Ensure we have exactly 3 images by repeating if necessary
+  while (images.length > 0 && images.length < 3) {
+    images.push(images[images.length - 1]);
+  }
+  return images;
+};
 ---
 
 <Layout
   title="Work — Alok Kumar"
   description="Six years across studios, an early-stage startup, and a healthtech company."
 >
-  <div class="container-edge container-content work-index">
-    <header class="work-header">
-      <p class="eyebrow">Work, 2020 — present</p>
-      <h1 class="display display-lg text-balance">Places I've worked.</h1>
-    </header>
+  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
+    
+    <div class="top-bar animate a1" style="margin-bottom: 24px;">
+      <a class="back-link-circle" href="/" aria-label="Back Home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </a>
+    </div>
+    
+    <div style="width: 100%; margin-bottom: 3rem;">
+      <h1 class="animate a2" style="font-family: var(--font-serif); font-style: italic; font-size: 40px; font-weight: 600; letter-spacing: -0.02em;">work</h1>
+    </div>
 
-    <ul class="work-list">
+    <div class="work-list-custom animate a3" style="width: 100%;">
       {
-        entries.map((entry) => (
-          <li class="work-item">
-            <div class="work-period">
-              <p class="eyebrow">{entry.data.period}</p>
-            </div>
-            <div class="work-body">
-              <h2
-                class="work-company"
-                transition:name={`work-title-${entry.id}`}
-              >
-                <a href={`/work/${entry.id}`} class="work-company-link">
-                  {entry.data.company}
-                </a>
-              </h2>
-              <p class="work-role">{entry.data.role}</p>
-              <p class="work-summary text-pretty">{entry.data.summary}</p>
-              <p class="work-links">
-                <a href={`/work/${entry.id}`} class="link link-accent">
-                  Read more →
-                </a>
-                <span aria-hidden="true">·</span>
-                <a
-                  href={entry.data.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="link"
-                >
-                  Visit {entry.data.company} ↗
-                </a>
-              </p>
-            </div>
-          </li>
-        ))
+        entries.map((entry) => {
+          const imgs = getImages(entry);
+          return (
+            <a class="work-item-custom" href={`/work/${entry.id}`}>
+              <div class="work-item-left">
+                <div class="card-stack">
+                  {imgs.length >= 3 ? (
+                    <>
+                      <img src={imgs[2]} alt="" class="card card-bottom" />
+                      <img src={imgs[1]} alt="" class="card card-middle" />
+                      <img src={imgs[0]} alt="" class="card card-top" />
+                    </>
+                  ) : entry.data.logo ? (
+                    <img src={entry.data.logo} alt="" class="card card-top" />
+                  ) : (
+                    <div class="card card-top" style="background: var(--border);"></div>
+                  )}
+                </div>
+                <span class="work-title">{entry.data.company}</span>
+              </div>
+              <span class="work-meta">{entry.data.period}</span>
+            </a>
+          );
+        })
       }
-    </ul>
+    </div>
   </div>
 </Layout>
-
 <style>
-  .work-index {
-    padding-block: clamp(4rem, 8vw, 7rem) clamp(4rem, 8vw, 7rem);
+  .work-list-custom {
+    flex-direction: column;
+    gap: 0;
   }
-  .work-header {
-    margin-bottom: clamp(3rem, 6vw, 5rem);
+  
+  /* Blur effect for non-hovered items */
+  .work-list-custom:hover .work-item-custom {
+    filter: blur(3px);
+    opacity: 0.4;
   }
-
-  .work-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .work-item {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-    padding-block: 2.5rem;
-    border-top: 1px solid var(--rule);
-  }
-  .work-item:last-child {
-    border-bottom: 1px solid var(--rule);
-  }
-  @media (min-width: 720px) {
-    .work-item {
-      grid-template-columns: 30% 70%;
-      gap: 2rem;
-    }
+  .work-list-custom .work-item-custom:hover {
+    filter: blur(0);
+    opacity: 1;
+    background-color: var(--hover-bg);
   }
 
-  .work-company {
-    font-family: var(--font-serif);
-    font-weight: 420;
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    margin: 0;
-  }
-  .work-company-link {
-    color: var(--ink);
-    transition: color 200ms ease;
-  }
-  .work-company-link:hover {
-    color: var(--accent);
-  }
-  .work-role {
-    margin: 0.4rem 0 0;
-    color: var(--ink-muted);
-    font-size: var(--text-base);
-  }
-  .work-summary {
-    margin: 1rem 0 0;
-    max-width: 55ch;
-    color: var(--ink);
-    font-size: var(--text-base);
-    line-height: 1.55;
-  }
-  .work-links {
-    margin: 1.2rem 0 0;
+  .work-item-custom {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem 0.8rem;
     align-items: center;
-    font-size: var(--text-sm);
+    justify-content: space-between;
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--fg);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-left: -12px;
+    margin-right: -12px;
+    border-radius: 8px;
   }
-  .work-links span[aria-hidden] {
-    color: var(--ink-faint);
+  .work-item-custom:first-child {
+    border-top: 1px solid var(--border);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  
+  .work-item-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .card-stack {
+    position: relative;
+    width: 72px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+  
+  .card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 2px;
+    display: block;
+    background: #ccc;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center center;
+  }
+  
+  [data-theme="dark"] .card {
+    border-color: #dedede;
+  }
+  
+  .card-bottom { z-index: 1; }
+  .card-middle { z-index: 2; }
+  .card-top { z-index: 3; }
+  
+  .work-item-custom:hover .card-bottom {
+    transform: rotate(-12deg) translateX(-12px) translateY(2px);
+  }
+  .work-item-custom:hover .card-middle {
+    transform: rotate(12deg) translateX(12px) translateY(2px);
+  }
+  .work-item-custom:hover .card-top {
+    transform: scale(1.05);
+  }
+  
+  .work-title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .work-meta {
+    font-size: 14px;
+    color: var(--fg-secondary);
   }
 </style>
