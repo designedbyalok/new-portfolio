@@ -110,67 +110,181 @@
     transition: color 0.15s ease;
   }
 
-  /* Minimal Prose for markdown content */
+  /* Prose for markdown content */
   .prose {
     max-width: 65ch;
     font-family: var(--font-sans);
+    line-height: 1.75;
   }
+
+  /* Paragraphs */
   .prose p {
-    margin: 1.2em 0;
-    line-height: 1.6;
+    margin: 1.25em 0;
     color: var(--fg);
   }
-  .prose h1, .prose h2, .prose h3 {
+
+  /* Headings */
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
     font-family: var(--font-sans);
     color: var(--fg);
-    margin: 1.5em 0 0.5em;
     font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
   }
-  .prose h1 { font-size: var(--text-2xl); }
-  .prose h2 { font-size: var(--text-xl); }
-  .prose h3 { font-size: var(--text-lg); }
+  .prose h1 { font-size: var(--text-2xl); margin: 2em 0 0.6em; }
+  .prose h2 { font-size: var(--text-xl); margin: 2em 0 0.5em; padding-bottom: 0.3em; border-bottom: 1px solid var(--border); }
+  .prose h3 { font-size: var(--text-lg); margin: 1.75em 0 0.4em; }
+  .prose h4 { font-size: var(--text-base); margin: 1.5em 0 0.3em; font-weight: 600; }
+  .prose h5, .prose h6 { font-size: var(--text-sm); margin: 1.25em 0 0.3em; font-weight: 600; color: var(--fg-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Links */
   .prose a {
     color: var(--fg);
     text-decoration: underline;
     text-decoration-color: var(--border);
-    text-underline-offset: 4px;
+    text-underline-offset: 3px;
     transition: all 0.15s ease;
   }
-  .prose a:hover { opacity: 0.7; }
+  .prose a:hover { text-decoration-color: var(--fg); }
+
+  /* Images */
   .prose img {
     margin: 2em 0;
     border-radius: 8px;
     max-width: 100%;
     height: auto;
   }
+
+  /* Blockquote */
   .prose blockquote {
-    border-left: 2px solid var(--border);
-    padding-left: 1.2em;
-    margin: 1.8em 0;
+    border-left: 3px solid var(--fg);
+    padding: 0.1em 0 0.1em 1.2em;
+    margin: 2em 0;
     color: var(--fg-secondary);
+    font-style: italic;
   }
-  .prose code {
-    font-size: 0.88em;
-    padding: 0.2em 0.4em;
+  .prose blockquote p { margin: 0.4em 0; }
+
+  /* Inline code */
+  .prose :not(pre) > code {
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: 0.82em;
+    padding: 0.15em 0.45em;
     background: var(--tag-bg);
+    border: 1px solid var(--border);
     border-radius: 4px;
+    font-weight: 400;
+    color: var(--fg);
   }
+
+  /* Code blocks */
   .prose pre {
-    margin: 1.6em 0;
-    padding: 1.2em;
+    margin: 1.75em 0;
+    padding: 1.25em 1.5em;
     background: var(--tag-bg);
-    border-radius: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
     overflow-x: auto;
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: var(--text-sm);
+    line-height: 1.7;
   }
-  .prose ul, .prose ol {
-    margin: 1em 0 1.4em;
-    padding-left: 1.4em;
+  .prose pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
   }
+
+  /* Unordered lists */
+  .prose ul {
+    margin: 1.25em 0 1.5em;
+    padding-left: 0;
+    list-style: none;
+  }
+  .prose ul > li {
+    position: relative;
+    padding-left: 1.5em;
+    margin-bottom: 0.4em;
+    color: var(--fg);
+  }
+  .prose ul > li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--fg-tertiary);
+    font-weight: 400;
+  }
+
+  /* Nested unordered lists */
+  .prose ul ul {
+    margin: 0.3em 0 0.3em 0.5em;
+    padding-left: 1em;
+  }
+  .prose ul ul > li::before {
+    content: "·";
+    font-size: 1.1em;
+    top: -0.05em;
+  }
+
+  /* Ordered lists */
+  .prose ol {
+    margin: 1.25em 0 1.5em;
+    padding-left: 0;
+    list-style: none;
+    counter-reset: prose-counter;
+  }
+  .prose ol > li {
+    position: relative;
+    padding-left: 2em;
+    margin-bottom: 0.4em;
+    color: var(--fg);
+    counter-increment: prose-counter;
+  }
+  .prose ol > li::before {
+    content: counter(prose-counter) ".";
+    position: absolute;
+    left: 0;
+    width: 1.6em;
+    color: var(--fg-tertiary);
+    font-size: 0.9em;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Horizontal rule */
   .prose hr {
     margin: 3em 0;
     border: 0;
     border-top: 1px solid var(--border);
   }
+
+  /* Strong & em */
+  .prose strong { font-weight: 600; color: var(--fg); }
+  .prose em { font-style: italic; color: var(--fg); }
+
+  /* Tables */
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2em 0;
+    font-size: var(--text-sm);
+  }
+  .prose th {
+    text-align: left;
+    padding: 0.5em 0.75em;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .prose td {
+    padding: 0.5em 0.75em;
+    border: 1px solid var(--border);
+    color: var(--fg-secondary);
+  }
+  .prose tr:nth-child(even) td { background: var(--tag-bg); }
 
   /* Animations for alok-cv layout */
   @keyframes fadeUp {
