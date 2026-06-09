@@ -3,7 +3,6 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/fraunces";
 import "@fontsource/jetbrains-mono";
 import "../styles/global.css";
-import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title?: string;
@@ -40,8 +39,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@designedbyalok" />
     <meta name="twitter:creator" content="@designedbyalok" />
-
-    <ClientRouter />
 
     <script is:inline>
       (function () {
