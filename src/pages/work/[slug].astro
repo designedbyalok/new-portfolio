@@ -162,4 +162,27 @@ const { Content } = await render(entry);
   .prose {
     max-width: 100% !important;
   }
+
+  /* Headings in serif to match the page title */
+  .prose :global(h1),
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4),
+  .prose :global(h5),
+  .prose :global(h6) {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  /* Always show underlines on links */
+  .prose :global(a) {
+    text-decoration: underline;
+    text-decoration-color: var(--fg);
+    text-underline-offset: 3px;
+  }
+  .prose :global(a:hover) {
+    opacity: 0.65;
+  }
 </style>
