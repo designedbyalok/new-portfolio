@@ -10,12 +10,12 @@ const work = defineCollection({
     summary: z.string(),
     website: z.string().url(),
     order: z.number().default(0),
-    hero: z.string().url().optional(),
-    logo: z.string().url().optional(),
+    hero: z.string().optional(),
+    logo: z.string().optional(),
     photos: z
       .array(
         z.object({
-          src: z.string().url(),
+          src: z.string(),
           caption: z.string().optional(),
           aspect: z.string().default("3 / 2"),
         }),
@@ -48,11 +48,11 @@ const projects = defineCollection({
     period: z.string(),
     role: z.string().optional(),
     tags: z.array(z.string()).default([]),
-    hero: z.string().url().optional(),
+    hero: z.string().optional(),
     photos: z
       .array(
         z.object({
-          src: z.string().url(),
+          src: z.string(),
           caption: z.string().optional(),
           aspect: z.string().default("3 / 2"),
         }),
@@ -73,7 +73,7 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    thumbnail: z.string().url().optional(),
+    thumbnail: z.string().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     readTime: z.string().optional(),
