@@ -8,48 +8,45 @@ import Layout from "../layouts/Layout.astro";
     <a href="/" aria-label="Home"><img src="/favicon.svg" alt="Alok Logo" class="logo-avatar animate a1" /></a>
 
     <!-- Name -->
-    <h1 class="name animate a2">
-      <span>Alok</span>
-      <span>Kumar</span>
-    </h1>
+    <h1 class="name animate a2">Alok Kumar</h1>
 
     <!-- Title -->
     <p class="title animate a3">Product Designer</p>
 
     <!-- Bio -->
-    <p class="bio animate a4">Simplifying Digital Healthcare<br />for all end-users</p>
+    <p class="bio animate a4">Simplifying Digital Healthcare for all end-users</p>
 
     <!-- Work History -->
     <div class="work-list animate a5">
       <a class="work-item" href="/work/fold-health">
         <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
           <img src="/foldhealth.svg" alt="Fold Health logo" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border);" />
-          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-            <span class="work-company">Fold Health</span>
-            <span class="work-years">Jun 2023 → <span class="work-dots">····</span></span>
-          </div>
+          <span class="work-company">Fold Health</span>
         </div>
-        <span class="work-icon">→</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="work-years">Jun 2023 - Present</span>
+          <span class="work-icon">→</span>
+        </div>
       </a>
       <a class="work-item" href="/work/banyan-cloud">
         <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
           <img src="/banyan.svg" alt="Banyan Cloud logo" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border);" />
-          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-            <span class="work-company">Banyan Cloud</span>
-            <span class="work-years">Aug 2021 → Jun 2023</span>
-          </div>
+          <span class="work-company">Banyan Cloud</span>
         </div>
-        <span class="work-icon">→</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="work-years">Aug 2021 - Jun 2023</span>
+          <span class="work-icon">→</span>
+        </div>
       </a>
       <a class="work-item" href="/work/sentient-studio">
         <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
           <img src="/sentient.svg" alt="Sentient Studio logo" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border);" />
-          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-            <span class="work-company">Sentient Studio</span>
-            <span class="work-years">Oct 2020 → Jul 2021</span>
-          </div>
+          <span class="work-company">Sentient Studio</span>
         </div>
-        <span class="work-icon">→</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="work-years">Oct 2020 - Jul 2021</span>
+          <span class="work-icon">→</span>
+        </div>
       </a>
     </div>
 
@@ -159,9 +156,7 @@ import Layout from "../layouts/Layout.astro";
     margin-bottom: 2px;
   }
 
-  .name span {
-    display: block;
-  }
+
 
   /* Title */
   .title {
