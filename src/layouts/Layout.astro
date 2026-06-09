@@ -8,15 +8,47 @@ interface Props {
   title?: string;
   description?: string;
   bodyClass?: string;
+  image?: string;
+  article?: boolean;
+  publishDate?: string;
 }
 
 const {
   title = "Alok - Designer",
   description = "Product Designer. Simplifying digital interfaces for all end-users.",
   bodyClass = "",
+  image = "/favicon.svg",
+  article = false,
+  publishDate,
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL(image, Astro.site);
+
+const schema = article ? {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": description,
+  "image": socialImageURL.toString(),
+  "author": {
+    "@type": "Person",
+    "name": "Alok Kumar",
+    "url": "https://www.designedbyalok.com"
+  },
+  ...(publishDate && { "datePublished": publishDate })
+} : {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Alok Kumar",
+  "url": "https://www.designedbyalok.com",
+  "jobTitle": "Product Designer",
+  "description": description,
+  "image": socialImageURL.toString(),
+  "sameAs": [
+    "https://twitter.com/designedbyalok"
+  ]
+};
 ---
 
 <!doctype html>
@@ -26,19 +58,27 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={canonical} />
+    <link rel="canonical" href={canonicalURL} />
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Alok Kumar" />
+    <meta name="robots" content="index, follow" />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? "article" : "website"} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={socialImageURL} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@designedbyalok" />
     <meta name="twitter:creator" content="@designedbyalok" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageURL} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
 
     <script is:inline>
       (function () {

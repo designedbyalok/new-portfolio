@@ -28,6 +28,8 @@ const formattedDate = post.date
 <Layout
   title={`${post.title} — Alok - Designer`}
   description={post.description || ""}
+  article={true}
+  publishDate={post.date || undefined}
 >
   <div class="container-edge container-prose page blog-post-page" style="align-items: flex-start; justify-content: flex-start; position: relative;">
     <!-- Logo -->
