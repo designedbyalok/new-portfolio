@@ -156,10 +156,10 @@ const lightboxData = JSON.stringify(
     align-items: center;
     justify-content: center;
     gap: clamp(8px, 2vw, 24px);
-    padding: clamp(16px, 4vw, 48px);
-    background: color-mix(in oklab, var(--bg) 80%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    padding: clamp(10px, 2.5vw, 28px);
+    background: color-mix(in oklab, var(--bg) 90%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     opacity: 0;
     transition: opacity 0.22s ease;
   }
@@ -169,18 +169,22 @@ const lightboxData = JSON.stringify(
   .lightbox.is-open {
     opacity: 1;
   }
+  /* Solid backdrop when the viewer genuinely owns the screen */
+  .lightbox:fullscreen {
+    background: var(--bg);
+  }
   .lb-stage {
     margin: 0;
-    max-width: min(1100px, 90vw);
-    max-height: 88dvh;
+    max-width: 96vw;
+    max-height: 94dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 14px;
   }
   .lb-stage img {
-    max-width: 100%;
-    max-height: 78dvh;
+    max-width: 96vw;
+    max-height: 88dvh;
     object-fit: contain;
     border-radius: 6px;
     box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
@@ -270,6 +274,14 @@ const lightboxData = JSON.stringify(
         );
         if (!json || !lightbox) return;
 
+        // Portal the overlay to <body>. The gallery sits inside an animated
+        // section whose fadeUp keyframe leaves `filter: blur(0)` on it, which
+        // would otherwise make `position: fixed; inset: 0` resolve against the
+        // section instead of the viewport (so it wouldn't cover the screen).
+        if (lightbox.parentElement !== document.body) {
+          document.body.appendChild(lightbox);
+        }
+
         type Shot = { src: string; caption: string };
         let photos: Shot[] = [];
         try {
@@ -311,16 +323,30 @@ const lightboxData = JSON.stringify(
           requestAnimationFrame(() => lightbox.classList.add("is-open"));
           document.body.style.overflow = "hidden";
           closeBtn.focus();
+          // Take over the whole screen where supported (no-op on iOS Safari,
+          // which still gets the full-bleed CSS viewer above).
+          lightbox.requestFullscreen?.().catch(() => {});
         };
         const close = () => {
+          if (!lightbox.classList.contains("is-open")) return;
           lightbox.classList.remove("is-open");
           document.body.style.overflow = "";
+          if (document.fullscreenElement === lightbox) {
+            document.exitFullscreen?.().catch(() => {});
+          }
           const done = () => (lightbox.hidden = true);
           if (reduced) done();
           else setTimeout(done, 220);
           lastFocused?.focus();
           lastFocused = null;
         };
+
+        // If the user exits native fullscreen (e.g. Esc), close the viewer too.
+        document.addEventListener("fullscreenchange", () => {
+          if (!document.fullscreenElement && lightbox.classList.contains("is-open")) {
+            close();
+          }
+        });
 
         grid
           .querySelectorAll<HTMLButtonElement>("[data-bento-tile]")
