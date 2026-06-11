@@ -78,16 +78,17 @@ const fmtDate = (d: Date) =>
                   <blockquote class="quote-body">
                     <Content />
                   </blockquote>
-                  {entry.data.source && (
-                    <figcaption class="quote-source">— {entry.data.source}</figcaption>
-                  )}
+                  <figcaption class="quote-source">
+                    {entry.data.source && <span>— {entry.data.source}</span>}
+                    <a class="quote-permalink" href={`/about/archive/${entry.id}`} aria-label={`Open ${entry.data.title}`}>↗</a>
+                  </figcaption>
                 </figure>
               ))}
             </div>
           ) : (
             <div class="card-list">
               {group.items.map(({ entry, Content }) => (
-                <article class="entry-card">
+                <a class="entry-card" href={`/about/archive/${entry.id}`}>
                   <div class="entry-head">
                     <h3 class="entry-title">{entry.data.title}</h3>
                     {entry.data.date && (
@@ -104,7 +105,7 @@ const fmtDate = (d: Date) =>
                       ))}
                     </div>
                   )}
-                </article>
+                </a>
               ))}
             </div>
           )}
@@ -162,6 +163,17 @@ const fmtDate = (d: Date) =>
     font-style: normal;
     font-size: var(--text-sm);
     color: var(--fg-secondary);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .quote-permalink {
+    color: var(--fg-tertiary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .quote-permalink:hover {
+    color: var(--fg);
   }
 
   /* Cards — notes, mental models, frameworks, observations */
@@ -172,13 +184,17 @@ const fmtDate = (d: Date) =>
     width: 100%;
   }
   .entry-card {
+    display: block;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px 24px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    text-decoration: none;
+    color: var(--fg);
   }
   .entry-card:hover {
     background: var(--hover-bg);
+    border-color: var(--fg-tertiary);
   }
   .entry-head {
     display: flex;

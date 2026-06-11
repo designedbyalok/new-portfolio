@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
+import BookCover from "../../components/BookCover.astro";
 import { getCollection } from "astro:content";
 
 const books = await getCollection("books");
@@ -68,9 +69,7 @@ const finished = books.filter((b) => b.data.status === "finished");
 const finishedDated = finished
   .filter((b) => b.data.finishedAt)
   .sort((a, b) => finishedAtMs(b) - finishedAtMs(a));
-const finishedUndated = finished
-  .filter((b) => !b.data.finishedAt)
-  .sort(byTitle);
+const finishedUndated = finished.filter((b) => !b.data.finishedAt).sort(byTitle);
 const years = [
   ...new Set(finishedDated.map((b) => b.data.finishedAt!.getFullYear())),
 ].sort((a, b) => b - a);
@@ -85,9 +84,7 @@ if (reading.length > 0) {
 for (const year of years) {
   groups.push({
     label: `Finished ${year}`,
-    items: finishedDated.filter(
-      (b) => b.data.finishedAt!.getFullYear() === year,
-    ),
+    items: finishedDated.filter((b) => b.data.finishedAt!.getFullYear() === year),
   });
 }
 if (finishedUndated.length > 0) {
@@ -102,22 +99,7 @@ for (const [label, status] of [
   if (items.length > 0) groups.push({ label, items });
 }
 
-/* ---- Static per-book data for the detail panel (no client fetch) ---- */
-const detailData = Object.fromEntries(
-  books.map((b) => [
-    b.id,
-    {
-      title: b.data.title,
-      author: b.data.author,
-      rating: b.data.rating ?? null,
-      statusLine: statusLine(b),
-      review: b.data.review ?? null,
-      favoriteQuote: b.data.favoriteQuote ?? null,
-      whyItMatters: b.data.whyItMatters ?? null,
-    },
-  ]),
-);
-const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
+const ratingOf = (b: Book) => (b.data.rating ? Math.round(b.data.rating) : 0);
 ---
 
 <Layout
@@ -149,32 +131,13 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
               style={`background-color: ${book.data.spineColor}; color: ${book.data.textColor};`}
               data-book-spine
               data-book-id={book.id}
-              aria-label={`${book.data.title} by ${book.data.author}`}
-              aria-expanded="false"
-              aria-controls="book-detail"
+              aria-label={`Open ${book.data.title} by ${book.data.author}`}
+              aria-haspopup="dialog"
             >
               <span class="spine-title">{book.data.title}</span>
             </button>
           ))
         }
-      </div>
-
-      <div class="book-detail" id="book-detail" hidden>
-        <button class="detail-close" type="button" aria-label="Close" data-detail-close>✕</button>
-        <p class="detail-title" data-detail-title></p>
-        <p class="detail-author" data-detail-author></p>
-        <p class="detail-stars-row" data-detail-rating hidden>
-          <span class="stars" data-detail-stars>
-            <span class="stars-filled" aria-hidden="true"></span><span class="stars-empty" aria-hidden="true"></span>
-          </span>
-        </p>
-        <p class="detail-status" data-detail-status></p>
-        <p class="detail-review" data-detail-review hidden></p>
-        <blockquote class="detail-quote" data-detail-quote hidden></blockquote>
-        <div class="detail-why" data-detail-why hidden>
-          <p class="eyebrow">Why it matters</p>
-          <p class="detail-why-text" data-detail-why-text></p>
-        </div>
       </div>
     </section>
 
@@ -191,7 +154,7 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
                   class="blur-item book-row"
                   data-book-row
                   data-book-id={book.id}
-                  aria-controls="book-detail"
+                  aria-haspopup="dialog"
                 >
                   <span class="blur-item-left">
                     <span class="blur-item-title">{book.data.title}</span>
@@ -206,7 +169,47 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
       }
     </section>
 
-    <script type="application/json" id="books-data" set:html={detailJson} />
+    {/* Pre-rendered detail card per book — cloned into the modal on open */}
+    <div hidden>
+      {
+        books.map((book) => (
+          <template data-book-template={book.id}>
+            <div class="book-card">
+              <div class="book-card-cover">
+                <BookCover
+                  title={book.data.title}
+                  author={book.data.author}
+                  spineColor={book.data.spineColor}
+                  textColor={book.data.textColor}
+                  cover={book.data.cover}
+                />
+              </div>
+              <div class="book-card-body">
+                <p class="eyebrow">{statusLine(book)}</p>
+                <p class="book-card-title">{book.data.title}</p>
+                <p class="book-card-author">{book.data.author}</p>
+                {ratingOf(book) > 0 && (
+                  <p class="book-card-stars">
+                    <span class="stars" aria-label={`Rated ${ratingOf(book)} of 5`}>
+                      <span class="stars-filled" aria-hidden="true">{"★".repeat(ratingOf(book))}</span><span class="stars-empty" aria-hidden="true">{"☆".repeat(5 - ratingOf(book))}</span>
+                    </span>
+                  </p>
+                )}
+                {book.data.review && <p class="book-card-review">{book.data.review}</p>}
+                <a class="book-card-link" href={`/books/${book.id}`}>Read full →</a>
+              </div>
+            </div>
+          </template>
+        ))
+      }
+    </div>
+
+    <div class="cover-modal" id="book-modal" hidden role="dialog" aria-modal="true" aria-label="Book details">
+      <div class="cover-modal-dialog" data-modal-dialog>
+        <button class="cover-modal-close" type="button" aria-label="Close" data-modal-close>✕</button>
+        <div class="cover-modal-mount" data-modal-mount></div>
+      </div>
+    </div>
   </div>
 </Layout>
 
@@ -238,7 +241,6 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
     align-items: flex-start;
     justify-content: center;
     overflow: hidden;
-    /* Subtle inset highlight over the frontmatter spineColor */
     background-image: linear-gradient(
       90deg,
       rgba(255, 255, 255, 0.18) 0%,
@@ -248,20 +250,11 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
     );
     transition: transform 0.2s ease;
   }
-  .spine:nth-child(3n) {
-    height: 188px;
-  }
-  .spine:nth-child(4n) {
-    height: 168px;
-  }
+  .spine:nth-child(3n) { height: 188px; }
+  .spine:nth-child(4n) { height: 168px; }
   .spine:hover,
-  .spine:focus-visible {
-    transform: translateY(-4px);
-  }
-  .spine:focus-visible {
-    outline: 2px solid var(--fg);
-    outline-offset: 2px;
-  }
+  .spine:focus-visible { transform: translateY(-4px); }
+  .spine:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
   .spine-title {
     writing-mode: vertical-rl;
     font-size: var(--text-xs);
@@ -272,7 +265,6 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  /* Currently-reading spines lean against the rest */
   .spine-leaning {
     transform: rotate(4deg) translateY(-3px);
     transform-origin: bottom left;
@@ -280,122 +272,69 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
     margin-right: 8px;
   }
   .spine-leaning:hover,
-  .spine-leaning:focus-visible {
-    transform: rotate(4deg) translateY(-7px);
-  }
+  .spine-leaning:focus-visible { transform: rotate(4deg) translateY(-7px); }
 
-  /* ---- Detail panel ---- */
-  .book-detail {
-    position: relative;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    margin-top: 20px;
+  /* ---- Modal card (cloned from template) ---- */
+  .cover-modal-mount :global(.book-card) {
+    display: contents;
   }
-  .detail-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    color: var(--fg-secondary);
-    font-size: var(--text-sm);
-    line-height: 1;
-    transition: background 0.2s ease;
+  .cover-modal-mount :global(.book-card-cover) {
+    width: 100%;
   }
-  .detail-close:hover,
-  .detail-close:focus-visible {
-    background: var(--hover-bg);
-    color: var(--fg);
+  .cover-modal-mount :global(.book-card-body) {
+    min-width: 0;
   }
-  .detail-title {
-    margin: 0;
+  .cover-modal-mount :global(.book-card-title) {
+    margin: 0.4rem 0 0.25rem;
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: var(--text-xl);
+    font-size: var(--text-2xl);
     font-weight: 500;
-    color: var(--fg);
-    padding-right: 40px;
-  }
-  .detail-author {
-    margin: 4px 0 0;
-    font-size: var(--text-sm);
-    color: var(--fg-secondary);
-  }
-  .detail-stars-row {
-    margin: 10px 0 0;
-  }
-  .stars {
-    font-size: var(--text-sm);
-    line-height: 1;
-    letter-spacing: 2px;
-  }
-  .stars-filled {
+    line-height: 1.1;
     color: var(--fg);
   }
-  .stars-empty {
-    color: var(--fg-tertiary);
-  }
-  .detail-status {
-    margin: 8px 0 0;
-    font-size: var(--text-xs);
-    color: var(--fg-tertiary);
-  }
-  .detail-review {
-    margin: 16px 0 0;
-    max-width: 65ch;
+  .cover-modal-mount :global(.book-card-author) {
+    margin: 0;
     font-size: var(--text-base);
     color: var(--fg-secondary);
-    line-height: 1.7;
   }
-  .detail-quote {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--text-lg);
-    color: var(--fg);
-    border-left: 3px solid var(--fg);
-    padding-left: 1.2em;
-    margin: 1.25em 0;
-    line-height: 1.6;
-    max-width: 65ch;
+  .cover-modal-mount :global(.book-card-stars) {
+    margin: 12px 0 0;
   }
-  .detail-why {
-    margin-top: 18px;
+  .cover-modal-mount :global(.stars) {
+    font-size: var(--text-base);
+    letter-spacing: 2px;
+    line-height: 1;
   }
-  .detail-why .eyebrow {
-    margin: 0 0 4px;
-  }
-  .detail-why-text {
-    margin: 0;
-    max-width: 65ch;
-    font-size: var(--text-sm);
+  .cover-modal-mount :global(.stars-filled) { color: var(--fg); }
+  .cover-modal-mount :global(.stars-empty) { color: var(--fg-tertiary); }
+  .cover-modal-mount :global(.book-card-review) {
+    margin: 16px 0 0;
+    font-size: var(--text-base);
     color: var(--fg-secondary);
-    line-height: 1.7;
+    line-height: 1.65;
+  }
+  .cover-modal-mount :global(.book-card-link) {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .cover-modal-mount :global(.book-card-link:hover) {
+    text-decoration-color: var(--fg);
   }
 
   /* ---- Timeline ---- */
-  .timeline {
-    width: 100%;
-  }
-  .timeline-label {
-    margin: 0 0 20px;
-  }
-  .timeline-group {
-    width: 100%;
-    margin-bottom: 2.5rem;
-  }
-  .timeline-group-label {
-    margin: 0 0 12px;
-  }
+  .timeline { width: 100%; }
+  .timeline-label { margin: 0 0 20px; }
+  .timeline-group { width: 100%; margin-bottom: 2.5rem; }
+  .timeline-group-label { margin: 0 0 12px; }
 
-  /* Button reset so .blur-item styles apply cleanly */
   button.book-row {
     width: 100%;
     background: none;
@@ -430,142 +369,60 @@ const detailJson = JSON.stringify(detailData).replace(/</g, "\\u003c");
 
 <script>
   function initBookshelf() {
-    const dataEl = document.getElementById("books-data");
-    const panel = document.getElementById("book-detail");
-    if (!dataEl || !panel) return;
-    if (panel.dataset.bound === "true") return;
-    panel.dataset.bound = "true";
+    const modal = document.getElementById("book-modal");
+    if (!modal || modal.dataset.bound === "true") return;
+    modal.dataset.bound = "true";
 
-    type BookDetail = {
-      title: string;
-      author: string;
-      rating: number | null;
-      statusLine: string;
-      review: string | null;
-      favoriteQuote: string | null;
-      whyItMatters: string | null;
-    };
-    let booksById: Record<string, BookDetail> = {};
-    try {
-      booksById = JSON.parse(dataEl.textContent || "{}");
-    } catch {
-      return;
-    }
+    const mount = modal.querySelector<HTMLElement>("[data-modal-mount]");
+    const closeBtn = modal.querySelector<HTMLButtonElement>("[data-modal-close]");
+    if (!mount || !closeBtn) return;
 
-    const q = <T extends HTMLElement>(sel: string) =>
-      panel.querySelector<T>(sel);
-    const titleEl = q("[data-detail-title]");
-    const authorEl = q("[data-detail-author]");
-    const ratingRow = q("[data-detail-rating]");
-    const starsEl = q("[data-detail-stars]");
-    const starsFilled = q(".stars-filled");
-    const starsEmpty = q(".stars-empty");
-    const statusEl = q("[data-detail-status]");
-    const reviewEl = q("[data-detail-review]");
-    const quoteEl = q<HTMLQuoteElement>("[data-detail-quote]");
-    const whyWrap = q("[data-detail-why]");
-    const whyText = q("[data-detail-why-text]");
+    let lastFocused: HTMLElement | null = null;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const spines = Array.from(
-      document.querySelectorAll<HTMLButtonElement>("[data-book-spine]"),
-    );
-
-    const setActiveSpine = (id: string | null) => {
-      spines.forEach((s) => {
-        s.setAttribute(
-          "aria-expanded",
-          s.dataset.bookId === id ? "true" : "false",
-        );
-      });
-    };
-
-    let activeId: string | null = null;
-
-    const openBook = (id: string, scrollToPanel: boolean) => {
-      const book = booksById[id];
-      if (!book) return;
-
-      if (titleEl) titleEl.textContent = book.title;
-      if (authorEl) authorEl.textContent = book.author;
-
-      if (book.rating && ratingRow && starsEl && starsFilled && starsEmpty) {
-        const n = Math.round(book.rating);
-        starsFilled.textContent = "★".repeat(n);
-        starsEmpty.textContent = "☆".repeat(Math.max(0, 5 - n));
-        starsEl.setAttribute("aria-label", `Rated ${n} of 5`);
-        ratingRow.hidden = false;
-      } else if (ratingRow) {
-        ratingRow.hidden = true;
-      }
-
-      if (statusEl) statusEl.textContent = book.statusLine;
-
-      if (reviewEl) {
-        reviewEl.textContent = book.review || "";
-        reviewEl.hidden = !book.review;
-      }
-      if (quoteEl) {
-        quoteEl.textContent = book.favoriteQuote || "";
-        quoteEl.hidden = !book.favoriteQuote;
-      }
-      if (whyWrap && whyText) {
-        whyText.textContent = book.whyItMatters || "";
-        whyWrap.hidden = !book.whyItMatters;
-      }
-
-      panel.hidden = false;
-      activeId = id;
-      setActiveSpine(id);
-
-      if (scrollToPanel) {
-        const reduced = window.matchMedia(
-          "(prefers-reduced-motion: reduce)",
-        ).matches;
-        panel.scrollIntoView({
-          block: "nearest",
-          behavior: reduced ? "auto" : "smooth",
-        });
-      }
+    const openBook = (id: string, trigger: HTMLElement) => {
+      const tpl = document.querySelector<HTMLTemplateElement>(
+        `template[data-book-template="${CSS.escape(id)}"]`,
+      );
+      if (!tpl) return;
+      mount.replaceChildren(tpl.content.cloneNode(true));
+      lastFocused = trigger;
+      modal.hidden = false;
+      // next frame so the opacity/transform transition runs
+      requestAnimationFrame(() => modal.classList.add("is-open"));
+      document.body.style.overflow = "hidden";
+      closeBtn.focus();
     };
 
     const closeBook = () => {
-      panel.hidden = true;
-      activeId = null;
-      setActiveSpine(null);
+      modal.classList.remove("is-open");
+      document.body.style.overflow = "";
+      const finish = () => {
+        modal.hidden = true;
+        mount.replaceChildren();
+      };
+      if (reduced) finish();
+      else setTimeout(finish, 220);
+      lastFocused?.focus();
+      lastFocused = null;
     };
 
-    spines.forEach((spine) => {
-      if (spine.dataset.bound === "true") return;
-      spine.dataset.bound = "true";
-      spine.addEventListener("click", () => {
-        const id = spine.dataset.bookId;
-        if (!id) return;
-        if (!panel.hidden && activeId === id) {
-          closeBook();
-        } else {
-          openBook(id, false);
-        }
+    document.querySelectorAll<HTMLButtonElement>("[data-book-spine], [data-book-row]").forEach((btn) => {
+      if (btn.dataset.bound === "true") return;
+      btn.dataset.bound = "true";
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.bookId;
+        if (id) openBook(id, btn);
       });
     });
 
-    document
-      .querySelectorAll<HTMLButtonElement>("[data-book-row]")
-      .forEach((row) => {
-        if (row.dataset.bound === "true") return;
-        row.dataset.bound = "true";
-        row.addEventListener("click", () => {
-          const id = row.dataset.bookId;
-          if (id) openBook(id, true);
-        });
-      });
-
-    const closeBtn = panel.querySelector<HTMLButtonElement>(
-      "[data-detail-close]",
-    );
-    if (closeBtn && closeBtn.dataset.bound !== "true") {
-      closeBtn.dataset.bound = "true";
-      closeBtn.addEventListener("click", closeBook);
-    }
+    closeBtn.addEventListener("click", closeBook);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeBook();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.hidden) closeBook();
+    });
   }
 
   initBookshelf();

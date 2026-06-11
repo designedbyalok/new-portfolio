@@ -121,7 +121,7 @@ const hasDetail = (f: Film) =>
                       </span>
                     </button>
                   ) : (
-                    <div class="blur-item film-row film-row-static">
+                    <a class="blur-item film-row film-row-link" href={`/films/${film.id}`}>
                       <span class="film-left">
                         <span class="blur-item-title">{film.data.title}</span>
                         <span class="film-byline">
@@ -154,7 +154,7 @@ const hasDetail = (f: Film) =>
                           </span>
                         ) : null}
                       </span>
-                    </div>
+                    </a>
                   )}
                   {expandable && (
                     <div class="film-detail" id={panelId} data-film-panel>
@@ -174,6 +174,7 @@ const hasDetail = (f: Film) =>
                             <p class="film-recommend">{film.data.recommendedFor}</p>
                           </div>
                         )}
+                        <a class="film-page-link" href={`/films/${film.id}`}>Full page →</a>
                       </div>
                     </div>
                   )}
@@ -208,8 +209,24 @@ const hasDetail = (f: Film) =>
     border-top: none;
     padding-block: 16px;
   }
-  .film-row-static {
-    cursor: default;
+  a.film-row-link {
+    text-decoration: none;
+    color: var(--fg);
+  }
+
+  .film-page-link {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .film-page-link:hover {
+    text-decoration-color: var(--fg);
   }
   .film-entry:first-child .film-row {
     border-top: 1px solid var(--border);

@@ -1,0 +1,39 @@
+---
+// A book "cover": real image if provided, otherwise a designed cover built
+// from the spine color + title + author (so the shelf looks complete without
+// scanned cover art). Used on the bookshelf pop-up and the per-book page.
+interface Props {
+  title: string;
+  author?: string;
+  spineColor?: string;
+  textColor?: string;
+  cover?: string;
+  class?: string;
+}
+const {
+  title,
+  author,
+  spineColor = "#333333",
+  textColor = "#ffffff",
+  cover,
+  class: className = "",
+} = Astro.props;
+---
+
+{
+  cover ? (
+    <div class:list={["bookcover", "bookcover-photo", className]}>
+      <img src={cover} alt={`Cover of ${title}`} loading="lazy" decoding="async" />
+    </div>
+  ) : (
+    <div
+      class:list={["bookcover", className]}
+      style={`--spine:${spineColor};--cover-ink:${textColor};`}
+      role="img"
+      aria-label={`Cover of ${title}${author ? ` by ${author}` : ""}`}
+    >
+      <span class="bookcover-title">{title}</span>
+      {author && <span class="bookcover-author">{author}</span>}
+    </div>
+  )
+}

@@ -19,6 +19,11 @@ export async function GET(context: APIContext) {
   const projects = (await getCollection("projects")).sort(
     (a, b) => a.data.order - b.data.order,
   );
+  const books = await getCollection("books");
+  const films = (await getCollection("films")).sort(
+    (a, b) => b.data.year - a.data.year,
+  );
+  const archive = await getCollection("archive");
   const posts = await getAllPosts();
 
   const lines: string[] = [
@@ -49,14 +54,25 @@ export async function GET(context: APIContext) {
     "## Reading",
     "",
     `- [Books](${abs("/books")}): The bookshelf — what Alok is reading, has finished, and recommends.`,
+    ...books.map(
+      (b) =>
+        `- [${b.data.title}](${abs(`/books/${b.id}`)}): ${b.data.author} — ${b.data.status}.`,
+    ),
     "",
     "## Cinema",
     "",
     `- [Films](${abs("/films")}): The film log — what Alok has watched and rated.`,
+    ...films.map(
+      (f) =>
+        `- [${f.data.title} (${f.data.year})](${abs(`/films/${f.id}`)})${f.data.director ? `: dir. ${f.data.director}` : ""}.`,
+    ),
     "",
     "## Archive",
     "",
     `- [Archive](${abs("/about/archive")}): Notes, quotes, mental models, and observations collected over time.`,
+    ...archive.map(
+      (a) => `- [${a.data.title}](${abs(`/about/archive/${a.id}`)}): ${a.data.type}.`,
+    ),
     "",
     "## Meta",
     "",
