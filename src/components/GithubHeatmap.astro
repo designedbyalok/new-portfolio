@@ -1,33 +1,63 @@
 ---
-// GitHub contribution heatmap — fetches public contribution data client-side
-// and renders a theme-aware, monochrome GitHub-style grid.
+// GitHub contribution heatmap — fetches public contribution data client-side.
+// Default: theme-aware monochrome grid (about page).
+// card: a self-contained green "Github Activity" card (homepage hover popover).
+interface Props {
+  card?: boolean;
+}
+const { card = false } = Astro.props;
 const SKELETON_CELLS = 53 * 7;
 ---
 
-<section class="gh-heatmap" data-pagefind-ignore>
-  <p class="eyebrow">GitHub activity</p>
-  <div class="gh-card" data-gh-card>
-    <div class="gh-scroll" data-gh-scroll>
-      <div class="gh-track">
-        <div class="gh-months" data-gh-months aria-hidden="true"></div>
-        <div class="gh-grid gh-loading" data-gh-grid aria-hidden="true">
-          {Array.from({ length: SKELETON_CELLS }).map(() => <div class="gh-cell"></div>)}
+{
+  card ? (
+    <div class="gh-card gh-as-card" data-gh-card data-pagefind-ignore>
+      <p class="gh-card-title">Github Activity</p>
+      <div class="gh-scroll" data-gh-scroll>
+        <div class="gh-track">
+          <div class="gh-months" data-gh-months aria-hidden="true" />
+          <div class="gh-grid gh-loading" data-gh-grid aria-hidden="true">
+            {Array.from({ length: SKELETON_CELLS }).map(() => <div class="gh-cell" />)}
+          </div>
         </div>
       </div>
+      <div class="gh-tooltip" data-gh-tooltip hidden role="tooltip" />
+      <p class="gh-sr" data-gh-summary>Loading GitHub contribution activity.</p>
+      <div class="gh-card-foot">
+        <img class="gh-card-avatar" src="/favicon.svg" alt="" width="36" height="36" />
+        <span class="gh-card-id">
+          <span class="gh-card-name">Alok Kumar</span>
+          <span class="gh-card-handle">@designedbyalok</span>
+        </span>
+      </div>
     </div>
-    <div class="gh-tooltip" data-gh-tooltip hidden role="tooltip"></div>
-    <p class="gh-sr" data-gh-summary>Loading GitHub contribution activity.</p>
-    <div class="gh-footer">
-      <span class="gh-total" data-gh-total>&nbsp;</span>
-      <a
-        class="gh-link"
-        href="https://github.com/designedbyalok"
-        target="_blank"
-        rel="noopener noreferrer">designedbyalok &#8599;</a
-      >
-    </div>
-  </div>
-</section>
+  ) : (
+    <section class="gh-heatmap" data-pagefind-ignore>
+      <p class="eyebrow">GitHub activity</p>
+      <div class="gh-card" data-gh-card>
+        <div class="gh-scroll" data-gh-scroll>
+          <div class="gh-track">
+            <div class="gh-months" data-gh-months aria-hidden="true" />
+            <div class="gh-grid gh-loading" data-gh-grid aria-hidden="true">
+              {Array.from({ length: SKELETON_CELLS }).map(() => <div class="gh-cell" />)}
+            </div>
+          </div>
+        </div>
+        <div class="gh-tooltip" data-gh-tooltip hidden role="tooltip" />
+        <p class="gh-sr" data-gh-summary>Loading GitHub contribution activity.</p>
+        <div class="gh-footer">
+          <span class="gh-total" data-gh-total>&nbsp;</span>
+          <a
+            class="gh-link"
+            href="https://github.com/designedbyalok"
+            target="_blank"
+            rel="noopener noreferrer">designedbyalok &#8599;</a
+          >
+        </div>
+      </div>
+    </section>
+  )
+}
 
 <script>
   type DayCell = { y: number; m: number; d: number; count: number; level: number };
@@ -38,6 +68,12 @@ const SKELETON_CELLS = 53 * 7;
   const COL_W = 14; // 11px cell + 3px gap
 
   function showError(card: HTMLElement) {
+    // Replace only the grid area so the card's title/footer survive an outage.
+    const scroll = card.querySelector<HTMLElement>("[data-gh-scroll]");
+    if (card.classList.contains("gh-as-card") && scroll) {
+      scroll.innerHTML = '<p class="gh-error">Contribution graph unavailable right now.</p>';
+      return;
+    }
     card.innerHTML =
       '<p class="gh-error">Contribution graph unavailable right now. ' +
       '<a class="gh-link" href="' +
@@ -360,5 +396,64 @@ const SKELETON_CELLS = 53 * 7;
     clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
+  }
+
+  /* ---- Card variant (homepage hover popover): green grid + title + footer ---- */
+  .gh-as-card {
+    width: 452px;
+    max-width: 88vw;
+    padding: 20px;
+    background: #1c1c1c;
+    border: 1px solid #353535;
+    border-radius: 16px;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
+  }
+  .gh-card-title {
+    margin: 0 0 14px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--text-lg);
+    color: #fcf2e1;
+  }
+  .gh-as-card .gh-months {
+    color: #8a8a8a;
+  }
+  .gh-as-card .gh-grid :global(.gh-cell) {
+    background: #353535;
+  }
+  .gh-as-card .gh-grid :global(.gh-l0) { background: #353535; }
+  .gh-as-card .gh-grid :global(.gh-l1) { background: #00501f; }
+  .gh-as-card .gh-grid :global(.gh-l2) { background: #236c36; }
+  .gh-as-card .gh-grid :global(.gh-l3) { background: #259038; }
+  .gh-as-card .gh-grid :global(.gh-l4) { background: #45a448; }
+  .gh-card-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .gh-card-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .gh-card-id {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .gh-card-name {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--text-base);
+    color: #fcf2e1;
+  }
+  .gh-card-handle {
+    font-size: var(--text-sm);
+    color: #a69d8d;
   }
 </style>

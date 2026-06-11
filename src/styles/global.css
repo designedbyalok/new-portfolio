@@ -21,6 +21,10 @@
   --page-pad-top: 32px;
   --page-pad-bottom: clamp(64px, 6vh, 80px);
   --container-pad-x: clamp(24px, 4vw, 32px);
+
+  /* Fixed chrome (logo + theme toggle) inset — overridden on the homepage */
+  --chrome-top: 32px;
+  --chrome-side: clamp(24px, 4vw, 32px);
 }
 
 @layer base {
@@ -421,6 +425,13 @@
     padding-top: var(--page-pad-top);
     padding-bottom: var(--page-pad-bottom);
     padding-inline: var(--container-pad-x);
+  }
+  /* On narrow screens the fixed chrome overlaps full-width content, so push
+     content below it (desktop keeps content in the gutter-clear center). */
+  @media (max-width: 768px) {
+    .page {
+      padding-top: calc(var(--chrome-top) + 64px);
+    }
   }
 
   /* Shared list pattern: rows that blur siblings on hover (blog, work, books, films) */

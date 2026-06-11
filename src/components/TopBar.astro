@@ -6,7 +6,7 @@ interface Props {
 const { showSearch = true } = Astro.props;
 ---
 
-<header class="top-bar animate a1" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; width: 100%;">
+<header class="top-bar animate a1">
   <!-- Logo -->
   <a href="/" aria-label="Home"><img src="/favicon.svg" alt="Alok Logo" class="logo-avatar" style="margin-bottom: 0;" /></a>
 
@@ -62,10 +62,30 @@ const { showSearch = true } = Astro.props;
 </script>
 
 <style>
+  /* Fixed, non-scrolling chrome: logo top-left, actions top-right.
+     Inset is controlled per-page via --chrome-top / --chrome-side. */
+  .top-bar {
+    position: fixed;
+    top: var(--chrome-top, 32px);
+    left: var(--chrome-side, 24px);
+    right: var(--chrome-side, 24px);
+    width: auto;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 200;
+    pointer-events: none;
+  }
+  .top-bar > a,
+  .top-bar-actions {
+    pointer-events: auto;
+  }
+
   .logo-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     object-fit: cover;
     animation-delay: 0.05s;
   }
