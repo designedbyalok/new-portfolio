@@ -10,7 +10,7 @@ export const prerender = true;
  * nothing that a collection can supply is hardcoded.
  */
 export async function GET(context: APIContext) {
-  const site = context.site ?? new URL("https://www.designedbyalok.com");
+  const site = context.site ?? new URL("https://designedbyalok.com");
   const abs = (path: string) => new URL(path, site).href;
 
   const work = (await getCollection("work")).sort(

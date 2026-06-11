@@ -31,7 +31,7 @@ function underline(heading: string): string {
  * resume/about pages of this site — nothing invented.
  */
 export async function GET(context: APIContext) {
-  const site = context.site ?? new URL("https://www.designedbyalok.com");
+  const site = context.site ?? new URL("https://designedbyalok.com");
   const abs = (path: string) => new URL(path, site).href;
 
   const work = (await getCollection("work")).sort(

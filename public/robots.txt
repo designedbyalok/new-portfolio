@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.designedbyalok.com/sitemap-index.xml
+Sitemap: https://designedbyalok.com/sitemap-index.xml
 
 # For AI crawlers and LLM agents:
-# Machine-readable site map: https://www.designedbyalok.com/llms.txt
-# Plain-text profile: https://www.designedbyalok.com/ai.txt
+# Machine-readable site map: https://designedbyalok.com/llms.txt
+# Plain-text profile: https://designedbyalok.com/ai.txt
