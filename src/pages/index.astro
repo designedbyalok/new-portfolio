@@ -189,8 +189,9 @@ const resources = [
 
 <style>
   .home {
-    padding-top: 32px;
-    padding-bottom: clamp(48px, 8vh, 80px);
+    /* Web: logo + toggle pinned to the edges with 48px sides, 80px top/bottom */
+    width: 100%;
+    padding: 80px 48px;
     align-items: center;
   }
   .home-col {
@@ -462,6 +463,9 @@ const resources = [
 
   /* Mobile */
   @media (max-width: 600px) {
+    .home {
+      padding: 40px 24px;
+    }
     .portrait-frame {
       width: 140px;
       height: 164px;
