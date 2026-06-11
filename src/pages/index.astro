@@ -1,225 +1,476 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import TopBar from "../components/TopBar.astro";
+import { getAllPosts } from "../lib/cms";
+
+const posts = (await getAllPosts()).slice(0, 5);
+
+const fmtDate = (iso?: string) =>
+  iso
+    ? new Date(iso).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "";
+
+const projects = [
+  {
+    title: "WriterPro",
+    sub: "A Minimal Editor & CMS",
+    href: "https://writerpro.vercel.app",
+    icon: "/icon-writerpro.svg",
+    external: true,
+  },
+  {
+    title: "JobStax",
+    sub: "The Calm Job Tracker",
+    href: "/blog/jobstax-the-calm-job-tracker",
+    icon: "/icon-stax.svg",
+    external: false,
+  },
+];
+
+const resources = [
+  { title: "Orbit Icons", sub: "Icon Library", href: "https://www.figma.com/@designedbyalok" },
+  { title: "Cloud Icons", sub: "Figma Community File", href: "https://www.figma.com/@designedbyalok" },
+];
 ---
 
-<Layout bodyClass="homepage-body">
-  <div class="container-content container-edge index-layout">
-    <!-- Top Bar -->
-    <TopBar />
+<Layout
+  title="Alok Kumar — Product Designer"
+  description="Product Designer based in Pune, India. Currently at Fold Health, simplifying digital healthcare."
+>
+  <div class="home page">
+    <TopBar showSearch={false} />
 
-    <div class="index-main">
-      <!-- Name -->
-      <h1 class="name animate a2">Alok Kumar</h1>
+    <div class="home-col">
+      <!-- Portrait -->
+      <div class="portrait-frame animate a2">
+        <img
+          src="/portrait-sketch.png"
+          alt="Hand-drawn portrait of Alok Kumar"
+          width="396"
+          height="464"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
 
-    <!-- Title -->
-    <p class="title animate a3">Product Designer</p>
+      <!-- Intro -->
+      <div class="intro animate a3">
+        <h1 class="home-name">Alok Kumar</h1>
+        <p class="home-role">Product Designer, based in Pune, India.</p>
 
-    <!-- Bio -->
-    <p class="bio animate a4">Simplifying Digital Healthcare for all end-users</p>
+        <p class="bio">
+          Currently the Product Designer at <strong>Fold Health</strong>, building
+          the framework for primary and chronic healthcare. I <em>care deeply</em>
+          about craft and quality and I like to make people feel something through
+          my work.
+        </p>
+        <p class="bio">
+          Previously, I worked at <strong>Banyan Cloud,</strong> as the founding
+          designer and built a holistic cyber security platform from scratch. You
+          can reach me at <strong>@designedbyalok</strong> and via
+          <a class="bio-link" href="mailto:designedbyalok@gmail.com">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><path d="M3 8l9 6 9-6"></path></svg>
+            email</a> or see my code on
+          <a class="bio-link" href="https://github.com/designedbyalok" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            GitHub</a>.
+        </p>
+      </div>
 
-    <!-- Work History -->
-    <div class="work-list animate a5">
-      <a class="work-item" href="/work/fold-health">
-        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
-          <img src="/foldhealth.svg" alt="Fold Health logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);" />
-          <span class="work-company">Fold Health</span>
+      <!-- Projects -->
+      <section class="block animate a4">
+        <h2 class="block-label">Projects</h2>
+        <div class="project-grid">
+          {
+            projects.map((p) => (
+              <a
+                class="project-card"
+                href={p.href}
+                target={p.external ? "_blank" : undefined}
+                rel={p.external ? "noopener noreferrer" : undefined}
+              >
+                <div class="project-card-inner">
+                  <div class="project-icon">
+                    <img src={p.icon} alt="" width="56" height="56" loading="lazy" />
+                  </div>
+                  <div class="project-meta">
+                    <span class="project-title">
+                      {p.title}
+                      <span class="project-arrow" aria-hidden="true">↗</span>
+                    </span>
+                    <span class="project-sub">{p.sub}</span>
+                  </div>
+                </div>
+              </a>
+            ))
+          }
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span class="work-years">Jun 2023 - Present</span>
-          <span class="work-icon">→</span>
+      </section>
+
+      <!-- Writing -->
+      <section class="block animate a5">
+        <h2 class="block-label">Writing</h2>
+        <div class="row-list">
+          {
+            posts.map((post) => (
+              <a class="row" href={`/blog/${post.slug}`} data-astro-prefetch="hover">
+                {post.thumbnail ? (
+                  <img class="row-thumb" src={post.thumbnail} alt="" width="80" height="50" loading="lazy" decoding="async" />
+                ) : (
+                  <span class="row-thumb row-thumb-empty" aria-hidden="true" />
+                )}
+                <span class="row-text">
+                  <span class="row-title">{post.title}</span>
+                  <span class="row-meta">{fmtDate(post.date)}</span>
+                </span>
+              </a>
+            ))
+          }
         </div>
-      </a>
-      <a class="work-item" href="/work/banyan-cloud">
-        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
-          <img src="/banyan.svg" alt="Banyan Cloud logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);" />
-          <span class="work-company">Banyan Cloud</span>
+      </section>
+
+      <!-- Resources -->
+      <section class="block animate a6">
+        <h2 class="block-label">Resources</h2>
+        <div class="row-list">
+          {
+            resources.map((r) => (
+              <a class="row" href={r.href} target="_blank" rel="noopener noreferrer">
+                <span class="res-thumb" aria-hidden="true">
+                  <span class="res-line"></span>
+                  <span class="res-line"></span>
+                  <span class="res-line"></span>
+                  <span class="res-bar"></span>
+                </span>
+                <span class="row-text">
+                  <span class="row-title">{r.title}</span>
+                  <span class="row-meta">{r.sub}</span>
+                </span>
+              </a>
+            ))
+          }
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span class="work-years">Aug 2021 - Jun 2023</span>
-          <span class="work-icon">→</span>
+      </section>
+
+      <!-- Follow me -->
+      <section class="block follow animate a7">
+        <h2 class="block-label center">Follow me</h2>
+        <div class="socials">
+          <a class="social" href="https://x.com/designedbyalok" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+          </a>
+          <a class="social" href="https://www.instagram.com/designedbyalok" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
+          <a class="social" href="https://www.linkedin.com/in/designedbyalok/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          </a>
+          <a class="social" href="https://dribbble.com/designedbyalok" target="_blank" rel="noopener noreferrer" aria-label="Dribbble">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.65-.53-13.94 8.6"></path></svg>
+          </a>
+          <a class="social" href="https://github.com/designedbyalok" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          </a>
         </div>
-      </a>
-      <a class="work-item" href="/work/sentient-studio">
-        <div class="work-left" style="display: flex; align-items: center; gap: 12px;">
-          <img src="/sentient.svg" alt="Sentient Studio logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);" />
-          <span class="work-company">Sentient Studio</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span class="work-years">Oct 2020 - Jul 2021</span>
-          <span class="work-icon">→</span>
-        </div>
-      </a>
+      </section>
+
+      <!-- Footer -->
+      <footer class="home-footer animate a8">
+        <span class="footer-handle">@designedbyalok</span>
+        <img class="footer-sign" src="/signature.svg" alt="Alok signature" width="100" height="41" loading="lazy" />
+      </footer>
     </div>
-
-    <!-- Nav Links -->
-    <div class="nav-links animate a7">
-      <a class="nav-item" href="/work">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-          <span class="nav-label">Works</span>
-        </div>
-        <span class="nav-icon">→</span>
-      </a>
-      <a class="nav-item" href="/blog">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
-          <span class="nav-label">Blog</span>
-        </div>
-        <span class="nav-icon">→</span>
-      </a>
-      <a class="nav-item" href="/resume">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          <span class="nav-label">Resume</span>
-        </div>
-        <span class="nav-icon">→</span>
-      </a>
-      <a class="nav-item" href="/about">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fg-secondary);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span class="nav-label">About</span>
-        </div>
-        <span class="nav-icon">→</span>
-      </a>
-    </div>
-    </div>
-
-    <!-- Social Links -->
-    <footer class="links-section animate a8" style="margin-top: auto;">
-      <a class="link-pill" href="https://www.linkedin.com/in/designedbyalok/" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-        LinkedIn <span class="pill-icon">↗</span>
-      </a>
-      <a class="link-pill" href="https://dribbble.com/designedbyalok" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><circle cx="12" cy="12" r="10"></circle><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.65-.53-13.94 8.6"></path></svg>
-        Dribbble <span class="pill-icon">↗</span>
-      </a>
-      <a class="link-pill" href="https://x.com/designedbyalok" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
-        Twitter <span class="pill-icon">↗</span>
-      </a>
-      <a class="link-pill" href="https://github.com/designedbyalok" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-        GitHub <span class="pill-icon">↗</span>
-      </a>
-    </footer>
-
   </div>
 </Layout>
 
 <style>
-  .index-layout {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: 100dvh;
-    overflow: hidden;
-    width: 100%;
+  .home {
     padding-top: 32px;
-    padding-bottom: 32px;
-    gap: 40px;
+    padding-bottom: clamp(48px, 8vh, 80px);
+    align-items: center;
   }
-
-  .index-main {
-    flex: 1;
+  .home-col {
+    width: 100%;
+    max-width: 632px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
   }
 
-
-
-
-  /* Avatar */
-  .avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
+  /* Portrait */
+  .portrait-frame {
+    width: 198px;
+    height: 232px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid var(--thumb-border);
+    background: var(--tag-bg);
+    margin-top: 24px;
+  }
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin-bottom: 20px;
-    animation-delay: 0.05s;
+    object-position: 50% 18%;
+    display: block;
   }
 
-  /* Name */
-  .name {
-    font-size: var(--text-3xl);
+  /* Intro */
+  .intro {
+    margin-top: 32px;
+  }
+  .home-name {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 500;
-    line-height: 1.15;
+    font-size: 30px;
     letter-spacing: -0.02em;
-    margin-bottom: 2px;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--fg);
   }
-
-
-
-  /* Title */
-  .title {
+  .home-role {
+    margin: 8px 0 0;
     font-size: var(--text-base);
-    font-weight: 400;
     color: var(--fg-secondary);
-    margin-top: 12px;
-    margin-bottom: 6px;
   }
-
-  /* Bio */
   .bio {
-    font-size: var(--text-sm);
-    font-weight: 400;
-    color: var(--fg-tertiary);
-    line-height: 1.6;
-    margin-bottom: 40px;
+    margin: 20px 0 0;
+    font-size: var(--text-base);
+    line-height: 1.625;
+    color: var(--fg-secondary);
+    max-width: 60ch;
+  }
+  .bio strong {
+    color: var(--fg);
+    font-weight: 600;
+  }
+  .bio em {
+    font-style: italic;
+    color: var(--fg);
+  }
+  .bio-link {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+  .bio-link svg {
+    display: inline-block;
+    vertical-align: -2px;
+    margin-right: 3px;
+  }
+  .bio-link:hover {
+    text-decoration-color: var(--fg);
   }
 
-  /* Work Section */
-  .work-dots {
-    color: var(--fg-tertiary);
-    letter-spacing: 0.1em;
+  /* Section blocks */
+  .block {
+    margin-top: 56px;
+  }
+  .block-label {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--text-lg);
+    color: var(--fg);
+    margin: 0 0 20px;
+  }
+  .block-label.center {
+    text-align: center;
   }
 
-  /* Links Section */
-  .links-section {
+  /* Projects */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .project-card {
+    display: block;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 4px;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .project-card:hover {
+    border-color: var(--fg-tertiary);
+  }
+  .project-card-inner {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .project-icon {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 44px 0;
   }
-
-  .link-pill {
-    display: inline-flex;
+  .project-icon img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+  }
+  .project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 16px 16px;
+  }
+  .project-title {
+    display: flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 16px;
-    background: var(--tag-bg);
-    border-radius: 8px;
-    font-size: var(--text-sm);
-    font-weight: 400;
+    font-size: var(--text-base);
+    font-weight: 500;
     color: var(--fg);
-    text-decoration: none;
-    transition: all 0.15s ease;
-    cursor: pointer;
-    border: 1px solid transparent;
+  }
+  .project-arrow {
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .project-card:hover .project-arrow {
+    opacity: 1;
+  }
+  .project-sub {
+    font-size: var(--text-base);
+    color: var(--fg-secondary);
   }
 
-  .link-pill:hover {
-    border-color: var(--border);
+  /* Row lists (Writing, Resources) */
+  .row-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+  }
+  .row:hover {
+    background: var(--hover-bg);
+  }
+  .row-thumb {
+    width: 80px;
+    height: 50px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--tag-bg);
+    display: block;
+  }
+  .row-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .row-title {
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--fg);
+    line-height: 1.2;
+  }
+  .row-meta {
+    font-size: var(--text-sm);
+    color: var(--fg-tertiary);
+  }
+
+  /* Resource CSS thumbnail (notebook card) */
+  .res-thumb {
+    width: 80px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px;
+  }
+  .res-line,
+  .res-bar {
+    height: 3px;
+    border-radius: 999px;
+    background: var(--fg-tertiary);
+    opacity: 0.5;
+  }
+  .res-bar {
+    height: 6px;
+    margin-top: 4px;
+    opacity: 0.7;
+  }
+
+  /* Follow me */
+  .follow .socials {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  .social {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--fg-secondary);
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+  .social:hover {
+    color: var(--fg);
     background: var(--hover-bg);
   }
 
-  .link-pill .pill-icon {
-    font-size: var(--text-xs);
-    color: var(--fg-secondary);
-    line-height: 1;
+  /* Footer */
+  .home-footer {
+    margin-top: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-handle {
+    font-size: var(--text-sm);
+    color: var(--fg-tertiary);
+  }
+  .footer-sign {
+    width: 100px;
+    height: auto;
+    opacity: 0.85;
+  }
+  [data-theme="dark"] .footer-sign {
+    filter: invert(1);
   }
 
-  /* Responsive */
-  @media (max-width: 480px) {
-    .container {
-      max-width: 100%;
+  /* Mobile */
+  @media (max-width: 600px) {
+    .portrait-frame {
+      width: 140px;
+      height: 164px;
     }
-    .work-company {
-      min-width: 80px;
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+    .home-name {
+      font-size: 26px;
     }
   }
 </style>
