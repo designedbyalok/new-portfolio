@@ -1,12 +1,9 @@
 @import "tailwindcss";
 
 /* Override Tailwind v4's purple ::selection with site colours */
-*, *::before, *::after {
-  &::selection {
-    background: var(--fg);
-    color: var(--bg);
-  }
-}
+::selection { background: var(--fg) !important; color: var(--bg) !important; }
+::-moz-selection { background: var(--fg) !important; color: var(--bg) !important; }
+
 
 @theme {
   --font-sans: "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

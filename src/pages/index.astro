@@ -345,21 +345,18 @@ const resources = [
     overflow: visible;
   }
   .gh-hover-card {
+    display: none;
     position: absolute;
     left: 0;
     bottom: calc(100% + 8px);
     transform: translateY(6px) scale(0.97);
     transform-origin: bottom left;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
     z-index: 60;
+    transition: transform 0.18s ease;
   }
   .gh-hover-link:hover .gh-hover-card,
   .gh-hover-link:focus-visible .gh-hover-card {
-    opacity: 1;
-    visibility: visible;
+    display: block;
     transform: translateY(0) scale(1);
   }
 
