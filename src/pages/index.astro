@@ -281,19 +281,27 @@ const resources = [
     vertical-align: baseline;
     padding: 1px 9px 2px;
     border-radius: 999px;
-    background: #8c5ae2;
-    color: #ffffff;
+    background: transparent;
+    color: var(--fg);
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
   }
   .fh-pill-logo {
     width: 16px;
     height: 16px;
-    filter: brightness(0) invert(1);
+    filter: none;
+    opacity: 0.7;
+    transition: filter 0.15s ease, opacity 0.15s ease;
   }
   .fh-pill-link:hover {
-    background: #7b49d6;
+    background: #8c5ae2;
+    color: #ffffff;
+  }
+  .fh-pill-link:hover .fh-pill-logo {
+    filter: brightness(0) invert(1);
+    opacity: 1;
   }
   .fh-card {
     position: absolute;
@@ -334,6 +342,7 @@ const resources = [
   /* GitHub — hover popover with the green activity card */
   .gh-hover-link {
     position: relative;
+    overflow: visible;
   }
   .gh-hover-card {
     position: absolute;
@@ -342,13 +351,15 @@ const resources = [
     transform: translateY(6px) scale(0.97);
     transform-origin: bottom left;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
     z-index: 60;
   }
   .gh-hover-link:hover .gh-hover-card,
   .gh-hover-link:focus-visible .gh-hover-card {
     opacity: 1;
+    visibility: visible;
     transform: translateY(0) scale(1);
   }
 
