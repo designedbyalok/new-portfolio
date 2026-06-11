@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-serif: "Fraunces Variable", "Fraunces", Georgia, serif;
 
-  /* Fluid Typography Scale */
-  --text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem); /* 12px -> 14px */
-  --text-sm: clamp(0.875rem, 0.85rem + 0.25vw, 1rem); /* 14px -> 16px */
-  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem); /* 16px -> 18px */
-  --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem); /* 18px -> 20px */
-  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem); /* 20px -> 24px */
+  /* Type scale — UI/body is fixed (Geist): 12 / 14 / 16 / 18 on a 4px grid.
+     The larger sizes drive the editorial serif (Fraunces) display headings. */
+  --text-xs: 12px;   /* labels, eyebrows, captions */
+  --text-sm: 14px;   /* secondary body */
+  --text-base: 16px; /* body */
+  --text-lg: 18px;   /* UI / card / section titles */
+  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem); /* 20px -> 24px (serif accents) */
   --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem); /* 24px -> 32px */
   --text-3xl: clamp(1.75rem, 1.5rem + 1.5vw, 2.5rem); /* 28px -> 40px */
   --text-4xl: clamp(2rem, 1.8rem + 2vw, 3rem); /* 32px -> 48px */
   --text-5xl: clamp(2.5rem, 2rem + 3vw, 4rem); /* 40px -> 64px */
 
-  /* Layout Spacing */
+  /* Layout Spacing — 4px grid */
   --page-pad-top: 32px;
-  --page-pad-bottom: clamp(60px, 6vh, 80px);
+  --page-pad-bottom: clamp(64px, 6vh, 80px);
   --container-pad-x: clamp(24px, 4vw, 32px);
 }
 
@@ -26,13 +27,13 @@
   :root {
     color-scheme: light;
     --bg: #F5F5F0;
-    --fg: #333333;
-    --fg-secondary: #888888;
-    --fg-tertiary: #b0b0b0;
+    --fg: #181818;
+    --fg-secondary: #6A6A6A;
+    --fg-tertiary: #9A9A9A;
     --border: #e0e0dc;
     --hover-bg: rgba(0,0,0,0.04);
     --tag-bg: rgba(0,0,0,0.05);
-    --accent: #333333;
+    --accent: #181818;
     --thumb-border: #ffffff;
   }
 
@@ -165,7 +166,7 @@
     padding: 0.15em 0.45em;
     background: var(--tag-bg);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
     font-weight: 400;
     color: var(--fg);
   }
@@ -647,6 +648,6 @@
   .work-left { display: flex; align-items: baseline; gap: 16px; }
   .work-company, .nav-label { font-size: var(--text-sm); font-weight: 500; min-width: 110px; }
   .work-years { font-size: var(--text-xs); color: var(--fg-secondary); font-weight: 400; letter-spacing: 0.02em; }
-  .work-icon, .nav-icon { font-size: var(--text-sm); color: var(--fg-secondary); flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.15s ease; }
+  .work-icon, .nav-icon { font-size: var(--text-sm); color: var(--fg-secondary); flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.15s ease; }
   .work-item:hover .work-icon, .nav-item:hover .nav-icon { color: var(--fg); }
 }

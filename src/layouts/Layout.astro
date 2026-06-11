@@ -1,10 +1,10 @@
 ---
-import "@fontsource-variable/inter";
+import "@fontsource-variable/geist";
 import "@fontsource-variable/fraunces";
 import "@fontsource-variable/fraunces/wght-italic.css";
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
-import interLatinWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import geistLatinWoff2 from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
 import frauncesLatinItalicWoff2 from "@fontsource-variable/fraunces/files/fraunces-latin-wght-italic.woff2?url";
 
 interface Props {
@@ -84,7 +84,7 @@ const schema = article
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F5F0" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121212" />
 
-    <link rel="preload" as="font" type="font/woff2" href={interLatinWoff2} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={geistLatinWoff2} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={frauncesLatinItalicWoff2} crossorigin />
 
     <title>{title}</title>
