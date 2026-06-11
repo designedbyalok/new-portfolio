@@ -14,39 +14,6 @@ const portrait: Photo = {
   caption: "Pune, 2024.",
 };
 
-const friends: Photo[] = [
-  {
-    src: "https://picsum.photos/seed/about-friends-1/900/1100",
-    aspect: "4 / 5",
-    caption: "Coffee with Adi, 2024",
-  },
-  {
-    src: "https://picsum.photos/seed/about-trip-vagamon/1200/800",
-    aspect: "3 / 2",
-    caption: "Vagamon, Kerala — 2023",
-  },
-  {
-    src: "https://picsum.photos/seed/about-fold-offsite/1000/1000",
-    aspect: "1 / 1",
-    caption: "At the Fold offsite, 2024",
-  },
-  {
-    src: "https://picsum.photos/seed/about-bdw/1200/800",
-    aspect: "3 / 2",
-    caption: "Bangalore design week",
-  },
-  {
-    src: "https://picsum.photos/seed/about-himachal/900/1100",
-    aspect: "4 / 5",
-    caption: "Trekking in Himachal",
-  },
-  {
-    src: "https://picsum.photos/seed/about-desk/1000/1000",
-    aspect: "1 / 1",
-    caption: "Sketching at the desk",
-  },
-];
-
 const movies = [
   { label: "Recently loved", value: "Past Lives (2023)" },
   { label: "Forever", value: "In the Mood for Love (2000)" },
@@ -64,13 +31,6 @@ const legos: Photo = {
   aspect: "4 / 5",
   caption: "Eiffel Tower, in pieces on the dining table.",
 };
-
-const art: Photo[] = [
-  { src: "https://picsum.photos/seed/about-art-1/1000/1000", aspect: "1 / 1", caption: "Ink, 2024" },
-  { src: "https://picsum.photos/seed/about-art-2/1000/1000", aspect: "1 / 1", caption: "Pen on Moleskine, 2023" },
-  { src: "https://picsum.photos/seed/about-art-3/1000/1000", aspect: "1 / 1", caption: "Watercolor study, 2024" },
-  { src: "https://picsum.photos/seed/about-art-4/1000/1000", aspect: "1 / 1", caption: "Charcoal, 2022" },
-];
 
 const photography: Photo[] = [
   { src: "https://picsum.photos/seed/photo-pune/1200/800", aspect: "3 / 2", caption: "Pune morning, 2024" },
@@ -95,7 +55,7 @@ const photography: Photo[] = [
       </a>
     </div>
 
-    <header class="about-header" style="margin-top: 1rem; margin-bottom: 4rem;">
+    <header class="about-header" style="margin-top: 1rem; margin-bottom: 1.5rem;">
       <p class="eyebrow">About</p>
       <h1 class="display display-lg text-balance">Off-screen.</h1>
       <p class="lede text-pretty">
@@ -104,7 +64,7 @@ const photography: Photo[] = [
       </p>
     </header>
 
-    <section class="section animate a2">
+    <section class="section section-hero animate a2">
       <div class="hero-card">
         <div class="hero-image-wrapper">
           <Image
@@ -144,13 +104,14 @@ const photography: Photo[] = [
       </div>
     </section>
 
-    <section class="section">
-      <p class="eyebrow">In the world</p>
-      <BentoGallery label="In the world" photos={friends} />
+    <!-- GitHub activity -->
+    <section class="section animate a3">
+      <GithubHeatmap />
     </section>
 
-    <section class="section">
-      <p class="eyebrow">Music</p>
+    <!-- Spotify -->
+    <section class="section animate a4">
+      <p class="eyebrow">Spotify</p>
       <p class="section-lede">
         Mostly post-rock and instrumental at the desk — Tycho, Mogwai, Nils Frahm.
         Anything with mood and few words.
@@ -158,7 +119,27 @@ const photography: Photo[] = [
       <ListeningTo />
     </section>
 
-    <section class="section section-prose">
+    <!-- Books -->
+    <section class="section section-prose animate a5">
+      <p class="eyebrow">Books</p>
+      <p class="section-lede">
+        Nonfiction-heavy, a little philosophy, the occasional novel.
+      </p>
+      <dl class="dlist">
+        {
+          books.map((item) => (
+            <div class="dlist-row">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <a class="more-link" href="/books">The bookshelf →</a>
+    </section>
+
+    <!-- Movies -->
+    <section class="section section-prose animate a6">
       <p class="eyebrow">Movies</p>
       <p class="section-lede">
         I prefer the long, slow ones — directors who trust the audience to sit
@@ -177,29 +158,8 @@ const photography: Photo[] = [
       <a class="more-link" href="/films">The full cinema list →</a>
     </section>
 
-    <section class="section section-prose">
-      <p class="eyebrow">Books</p>
-      <p class="section-lede">
-        Nonfiction-heavy, a little philosophy, the occasional novel.
-      </p>
-      <dl class="dlist">
-        {
-          books.map((item) => (
-            <div class="dlist-row">
-              <dt>{item.label}</dt>
-              <dd>{item.value}</dd>
-            </div>
-          ))
-        }
-      </dl>
-      <a class="more-link" href="/books">The bookshelf →</a>
-    </section>
-
-    <section class="section">
-      <GithubHeatmap />
-    </section>
-
-    <section class="section section-prose">
+    <!-- Archive -->
+    <section class="section section-prose animate a7">
       <p class="eyebrow">Archive</p>
       <p class="section-lede">
         Notes, quotes, mental models — the raw material I keep reaching for.
@@ -207,8 +167,9 @@ const photography: Photo[] = [
       <a class="more-link" href="/about/archive">Browse the archive →</a>
     </section>
 
-    <section class="section section-legos">
-      <p class="eyebrow">Legos</p>
+    <!-- Lego -->
+    <section class="section section-legos animate a8">
+      <p class="eyebrow">Lego</p>
       <div class="me-grid">
         <figure class="photo-frame" style={`aspect-ratio: ${legos.aspect};`}>
           <Image
@@ -228,12 +189,8 @@ const photography: Photo[] = [
       </div>
     </section>
 
-    <section class="section">
-      <p class="eyebrow">Art</p>
-      <BentoGallery label="Art" photos={art} />
-    </section>
-
-    <section class="section">
+    <!-- Photography -->
+    <section class="section animate a9">
       <p class="eyebrow">Photography</p>
       <BentoGallery label="Photography" photos={photography} />
     </section>
@@ -352,30 +309,30 @@ const photography: Photo[] = [
     transform: scale(1.02);
   }
 
-  /* Hero Section (New Design) */
+  /* Hero / About block — sits directly under the page header */
+  .section-hero {
+    margin-top: 0.5rem;
+  }
   .hero-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 3rem;
-    margin-top: 2rem;
-  }
-  [data-theme="dark"] .hero-card {
-    /* No background or shadow */
+    gap: 2rem;
+    margin-top: 0;
   }
 
   @media (min-width: 768px) {
     .hero-card {
       flex-direction: row;
-      align-items: center;
-      gap: 4rem;
+      align-items: flex-start;
+      gap: 3rem;
     }
   }
 
   .hero-image-wrapper {
     position: relative;
     width: 100%;
-    max-width: 280px; /* Allow shrinking on very small screens */
+    max-width: 230px; /* Allow shrinking on very small screens */
     margin: 0 auto;
     padding: 6px;
     background: #ffffff;

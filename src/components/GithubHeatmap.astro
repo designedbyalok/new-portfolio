@@ -5,7 +5,7 @@ const SKELETON_CELLS = 53 * 7;
 ---
 
 <section class="gh-heatmap" data-pagefind-ignore>
-  <p class="eyebrow">GitHub</p>
+  <p class="eyebrow">GitHub activity</p>
   <div class="gh-card" data-gh-card>
     <div class="gh-scroll" data-gh-scroll>
       <div class="gh-track">
@@ -15,6 +15,7 @@ const SKELETON_CELLS = 53 * 7;
         </div>
       </div>
     </div>
+    <div class="gh-tooltip" data-gh-tooltip hidden role="tooltip"></div>
     <p class="gh-sr" data-gh-summary>Loading GitHub contribution activity.</p>
     <div class="gh-footer">
       <span class="gh-total" data-gh-total>&nbsp;</span>
@@ -95,7 +96,7 @@ const SKELETON_CELLS = 53 * 7;
             : day.count + " contributions";
       const when = MONTHS[day.m - 1] + " " + day.d + ", " + day.y;
       cellsHtml +=
-        '<div class="gh-cell gh-l' + day.level + '" title="' + what + " on " + when + '"></div>';
+        '<div class="gh-cell gh-l' + day.level + '" data-label="' + what + " on " + when + '"></div>';
     }
     grid.innerHTML = cellsHtml;
     grid.classList.remove("gh-loading");
@@ -144,6 +145,45 @@ const SKELETON_CELLS = 53 * 7;
     }
   }
 
+  function bindTooltip(card: HTMLElement) {
+    const tooltip = card.querySelector<HTMLElement>("[data-gh-tooltip]");
+    const scroller = card.querySelector<HTMLElement>("[data-gh-scroll]");
+    if (!tooltip || !scroller) return;
+
+    const show = (cell: HTMLElement) => {
+      const label = cell.dataset.label;
+      if (!label) return;
+      tooltip.textContent = label;
+      tooltip.hidden = false;
+      // Position centered above the cell, relative to the card.
+      const cardRect = card.getBoundingClientRect();
+      const cellRect = cell.getBoundingClientRect();
+      const left = cellRect.left - cardRect.left + cellRect.width / 2;
+      const top = cellRect.top - cardRect.top;
+      tooltip.style.left = left + "px";
+      tooltip.style.top = top + "px";
+      // Clamp horizontally so it never overflows the card edges.
+      const half = tooltip.offsetWidth / 2;
+      const clamped = Math.max(half + 4, Math.min(left, card.clientWidth - half - 4));
+      tooltip.style.left = clamped + "px";
+      tooltip.style.setProperty("--arrow-shift", left - clamped + "px");
+    };
+    const hide = () => {
+      tooltip.hidden = true;
+    };
+
+    // Delegated so it keeps working after the grid's innerHTML is rebuilt.
+    card.addEventListener("mouseover", (e) => {
+      const cell = (e.target as HTMLElement)?.closest<HTMLElement>(".gh-cell[data-label]");
+      if (cell) show(cell);
+    });
+    card.addEventListener("mouseout", (e) => {
+      const to = (e.relatedTarget as HTMLElement)?.closest?.(".gh-cell[data-label]");
+      if (!to) hide();
+    });
+    scroller.addEventListener("scroll", hide, { passive: true });
+  }
+
   function initGithubHeatmaps() {
     const cards = document.querySelectorAll<HTMLElement>("[data-gh-card]:not([data-gh-bound])");
     cards.forEach((card) => {
@@ -151,6 +191,7 @@ const SKELETON_CELLS = 53 * 7;
       // Skeleton starts scrolled to the most recent edge too
       const scroller = card.querySelector<HTMLElement>("[data-gh-scroll]");
       if (scroller) scroller.scrollLeft = scroller.scrollWidth;
+      bindTooltip(card);
       loadHeatmap(card);
     });
   }
@@ -168,10 +209,40 @@ const SKELETON_CELLS = 53 * 7;
   }
 
   .gh-card {
+    position: relative;
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 24px;
     background: transparent;
+  }
+
+  /* GitHub-style hover tooltip */
+  .gh-tooltip {
+    position: absolute;
+    z-index: 5;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: color-mix(in oklab, var(--fg) 90%, var(--bg));
+    color: var(--bg);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    padding: 6px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
+  }
+  .gh-tooltip[hidden] {
+    display: none;
+  }
+  .gh-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(calc(-50% + var(--arrow-shift, 0px)));
+    border: 5px solid transparent;
+    border-top-color: color-mix(in oklab, var(--fg) 90%, var(--bg));
   }
 
   /* Horizontal scroll on small screens — scrollbar hidden but scrollable */
