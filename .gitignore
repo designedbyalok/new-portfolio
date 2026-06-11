@@ -37,3 +37,6 @@ pnpm-debug.log*
 
 # Claude Code per-developer state
 .claude/
+
+# Vercel adapter build output
+.vercel/

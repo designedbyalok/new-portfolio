@@ -1,19 +1,9 @@
 @import "tailwindcss";
-@import "@fontsource/jetbrains-mono";
 
 @theme {
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-serif: "Instrument Serif", "Playfair Display", Georgia, serif;
-
-  /* Aliasing old tokens to new ones to prevent breaking existing pages that haven't been refactored yet */
-  --color-paper: var(--bg);
-  --color-paper-deep: var(--tag-bg);
-  --color-ink: var(--fg);
-  --color-ink-muted: var(--fg-secondary);
-  --color-ink-faint: var(--fg-tertiary);
-  --color-rule: var(--border);
-  --color-accent: var(--accent);
+  --font-serif: "Fraunces Variable", "Fraunces", Georgia, serif;
 
   /* Fluid Typography Scale */
   --text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem); /* 12px -> 14px */
@@ -43,6 +33,7 @@
     --hover-bg: rgba(0,0,0,0.04);
     --tag-bg: rgba(0,0,0,0.05);
     --accent: #333333;
+    --thumb-border: #ffffff;
   }
 
   [data-theme="dark"] {
@@ -55,6 +46,7 @@
     --hover-bg: rgba(255,255,255,0.05);
     --tag-bg: rgba(255,255,255,0.08);
     --accent: #c8c8c8;
+    --thumb-border: #dedede;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -68,6 +60,7 @@
       --hover-bg: rgba(255,255,255,0.05);
       --tag-bg: rgba(255,255,255,0.08);
       --accent: #c8c8c8;
+      --thumb-border: #dedede;
     }
   }
 
@@ -331,6 +324,24 @@
     animation-duration: 100ms;
     animation-timing-function: ease-out;
   }
+
+  /* Respect users who opt out of motion */
+  @media (prefers-reduced-motion: reduce) {
+    .animate {
+      animation: none;
+      opacity: 1;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+    }
+  }
 }
 
 @layer utilities {
@@ -409,6 +420,86 @@
     padding-top: var(--page-pad-top);
     padding-bottom: var(--page-pad-bottom);
     padding-inline: var(--container-pad-x);
+  }
+
+  /* Shared list pattern: rows that blur siblings on hover (blog, work, books, films) */
+  .blur-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  .blur-list:hover .blur-item {
+    filter: blur(3px);
+    opacity: 0.4;
+  }
+  .blur-list .blur-item:hover {
+    filter: blur(0);
+    opacity: 1;
+    background-color: var(--hover-bg);
+  }
+  .blur-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--fg);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-left: -12px;
+    margin-right: -12px;
+    border-radius: 8px;
+  }
+  .blur-item:first-child {
+    border-top: 1px solid var(--border);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  .blur-item-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .blur-item-title {
+    font-size: var(--text-base);
+    font-weight: 500;
+  }
+  .blur-item-meta {
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+  }
+  /* Polaroid-style thumbnail used inside list rows */
+  .thumb-frame {
+    width: 64px;
+    height: 40px;
+    object-fit: cover;
+    border: 3px solid var(--thumb-border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 2px;
+    display: block;
+    background: var(--tag-bg);
+    flex-shrink: 0;
+  }
+
+  /* Page heading shared by list pages (work, words, reading, cinema, archive) */
+  .page-heading {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 40px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  /* Sticky circular back button wrapper, shared by all subpages */
+  .back-wrapper {
+    margin-bottom: 24px;
+    position: sticky;
+    top: 32px;
+    z-index: 100;
+    width: fit-content;
   }
 
   .work-list, .nav-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 36px; width: 100%; }

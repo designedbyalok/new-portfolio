@@ -80,4 +80,55 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { work, projects, blog };
+const books = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/books" }),
+  schema: z.object({
+    title: z.string(),
+    author: z.string(),
+    status: z.enum([
+      "currently-reading",
+      "finished",
+      "paused",
+      "abandoned",
+      "wishlist",
+    ]),
+    rating: z.number().min(1).max(5).optional(),
+    startedAt: z.coerce.date().optional(),
+    finishedAt: z.coerce.date().optional(),
+    spineColor: z.string().default("#333333"),
+    textColor: z.string().default("#FFFFFF"),
+    cover: z.string().optional(),
+    review: z.string().optional(),
+    favoriteQuote: z.string().optional(),
+    whyItMatters: z.string().optional(),
+  }),
+});
+
+const films = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/films" }),
+  schema: z.object({
+    title: z.string(),
+    year: z.number(),
+    director: z.string().optional(),
+    rating: z.number().min(0).max(5).optional(),
+    watchedAt: z.coerce.date().optional(),
+    poster: z.string().optional(),
+    review: z.string().optional(),
+    favoriteMoment: z.string().optional(),
+    recommendedFor: z.string().optional(),
+    lists: z.array(z.string()).default([]),
+  }),
+});
+
+const archive = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/archive" }),
+  schema: z.object({
+    title: z.string(),
+    type: z.enum(["note", "quote", "mental-model", "framework", "observation"]),
+    date: z.coerce.date().optional(),
+    source: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { work, projects, blog, books, films, archive };

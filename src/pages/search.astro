@@ -1,0 +1,206 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopBar from "../components/TopBar.astro";
+---
+
+<Layout
+  title="Search — Alok Kumar"
+  description="Search everything — work, projects, writing, books, films, archive."
+>
+  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
+    <TopBar />
+    <div class="back-wrapper animate a1">
+      <a class="back-link-circle" href="/" aria-label="Back Home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </a>
+    </div>
+
+    <div style="width: 100%; margin-bottom: 3rem;">
+      <h1 class="page-heading animate a2">search</h1>
+    </div>
+
+    <div class="search-wrap animate a3">
+      <input
+        id="search-input"
+        class="search-input"
+        type="search"
+        placeholder="Search work, projects, writing…"
+        aria-label="Search the site"
+        autocomplete="off"
+        spellcheck="false"
+      />
+
+      <div data-pagefind-ignore>
+        <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
+        <div id="search-results" class="blur-list" aria-label="Search results"></div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .search-wrap {
+    width: 100%;
+  }
+  .search-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    transition: border-color 0.15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .search-input::placeholder {
+    color: var(--fg-tertiary);
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--fg-tertiary);
+  }
+  .search-status {
+    margin: 1.25rem 0 0;
+    font-size: var(--text-sm);
+    color: var(--fg-tertiary);
+    min-height: 1em;
+  }
+  #search-results {
+    margin-top: 1rem;
+  }
+  #search-results:empty {
+    margin-top: 0;
+  }
+  /* Result rows are rendered by the client script, so style them via :global */
+  #search-results :global(.search-result) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  #search-results :global(.search-result-excerpt) {
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    line-height: 1.55;
+  }
+  #search-results :global(mark) {
+    background: var(--tag-bg);
+    color: var(--fg);
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+</style>
+
+<script>
+  type PagefindFragment = {
+    url: string;
+    excerpt: string;
+    meta?: { title?: string };
+  };
+  type PagefindResult = { data: () => Promise<PagefindFragment> };
+  type Pagefind = {
+    init?: () => Promise<void>;
+    search: (query: string) => Promise<{ results: PagefindResult[] }>;
+  };
+
+  const DEV_MESSAGE =
+    "Search index builds with the production site — run a full build to enable it.";
+
+  function escapeHtml(value: string): string {
+    return value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  async function loadPagefind(): Promise<Pagefind | null> {
+    try {
+      // The pagefind bundle is generated into dist/ by the pagefind CLI after
+      // astro build; it does not exist in dev. The variable indirection keeps
+      // Rollup from trying to resolve it at build time.
+      const pagefindPath = "/pagefind/pagefind.js";
+      const pagefind = (await import(/* @vite-ignore */ pagefindPath)) as Pagefind;
+      if (pagefind.init) await pagefind.init();
+      return pagefind;
+    } catch {
+      return null;
+    }
+  }
+
+  async function initSearchPage(): Promise<void> {
+    const input = document.getElementById("search-input") as HTMLInputElement | null;
+    const results = document.getElementById("search-results");
+    const status = document.getElementById("search-status");
+    if (!input || !results || !status) return;
+    if (input.dataset.searchBound === "true") return;
+    input.dataset.searchBound = "true";
+
+    input.focus();
+
+    const pagefind = await loadPagefind();
+    if (!pagefind) status.textContent = DEV_MESSAGE;
+
+    let latestQuery = "";
+
+    async function runSearch(raw: string): Promise<void> {
+      const query = raw.trim();
+      latestQuery = query;
+      if (!results || !status) return;
+
+      if (!pagefind) {
+        status.textContent = DEV_MESSAGE;
+        return;
+      }
+      if (!query) {
+        results.innerHTML = "";
+        status.textContent = "";
+        return;
+      }
+
+      const response = await pagefind.search(query);
+      if (query !== latestQuery) return; // a newer keystroke superseded this one
+
+      const fragments = await Promise.all(
+        response.results.slice(0, 10).map((result) => result.data()),
+      );
+      if (query !== latestQuery) return;
+
+      if (fragments.length === 0) {
+        results.innerHTML = "";
+        status.textContent = `No results for “${query}”.`;
+        return;
+      }
+
+      status.textContent = "";
+      // Pagefind excerpts are pre-escaped HTML containing only <mark> tags.
+      results.innerHTML = fragments
+        .map(
+          (fragment) => `
+            <a class="blur-item search-result" href="${escapeHtml(fragment.url)}">
+              <span class="blur-item-title">${escapeHtml(fragment.meta?.title ?? fragment.url)}</span>
+              <span class="search-result-excerpt">${fragment.excerpt}</span>
+            </a>`,
+        )
+        .join("");
+    }
+
+    let debounce: number | undefined;
+    input.addEventListener("input", () => {
+      window.clearTimeout(debounce);
+      debounce = window.setTimeout(() => runSearch(input.value), 150);
+    });
+
+    const preset = new URLSearchParams(window.location.search).get("q");
+    if (preset) {
+      input.value = preset;
+      runSearch(preset);
+    }
+  }
+
+  initSearchPage();
+  document.addEventListener("astro:after-swap", initSearchPage);
+</script>

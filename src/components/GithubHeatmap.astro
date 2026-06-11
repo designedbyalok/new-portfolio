@@ -1,0 +1,293 @@
+---
+// GitHub contribution heatmap — fetches public contribution data client-side
+// and renders a theme-aware, monochrome GitHub-style grid.
+const SKELETON_CELLS = 53 * 7;
+---
+
+<section class="gh-heatmap" data-pagefind-ignore>
+  <p class="eyebrow">GitHub</p>
+  <div class="gh-card" data-gh-card>
+    <div class="gh-scroll" data-gh-scroll>
+      <div class="gh-track">
+        <div class="gh-months" data-gh-months aria-hidden="true"></div>
+        <div class="gh-grid gh-loading" data-gh-grid aria-hidden="true">
+          {Array.from({ length: SKELETON_CELLS }).map(() => <div class="gh-cell"></div>)}
+        </div>
+      </div>
+    </div>
+    <p class="gh-sr" data-gh-summary>Loading GitHub contribution activity.</p>
+    <div class="gh-footer">
+      <span class="gh-total" data-gh-total>&nbsp;</span>
+      <a
+        class="gh-link"
+        href="https://github.com/designedbyalok"
+        target="_blank"
+        rel="noopener noreferrer">designedbyalok &#8599;</a
+      >
+    </div>
+  </div>
+</section>
+
+<script>
+  type DayCell = { y: number; m: number; d: number; count: number; level: number };
+
+  const API_URL = "https://github-contributions-api.jogruber.de/v4/designedbyalok?y=last";
+  const PROFILE_URL = "https://github.com/designedbyalok";
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const COL_W = 14; // 11px cell + 3px gap
+
+  function showError(card: HTMLElement) {
+    card.innerHTML =
+      '<p class="gh-error">Contribution graph unavailable right now. ' +
+      '<a class="gh-link" href="' +
+      PROFILE_URL +
+      '" target="_blank" rel="noopener noreferrer">designedbyalok &#8599;</a></p>';
+  }
+
+  function parseDays(raw: unknown): DayCell[] {
+    if (!Array.isArray(raw) || raw.length === 0) throw new Error("empty payload");
+    // Guard against the API ignoring ?y=last — keep at most the last 366 days.
+    const list = raw.slice(-366);
+    const days: DayCell[] = [];
+    for (const entry of list) {
+      const date = entry?.date;
+      if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        throw new Error("bad entry");
+      }
+      const [y, m, d] = date.split("-").map(Number);
+      const count = Number.isFinite(Number(entry.count)) ? Math.max(0, Number(entry.count)) : 0;
+      let level = Number(entry.level);
+      if (!Number.isFinite(level)) level = count > 0 ? 1 : 0;
+      level = Math.min(4, Math.max(0, Math.round(level)));
+      days.push({ y, m, d, count, level });
+    }
+    return days;
+  }
+
+  function render(card: HTMLElement, json: any) {
+    const grid = card.querySelector<HTMLElement>("[data-gh-grid]");
+    const monthsRow = card.querySelector<HTMLElement>("[data-gh-months]");
+    const totalEl = card.querySelector<HTMLElement>("[data-gh-total]");
+    const summaryEl = card.querySelector<HTMLElement>("[data-gh-summary]");
+    const scroller = card.querySelector<HTMLElement>("[data-gh-scroll]");
+    if (!grid || !monthsRow || !totalEl || !summaryEl || !scroller) {
+      throw new Error("missing heatmap markup");
+    }
+
+    const days = parseDays(json?.contributions);
+    const first = days[0];
+    const padStart = new Date(first.y, first.m - 1, first.d).getDay();
+    if (!Number.isFinite(padStart)) throw new Error("bad date");
+
+    const numWeeks = Math.ceil((padStart + days.length) / 7);
+
+    // Cells (top-to-bottom Sun..Sat, column per week via grid-auto-flow: column)
+    let cellsHtml = "";
+    for (let i = 0; i < padStart; i++) {
+      cellsHtml += '<div class="gh-cell gh-pad"></div>';
+    }
+    for (const day of days) {
+      const what =
+        day.count === 0
+          ? "No contributions"
+          : day.count === 1
+            ? "1 contribution"
+            : day.count + " contributions";
+      const when = MONTHS[day.m - 1] + " " + day.d + ", " + day.y;
+      cellsHtml +=
+        '<div class="gh-cell gh-l' + day.level + '" title="' + what + " on " + when + '"></div>';
+    }
+    grid.innerHTML = cellsHtml;
+    grid.classList.remove("gh-loading");
+
+    // Month labels — first week column of each month
+    const labels: { col: number; text: string }[] = [];
+    let prevMonth = -1;
+    for (let w = 0; w < numWeeks; w++) {
+      const idx = Math.min(Math.max(0, w * 7 - padStart), days.length - 1);
+      const m = days[idx].m;
+      if (w === 0 || m !== prevMonth) labels.push({ col: w, text: MONTHS[m - 1] });
+      prevMonth = m;
+    }
+    // Avoid the first two labels overlapping, and clipping at the right edge.
+    if (labels.length > 1 && labels[1].col - labels[0].col < 3) labels.shift();
+    if (labels.length > 0 && labels[labels.length - 1].col > numWeeks - 3) labels.pop();
+    monthsRow.style.width = numWeeks * COL_W - 3 + "px";
+    monthsRow.innerHTML = labels
+      .map((l) => '<span class="gh-month" style="left:' + l.col * COL_W + 'px">' + l.text + "</span>")
+      .join("");
+
+    // Footer total + screen-reader summary
+    let total = Number(json?.total?.lastYear);
+    if (!Number.isFinite(total)) total = days.reduce((sum, d) => sum + d.count, 0);
+    const totalText = total.toLocaleString("en-US") + " contributions in the last year";
+    totalEl.textContent = totalText;
+    summaryEl.textContent = "GitHub activity: " + totalText + ".";
+
+    // Keep the most recent weeks in view
+    scroller.scrollLeft = scroller.scrollWidth;
+  }
+
+  async function loadHeatmap(card: HTMLElement) {
+    try {
+      let signal: AbortSignal | undefined;
+      if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {
+        signal = AbortSignal.timeout(10000);
+      }
+      const res = await fetch(API_URL, { signal });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const json = await res.json();
+      render(card, json);
+    } catch (err) {
+      console.warn("GitHub heatmap unavailable:", err);
+      showError(card);
+    }
+  }
+
+  function initGithubHeatmaps() {
+    const cards = document.querySelectorAll<HTMLElement>("[data-gh-card]:not([data-gh-bound])");
+    cards.forEach((card) => {
+      card.dataset.ghBound = "true";
+      // Skeleton starts scrolled to the most recent edge too
+      const scroller = card.querySelector<HTMLElement>("[data-gh-scroll]");
+      if (scroller) scroller.scrollLeft = scroller.scrollWidth;
+      loadHeatmap(card);
+    });
+  }
+
+  initGithubHeatmaps();
+  document.addEventListener("astro:after-swap", initGithubHeatmaps);
+</script>
+
+<style>
+  .gh-heatmap {
+    width: 100%;
+  }
+  .gh-heatmap > .eyebrow {
+    margin-bottom: 1.25rem;
+  }
+
+  .gh-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    background: transparent;
+  }
+
+  /* Horizontal scroll on small screens — scrollbar hidden but scrollable */
+  .gh-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .gh-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gh-track {
+    width: max-content;
+  }
+
+  .gh-months {
+    position: relative;
+    height: 18px;
+    margin-bottom: 4px;
+    font-size: var(--text-xs);
+    color: var(--fg-tertiary);
+    line-height: 1.4;
+  }
+  .gh-months :global(.gh-month) {
+    position: absolute;
+    top: 0;
+    white-space: nowrap;
+  }
+
+  .gh-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-columns: 11px;
+    gap: 3px;
+    width: max-content;
+    transition: opacity 0.3s ease;
+  }
+  .gh-grid.gh-loading {
+    opacity: 0.55;
+  }
+
+  /* Cells are injected by JS, so style them via :global under the scoped grid */
+  .gh-grid :global(.gh-cell) {
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+    background: var(--tag-bg);
+  }
+  .gh-grid :global(.gh-cell:hover) {
+    outline: 1px solid var(--fg-tertiary);
+  }
+  .gh-grid :global(.gh-pad) {
+    visibility: hidden;
+  }
+  .gh-grid :global(.gh-l0) {
+    background: var(--tag-bg);
+  }
+  .gh-grid :global(.gh-l1) {
+    background: color-mix(in oklab, var(--fg) 25%, var(--bg));
+  }
+  .gh-grid :global(.gh-l2) {
+    background: color-mix(in oklab, var(--fg) 45%, var(--bg));
+  }
+  .gh-grid :global(.gh-l3) {
+    background: color-mix(in oklab, var(--fg) 65%, var(--bg));
+  }
+  .gh-grid :global(.gh-l4) {
+    background: color-mix(in oklab, var(--fg) 85%, var(--bg));
+  }
+
+  .gh-footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-top: 16px;
+  }
+  .gh-total {
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+  }
+
+  /* Link + error are also injected on failure, so keep them :global under the card */
+  .gh-card :global(.gh-link) {
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+  }
+  .gh-card :global(.gh-link:hover) {
+    color: var(--fg);
+    text-decoration-color: var(--fg);
+  }
+  .gh-card :global(.gh-error) {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+  }
+
+  /* Visually hidden summary for screen readers */
+  .gh-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

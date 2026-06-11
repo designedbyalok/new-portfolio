@@ -1,54 +1,76 @@
 ---
 import "@fontsource-variable/inter";
 import "@fontsource-variable/fraunces";
-import "@fontsource/jetbrains-mono";
+import "@fontsource-variable/fraunces/wght-italic.css";
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import interLatinWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import frauncesLatinItalicWoff2 from "@fontsource-variable/fraunces/files/fraunces-latin-wght-italic.woff2?url";
 
 interface Props {
   title?: string;
+  headline?: string;
   description?: string;
   bodyClass?: string;
   image?: string;
   article?: boolean;
   publishDate?: string;
+  modifiedDate?: string;
+  noindex?: boolean;
 }
 
 const {
-  title = "Alok - Designer",
-  description = "Product Designer. Simplifying digital interfaces for all end-users.",
+  title = "Alok Kumar — Product Designer",
+  headline,
+  description = "Product Designer. Simplifying digital healthcare for all end-users.",
   bodyClass = "",
-  image = "/favicon.svg",
+  image = "/og.png",
   article = false,
   publishDate,
+  modifiedDate,
+  noindex = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
+const plausibleDomain = import.meta.env.PLAUSIBLE_DOMAIN;
 
-const schema = article ? {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": title,
-  "description": description,
-  "image": socialImageURL.toString(),
-  "author": {
-    "@type": "Person",
-    "name": "Alok Kumar",
-    "url": "https://www.designedbyalok.com"
-  },
-  ...(publishDate && { "datePublished": publishDate })
-} : {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Alok Kumar",
-  "url": "https://www.designedbyalok.com",
-  "jobTitle": "Product Designer",
-  "description": description,
-  "image": socialImageURL.toString(),
-  "sameAs": [
-    "https://twitter.com/designedbyalok"
-  ]
-};
+const schema = article
+  ? {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: headline ?? title,
+      description: description,
+      image: socialImageURL.toString(),
+      mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL.toString() },
+      author: {
+        "@type": "Person",
+        name: "Alok Kumar",
+        url: "https://www.designedbyalok.com",
+      },
+      publisher: {
+        "@type": "Person",
+        name: "Alok Kumar",
+        url: "https://www.designedbyalok.com",
+      },
+      ...(publishDate && { datePublished: publishDate }),
+      ...(modifiedDate && { dateModified: modifiedDate }),
+    }
+  : {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Alok Kumar",
+      url: "https://www.designedbyalok.com",
+      jobTitle: "Product Designer",
+      description: description,
+      image: socialImageURL.toString(),
+      sameAs: [
+        "https://x.com/designedbyalok",
+        "https://www.linkedin.com/in/designedbyalok/",
+        "https://github.com/designedbyalok",
+        "https://dribbble.com/designedbyalok",
+      ],
+    };
 ---
 
 <!doctype html>
@@ -58,18 +80,27 @@ const schema = article ? {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={canonicalURL} />
+    {!noindex && <link rel="canonical" href={canonicalURL} />}
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F5F0" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121212" />
+
+    <link rel="preload" as="font" type="font/woff2" href={interLatinWoff2} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={frauncesLatinItalicWoff2} crossorigin />
 
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Alok Kumar" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
 
     <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:site_name" content="Alok Kumar" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonicalURL} />
+    {!noindex && <meta property="og:url" content={canonicalURL} />}
     <meta property="og:image" content={socialImageURL} />
+    {article && publishDate && (
+      <meta property="article:published_time" content={publishDate} />
+    )}
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@designedbyalok" />
@@ -78,7 +109,24 @@ const schema = article ? {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImageURL} />
 
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Alok Kumar — Blog"
+      href={new URL("rss.xml", Astro.site)}
+    />
+
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+    {plausibleDomain && (
+      <script
+        defer
+        data-domain={plausibleDomain}
+        src="https://plausible.io/js/script.js"
+      ></script>
+    )}
+
+    <ClientRouter />
 
     <script is:inline>
       (function () {
@@ -88,8 +136,8 @@ const schema = article ? {
             var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
             if (saved === "light" || saved === "dark") {
               document.documentElement.setAttribute("data-theme", saved);
-            } else if (prefersDark) {
-              document.documentElement.setAttribute("data-theme", "dark");
+            } else {
+              document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
             }
           } catch (e) {
             /* ignore */

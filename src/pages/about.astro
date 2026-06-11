@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import TopBar from "../components/TopBar.astro";
+import ListeningTo from "../components/ListeningTo.astro";
+import GithubHeatmap from "../components/GithubHeatmap.astro";
 import { Image } from "astro:assets";
 
 type Photo = { src: string; aspect: string; caption: string; alt?: string };
@@ -44,12 +46,6 @@ const friends: Photo[] = [
   },
 ];
 
-const music = [
-  { label: "On repeat", value: "Tycho — Awake" },
-  { label: "All-time", value: "Stranger in the Alps — Phoebe Bridgers" },
-  { label: "Live, recently", value: "Bonobo, Pune, 2024" },
-];
-
 const movies = [
   { label: "Recently loved", value: "Past Lives (2023)" },
   { label: "Forever", value: "In the Mood for Love (2000)" },
@@ -86,7 +82,7 @@ const photography: Photo[] = [
 ---
 
 <Layout
-  title="About — Alok - Designer"
+  title="About — Alok Kumar"
   description="The things I think about when I'm not designing."
 >
   <div class="container-edge container-content page about">
@@ -120,7 +116,7 @@ const photography: Photo[] = [
           />
         </div>
         <div class="hero-content">
-          <h1>Hey, I'm Alok<span style="color: var(--accent);">.</span></h1>
+          <h2 class="hero-title">Hey, I'm Alok<span style="color: var(--accent);">.</span></h2>
           <p class="bio-text">
             I've been designing websites and apps for years, working with startups and small teams to deliver holistic, impactful solutions. With a background in Computer Science, product design has become a fast and flexible part of my work — allowing for efficient projects that contribute to increased visibility and better user experiences. Further I'm driven by a broad interest in creative fields like architecture, photography, branding, and digital products.
           </p>
@@ -129,7 +125,7 @@ const photography: Photo[] = [
           </p>
           
           <div class="hero-socials">
-            <h2>Contact & Socials</h2>
+            <h3>Contact & Socials</h3>
             <div class="social-links">
               <a href="mailto:designedbyalok@gmail.com" class="social-link">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><path d="M3 8l9 6 9-6"></path></svg>
@@ -171,22 +167,13 @@ const photography: Photo[] = [
       </ul>
     </section>
 
-    <section class="section section-prose">
+    <section class="section">
       <p class="eyebrow">Music</p>
       <p class="section-lede">
         Mostly post-rock and instrumental at the desk — Tycho, Mogwai, Nils Frahm.
         Anything with mood and few words.
       </p>
-      <dl class="dlist">
-        {
-          music.map((item) => (
-            <div class="dlist-row">
-              <dt>{item.label}</dt>
-              <dd>{item.value}</dd>
-            </div>
-          ))
-        }
-      </dl>
+      <ListeningTo />
     </section>
 
     <section class="section section-prose">
@@ -205,6 +192,7 @@ const photography: Photo[] = [
           ))
         }
       </dl>
+      <a class="more-link" href="/films">The full cinema list →</a>
     </section>
 
     <section class="section section-prose">
@@ -222,6 +210,19 @@ const photography: Photo[] = [
           ))
         }
       </dl>
+      <a class="more-link" href="/books">The bookshelf →</a>
+    </section>
+
+    <section class="section">
+      <GithubHeatmap />
+    </section>
+
+    <section class="section section-prose">
+      <p class="eyebrow">Archive</p>
+      <p class="section-lede">
+        Notes, quotes, mental models — the raw material I keep reaching for.
+      </p>
+      <a class="more-link" href="/about/archive">Browse the archive →</a>
     </section>
 
     <section class="section section-legos">
@@ -331,8 +332,37 @@ const photography: Photo[] = [
     max-width: 60ch;
     margin-bottom: clamp(4rem, 8vw, 6rem);
   }
+  .about-header .display {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--text-4xl);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--fg);
+  }
   .about-header .lede {
     margin-top: 1.5rem;
+    font-size: var(--text-lg);
+    color: var(--fg-secondary);
+    line-height: 1.55;
+  }
+
+  .more-link {
+    display: inline-block;
+    margin-top: 1.25rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--fg-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 4px;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  }
+  .more-link:hover {
+    color: var(--fg);
+    text-decoration-color: var(--fg);
   }
 
   .section {
@@ -347,10 +377,11 @@ const photography: Photo[] = [
   .section-lede {
     margin: 0 0 1.75rem;
     font-family: var(--font-serif);
+    font-style: italic;
     font-weight: 380;
     font-size: var(--text-xl);
     line-height: 1.45;
-    color: var(--ink-muted);
+    color: var(--fg-secondary);
     max-width: 50ch;
   }
 
@@ -360,8 +391,8 @@ const photography: Photo[] = [
   }
   .photo-frame {
     overflow: hidden;
-    background: var(--paper-deep);
-    border: 1px solid var(--rule);
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
     border-radius: 4px;
     display: block;
   }
@@ -439,11 +470,11 @@ const photography: Photo[] = [
   .hero-content {
     flex: 1;
   }
-  .hero-content h1 {
+  .hero-content .hero-title {
     font-size: var(--text-4xl);
     font-weight: 600;
     letter-spacing: -0.02em;
-    margin-bottom: 24px;
+    margin: 0 0 24px;
     color: var(--fg);
   }
   .hero-content .bio-text {
@@ -463,7 +494,7 @@ const photography: Photo[] = [
   .hero-socials {
     margin-top: 16px;
   }
-  .hero-socials h2 {
+  .hero-socials h3 {
     font-size: var(--text-xs);
     font-weight: 600;
     margin-bottom: 16px;
@@ -547,28 +578,28 @@ const photography: Photo[] = [
   .dlist {
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--border);
   }
   .dlist-row {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 1.5rem;
     padding-block: 0.9rem;
-    border-bottom: 1px solid var(--rule);
+    border-bottom: 1px solid var(--border);
     align-items: baseline;
   }
   .dlist-row dt {
-    font-size: var(--text-2xs);
+    font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--ink-muted);
+    color: var(--fg-secondary);
     margin: 0;
   }
   .dlist-row dd {
     margin: 0;
     font-family: var(--font-serif);
     font-size: var(--text-base);
-    color: var(--ink);
+    color: var(--fg);
     line-height: 1.4;
   }
 
@@ -585,8 +616,9 @@ const photography: Photo[] = [
   .footer-lede {
     margin: 0 0 1.5rem;
     font-family: var(--font-serif);
+    font-style: italic;
     font-size: var(--text-xl);
-    color: var(--ink);
+    color: var(--fg);
     font-weight: 380;
   }
   .footer-links {
@@ -598,6 +630,16 @@ const photography: Photo[] = [
     margin: 0;
   }
   .footer-links span[aria-hidden] {
-    color: var(--ink-faint);
+    color: var(--fg-tertiary);
+  }
+  .link {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .link:hover {
+    text-decoration-color: var(--fg);
   }
 </style>

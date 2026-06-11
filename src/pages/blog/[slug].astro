@@ -1,8 +1,8 @@
 ---
+import "@fontsource/jetbrains-mono/400.css";
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import LikeButton from "../../components/LikeButton.astro";
-import { Image } from "astro:assets";
 import { getAllPosts } from "../../lib/cms";
 import type { CMSPost } from "../../lib/cms";
 import { marked } from "marked";
@@ -18,7 +18,30 @@ export async function getStaticPaths() {
 type Props = { post: CMSPost };
 const { post } = Astro.props;
 
-const htmlContent = marked.parse(post.markdownContent);
+// The layout already renders the post title as the page <h1>. Post bodies are
+// authored inconsistently (some start at #, some at ###), so normalize every
+// body so its shallowest heading becomes <h2> — keeps one h1 per page and a
+// clean heading outline regardless of how the author wrote it.
+function renderPostBody(markdown: string): string {
+  const tokens = marked.lexer(markdown);
+  let min = 6;
+  marked.walkTokens(tokens, (t) => {
+    if (t.type === "heading") min = Math.min(min, t.depth);
+  });
+  if (min < 6) {
+    const offset = 2 - min;
+    if (offset !== 0) {
+      marked.walkTokens(tokens, (t) => {
+        if (t.type === "heading") {
+          t.depth = Math.max(2, Math.min(6, t.depth + offset));
+        }
+      });
+    }
+  }
+  return marked.parser(tokens);
+}
+
+const htmlContent = renderPostBody(post.markdownContent);
 
 const formattedDate = post.date
   ? new Date(post.date).toLocaleDateString("en-US", { year: "numeric", month: "long" })
@@ -26,10 +49,13 @@ const formattedDate = post.date
 ---
 
 <Layout
-  title={`${post.title} — Alok - Designer`}
-  description={post.description || ""}
+  title={`${post.title} — Alok Kumar`}
+  headline={post.title}
+  description={post.description}
   article={true}
   publishDate={post.date || undefined}
+  modifiedDate={post.updated || undefined}
+  image={post.thumbnail || "/og.png"}
 >
   <div class="container-edge container-prose page blog-post-page" style="align-items: flex-start; justify-content: flex-start; position: relative;">
     <!-- Logo -->
@@ -43,10 +69,11 @@ const formattedDate = post.date
     {
       post.thumbnail && (
         <div class="post-hero-image animate a2">
-          <Image
+          <img
             src={post.thumbnail}
             alt={post.title}
-            width={1200} height={800}
+            width="1200"
+            height="800"
             loading="eager"
             decoding="async"
           />

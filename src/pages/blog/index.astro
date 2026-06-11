@@ -3,132 +3,44 @@ import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import { getAllPosts } from "../../lib/cms";
 
-const posts = (await getAllPosts()).sort((a, b) => {
-  const dateA = a.date ? new Date(a.date).getTime() : 0;
-  const dateB = b.date ? new Date(b.date).getTime() : 0;
-  return dateB - dateA;
-});
+const posts = await getAllPosts();
 
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
 ---
 
-<Layout title="Blog — Alok - Designer" description="Notes from the desk.">
+<Layout
+  title="Blog — Alok Kumar"
+  description="Notes from the desk — design, healthcare, and building things."
+>
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
-    
-    <!-- Logo -->
     <TopBar />
-    <div class="top-bar-wrapper animate a1" style="margin-bottom: 24px; position: sticky; top: 32px; z-index: 100; width: fit-content;">
+    <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/" aria-label="Back Home">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </a>
     </div>
-    
+
     <div style="width: 100%; margin-bottom: 3rem;">
-      <h1 class="animate a2" style="font-family: var(--font-serif); font-style: italic; font-size: 40px; font-weight: 600; letter-spacing: -0.02em;">words</h1>
+      <h1 class="page-heading animate a2">words</h1>
     </div>
 
-    <div class="blog-list animate a3" style="width: 100%;">
+    <div class="blur-list animate a3">
       {
         posts.map((post) => (
-          <a class="blog-item" href={`/blog/${post.slug}`} data-astro-prefetch="hover">
-            <div class="blog-item-left">
+          <a class="blur-item" href={`/blog/${post.slug}`} data-astro-prefetch="hover">
+            <div class="blur-item-left">
               {post.thumbnail ? (
-                <img src={post.thumbnail} alt="" class="blog-thumb" />
+                <img class="thumb-frame" src={post.thumbnail} alt="" width="64" height="40" loading="lazy" decoding="async" />
               ) : (
-                <div class="blog-thumb" style="background: var(--border);"></div>
+                <div class="thumb-frame" aria-hidden="true"></div>
               )}
-              <span class="blog-title">{post.title}</span>
+              <span class="blur-item-title">{post.title}</span>
             </div>
-            <span class="blog-meta">{post.date ? fmtDate(new Date(post.date)) : "Recently"}</span>
+            <span class="blur-item-meta">{post.date ? fmtDate(new Date(post.date)) : ""}</span>
           </a>
         ))
       }
-      <a class="blog-item" href="#">
-        <div class="blog-item-left">
-          <img src="https://picsum.photos/seed/more-blog/200/100" alt="More" class="blog-thumb" />
-          <span class="blog-title">More</span>
-        </div>
-        <span class="blog-more-icon">›</span>
-      </a>
     </div>
   </div>
 </Layout>
-
-<style>
-  .blog-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  
-  /* The magic blur effect */
-  .blog-list:hover .blog-item {
-    filter: blur(3px);
-    opacity: 0.4;
-  }
-  .blog-list .blog-item:hover {
-    filter: blur(0);
-    opacity: 1;
-    background-color: var(--hover-bg);
-  }
-
-  .blog-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 12px;
-    border-bottom: 1px solid var(--border);
-    text-decoration: none;
-    color: var(--fg);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    margin-left: -12px;
-    margin-right: -12px;
-    border-radius: 8px;
-  }
-  .blog-item:first-child {
-    border-top: 1px solid var(--border);
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
-  
-  .blog-item-left {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-  
-  .blog-thumb {
-    width: 64px;
-    height: 40px;
-    object-fit: cover;
-    border: 3px solid #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-radius: 2px;
-    display: block;
-    background: #ccc;
-    flex-shrink: 0;
-  }
-  
-  [data-theme="dark"] .blog-thumb {
-    border-color: #dedede;
-  }
-  
-  .blog-title {
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  .blog-meta {
-    font-size: 14px;
-    color: var(--fg-secondary);
-  }
-
-  .blog-more-icon {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--fg-secondary);
-    padding-right: 4px;
-  }
-</style>

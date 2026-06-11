@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopBar from "../components/TopBar.astro";
+---
+
+<Layout
+  title="Page not found — Alok Kumar"
+  description="That page doesn't exist. Head back home."
+  noindex={true}
+>
+  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
+    <TopBar />
+
+    <div class="notfound animate a2">
+      <p class="eyebrow">404</p>
+      <h1 class="page-heading">nothing here</h1>
+      <p class="notfound-copy">
+        The page you're looking for moved, never existed, or is hiding.
+      </p>
+      <a class="link-pill" href="/">Back home <span class="pill-icon">→</span></a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .notfound {
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .notfound-copy {
+    font-size: var(--text-base);
+    color: var(--fg-secondary);
+    margin: 0 0 16px;
+    max-width: 40ch;
+  }
+  .link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--tag-bg);
+    border-radius: 6px;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--fg);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+  }
+  .link-pill:hover {
+    border-color: var(--border);
+    background: var(--hover-bg);
+  }
+  .pill-icon {
+    font-size: var(--text-xs);
+    color: var(--fg-secondary);
+  }
+</style>

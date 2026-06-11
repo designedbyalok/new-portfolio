@@ -1,43 +1,63 @@
-# Astro Starter Kit: Minimal
+# designedbyalok.com
 
-```sh
-bun create astro@latest -- --template minimal
-```
+Personal portfolio of Alok Kumar — Astro 6, Tailwind 4, deployed on Vercel.
+Static-first: every page is prerendered except `/api/spotify.json`.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Editing content
 
-## 🚀 Project Structure
+| Content | Source of truth | How to edit |
+| :--- | :--- | :--- |
+| Blog posts | [WriterPro CMS](https://writerpro.vercel.app) | Write/edit in WriterPro → redeploy (see below) |
+| Work case studies | `src/content/work/*.md` | Edit frontmatter + markdown, push |
+| Projects | `src/content/projects/*.md` | Edit, push |
+| Books / reading | `src/content/books/*.md` | Edit, push — or `bun scripts/import-fable.ts` |
+| Films / cinema | `src/content/films/*.md` | Edit, push — or `bun scripts/import-letterboxd.ts` |
+| Archive (notes, quotes, models) | `src/content/archive/*.md` | Edit, push |
+| Resume / About | `src/pages/resume.astro`, `src/pages/about.astro` | Edit, push |
 
-Inside of your Astro project, you'll see the following folders and files:
+### WriterPro → site updates
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+The blog is fetched from WriterPro **at build time** (`src/lib/cms.ts`). The site
+is static, so publishing in WriterPro does not update the site until a new build
+runs. To make WriterPro edits go live automatically:
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+1. In Vercel: Project → Settings → Git → **Deploy Hooks** → create a hook
+   (e.g. `writerpro-publish`, branch `main`). Copy the URL.
+2. Have WriterPro call that URL on publish (webhook), or just open the URL
+   yourself after publishing — it triggers a rebuild.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+If WriterPro is down or `CMS_API_KEY` is missing, the build **does not fail** —
+it falls back to the local posts in `src/content/blog/`.
 
-Any static assets, like images, can be placed in the `public/` directory.
+> The local MDX files in `src/content/blog/` are the offline fallback, not the
+> primary source. Posts in WriterPro with the same slug win.
 
-## 🧞 Commands
+## Environment variables
 
-All commands are run from the root of the project, from a terminal:
+Copy `.env.example` to `.env`. Set the same values in Vercel → Project →
+Settings → Environment Variables.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+- `CMS_API_KEY` — WriterPro API key (blog). **Rotate the old committed key.**
+- `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` / `SPOTIFY_REFRESH_TOKEN` —
+  power the "Listening to…" card (see `docs/spotify-setup.md`). Optional:
+  without them the card shows a quiet offline state.
+- `LETTERBOXD_USERNAME`, `FABLE_USERNAME` — only used by the manual import
+  scripts; never used at build/runtime.
+- `PLAUSIBLE_DOMAIN` — set (e.g. `www.designedbyalok.com`) to enable
+  privacy-first analytics. Unset = no analytics script at all.
 
-## 👀 Want to learn more?
+## Commands
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command | Action |
+| :--- | :--- |
+| `bun install` | Install dependencies |
+| `bun dev` | Dev server at `localhost:4321` (search is disabled in dev) |
+| `bun run build` | Build to `./dist/` + generate the Pagefind search index |
+| `bun preview` | Preview the production build (search works here) |
+| `bun scripts/generate-og.mjs` | Regenerate the default social share image |
+
+## Discovery
+
+The site exposes `/rss.xml`, `/sitemap-index.xml`, `/llms.txt` (machine-readable
+site map for AI agents) and `/ai.txt` (plain-text profile). These build from the
+content collections — they update themselves when content changes.
