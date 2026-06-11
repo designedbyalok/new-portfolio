@@ -66,39 +66,44 @@ const photography: Photo[] = [
 
     <section class="section section-hero animate a2">
       <div class="hero-card">
-        <div class="hero-image-wrapper">
+        <div class="hero-head">
           <Image
             src={portrait.src}
             alt="Portrait of Alok Kumar"
-            width={800} height={1000}
-            class="hero-image"
+            width={176} height={176}
+            class="hero-avatar"
             loading="eager"
             decoding="async"
           />
+          <div class="hero-id">
+            <h2 class="hero-name">Alok Kumar</h2>
+            <p class="hero-role">Product Designer</p>
+          </div>
         </div>
-        <div class="hero-content">
-          <h2 class="hero-title">Hey, I'm Alok<span style="color: var(--accent);">.</span></h2>
+
+        <div class="hero-about">
+          <p class="eyebrow">About</p>
           <p class="bio-text">
             I've been designing websites and apps for years, working with startups and small teams to deliver holistic, impactful solutions. With a background in Computer Science, product design has become a fast and flexible part of my work — allowing for efficient projects that contribute to increased visibility and better user experiences. Further I'm driven by a broad interest in creative fields like architecture, photography, branding, and digital products.
           </p>
           <p class="bio-text bio-cta">
             So if you're looking for a product designer <span class="highlight">for fast, high-quality, and distinctive experiences,</span> drop me a mail or reach out via my socials.
           </p>
-          
-          <div class="hero-socials">
-            <h3>Contact & Socials</h3>
-            <div class="social-links">
-              <a href="mailto:designedbyalok@gmail.com" class="social-link">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><path d="M3 8l9 6 9-6"></path></svg>
-                designedbyalok@gmail.com
-              </a>
-              <a href="https://x.com/designedbyalok" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
-              </a>
-              <a href="https://www.linkedin.com/in/designedbyalok/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-              </a>
-            </div>
+        </div>
+
+        <div class="hero-socials">
+          <h3>Contact & Socials</h3>
+          <div class="social-links">
+            <a href="mailto:designedbyalok@gmail.com" class="social-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><path d="M3 8l9 6 9-6"></path></svg>
+              designedbyalok@gmail.com
+            </a>
+            <a href="https://x.com/designedbyalok" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/designedbyalok/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </a>
           </div>
         </div>
       </div>
@@ -309,90 +314,69 @@ const photography: Photo[] = [
     transform: scale(1.02);
   }
 
-  /* Hero / About block — sits directly under the page header */
+  /* Hero / About card — compact profile card, themed (no white bg) */
   .section-hero {
     margin-top: 0.5rem;
   }
   .hero-card {
-    position: relative;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: clamp(20px, 4vw, 36px);
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    margin-top: 0;
+    gap: 24px;
   }
-
-  @media (min-width: 768px) {
-    .hero-card {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 3rem;
-    }
+  .hero-head {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
-
-  .hero-image-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 230px; /* Allow shrinking on very small screens */
-    margin: 0 auto;
-    padding: 6px;
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 16px;
-    box-shadow: 0 24px 48px -12px rgba(0,0,0,0.15);
-    transform: rotate(-3deg);
-    transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
-    z-index: 2;
-    box-sizing: border-box;
-  }
-  @media (min-width: 768px) {
-    .hero-image-wrapper {
-      margin-left: 0;
-      margin-right: 0;
-    }
-  }
-  [data-theme="dark"] .hero-image-wrapper {
-    background: #2a2a2a;
-    border-color: rgba(255,255,255,0.1);
-    box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5);
-  }
-  .hero-image-wrapper:hover {
-    transform: rotate(0deg) scale(1.02);
-  }
-  .hero-image {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4/5;
+  .hero-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
     object-fit: cover;
-    border-radius: 10px;
-    display: block;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
   }
-
-  .hero-content {
-    flex: 1;
+  .hero-id {
+    min-width: 0;
   }
-  .hero-content .hero-title {
-    font-size: var(--text-4xl);
+  .hero-name {
+    margin: 0;
+    font-size: var(--text-2xl);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    margin: 0 0 24px;
+    letter-spacing: -0.01em;
     color: var(--fg);
+    line-height: 1.1;
   }
-  .hero-content .bio-text {
+  .hero-role {
+    margin: 4px 0 0;
+    font-size: var(--text-lg);
+    color: var(--fg-secondary);
+  }
+  .hero-about > .eyebrow {
+    margin: 0 0 12px;
+  }
+  .bio-text {
     font-size: var(--text-base);
     color: var(--fg-secondary);
-    line-height: 1.6;
-    margin-bottom: 20px;
+    line-height: 1.65;
+    margin: 0 0 16px;
+    max-width: 68ch;
   }
-  .hero-content .bio-cta {
-    margin-bottom: 32px;
+  .bio-cta {
+    margin-bottom: 0;
   }
-  .hero-content .highlight {
+  .highlight {
     color: var(--fg);
     font-weight: 500;
   }
 
   .hero-socials {
-    margin-top: 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
   }
   .hero-socials h3 {
     font-size: var(--text-xs);
