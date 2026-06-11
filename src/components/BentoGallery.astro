@@ -1,0 +1,366 @@
+---
+// Compact photo gallery:
+//  - desktop: a bento grid (mixed tile sizes) — dense, low vertical footprint
+//  - mobile: a horizontal swipeable carousel (one row, not a tall stack)
+//  - click any tile: a full-screen lightbox carousel (prev/next, swipe, keys)
+interface Photo {
+  src: string;
+  aspect?: string;
+  caption?: string;
+  alt?: string;
+}
+interface Props {
+  photos: Photo[];
+  label: string;
+}
+const { photos, label } = Astro.props;
+
+const id =
+  "bento-" +
+  label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+// Bento size pattern — repeats every 6 tiles for visual rhythm.
+const sizeFor = (i: number) => {
+  const m = i % 6;
+  if (m === 0) return "t-lg"; // 2x2 feature
+  if (m === 3) return "t-wide"; // 2x1
+  return "";
+};
+
+const lightboxData = JSON.stringify(
+  photos.map((p) => ({ src: p.src, caption: p.caption ?? p.alt ?? "" })),
+).replace(/</g, "\\u003c");
+---
+
+<div class="bento" data-bento data-bento-id={id}>
+  {
+    photos.map((photo, i) => (
+      <button
+        type="button"
+        class:list={["bento-tile", sizeFor(i)]}
+        data-bento-tile
+        data-index={i}
+        aria-label={`Open photo${photo.caption ? `: ${photo.caption}` : ""}`}
+      >
+        <img
+          src={photo.src}
+          alt={photo.alt ?? photo.caption ?? ""}
+          loading="lazy"
+          decoding="async"
+        />
+      </button>
+    ))
+  }
+</div>
+
+<script type="application/json" data-bento-json={id} set:html={lightboxData} />
+
+<div
+  class="lightbox"
+  data-lightbox={id}
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label={`${label} — photo viewer`}
+>
+  <button class="lb-btn lb-close" type="button" data-lb-close aria-label="Close">✕</button>
+  <button class="lb-btn lb-prev" type="button" data-lb-prev aria-label="Previous photo">‹</button>
+  <figure class="lb-stage">
+    <img data-lb-img alt="" />
+    <figcaption class="lb-caption" data-lb-caption></figcaption>
+  </figure>
+  <button class="lb-btn lb-next" type="button" data-lb-next aria-label="Next photo">›</button>
+  <span class="lb-counter" data-lb-counter></span>
+</div>
+
+<style>
+  /* ---- Bento grid (desktop) ---- */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: clamp(110px, 13vw, 165px);
+    grid-auto-flow: dense;
+    gap: 10px;
+    width: 100%;
+  }
+  .bento-tile {
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--tag-bg);
+    display: block;
+    position: relative;
+  }
+  .bento-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+  }
+  .bento-tile:hover img,
+  .bento-tile:focus-visible img {
+    transform: scale(1.04);
+  }
+  .bento-tile:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+  .t-lg {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .t-wide {
+    grid-column: span 2;
+  }
+
+  /* ---- Mobile: horizontal swipe carousel ---- */
+  @media (max-width: 640px) {
+    .bento {
+      display: flex;
+      grid-auto-flow: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 12px;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .bento::-webkit-scrollbar {
+      display: none;
+    }
+    .bento-tile {
+      flex: 0 0 80%;
+      scroll-snap-align: center;
+      aspect-ratio: 4 / 3;
+    }
+    .t-lg,
+    .t-wide {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+
+  /* ---- Lightbox carousel ---- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 2vw, 24px);
+    padding: clamp(16px, 4vw, 48px);
+    background: color-mix(in oklab, var(--bg) 80%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+  .lightbox[hidden] {
+    display: none;
+  }
+  .lightbox.is-open {
+    opacity: 1;
+  }
+  .lb-stage {
+    margin: 0;
+    max-width: min(1100px, 90vw);
+    max-height: 88dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .lb-stage img {
+    max-width: 100%;
+    max-height: 78dvh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+    background: var(--tag-bg);
+  }
+  .lb-caption {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    text-align: center;
+    min-height: 1em;
+  }
+  .lb-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .lb-btn:hover,
+  .lb-btn:focus-visible {
+    background: var(--hover-bg);
+  }
+  .lb-prev,
+  .lb-next {
+    width: 48px;
+    height: 48px;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .lb-close {
+    position: absolute;
+    top: clamp(12px, 3vw, 24px);
+    right: clamp(12px, 3vw, 24px);
+    width: 40px;
+    height: 40px;
+    font-size: var(--text-base);
+  }
+  .lb-counter {
+    position: absolute;
+    bottom: clamp(12px, 3vw, 24px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    color: var(--fg-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 640px) {
+    /* On mobile, float the arrows over the image edges to save width */
+    .lb-prev,
+    .lb-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      z-index: 2;
+    }
+    .lb-prev {
+      left: 10px;
+    }
+    .lb-next {
+      right: 10px;
+    }
+  }
+</style>
+
+<script>
+  function initBentoGalleries() {
+    document
+      .querySelectorAll<HTMLElement>("[data-bento]")
+      .forEach((grid) => {
+        if (grid.dataset.bound === "true") return;
+        grid.dataset.bound = "true";
+
+        const id = grid.dataset.bentoId || "";
+        const json = document.querySelector(`[data-bento-json="${id}"]`);
+        const lightbox = document.querySelector<HTMLElement>(
+          `[data-lightbox="${id}"]`,
+        );
+        if (!json || !lightbox) return;
+
+        type Shot = { src: string; caption: string };
+        let photos: Shot[] = [];
+        try {
+          photos = JSON.parse(json.textContent || "[]");
+        } catch {
+          return;
+        }
+        if (photos.length === 0) return;
+
+        const imgEl = lightbox.querySelector<HTMLImageElement>("[data-lb-img]");
+        const capEl = lightbox.querySelector<HTMLElement>("[data-lb-caption]");
+        const counterEl = lightbox.querySelector<HTMLElement>("[data-lb-counter]");
+        const closeBtn = lightbox.querySelector<HTMLButtonElement>("[data-lb-close]");
+        const prevBtn = lightbox.querySelector<HTMLButtonElement>("[data-lb-prev]");
+        const nextBtn = lightbox.querySelector<HTMLButtonElement>("[data-lb-next]");
+        if (!imgEl || !capEl || !counterEl || !closeBtn || !prevBtn || !nextBtn)
+          return;
+
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let index = 0;
+        let lastFocused: HTMLElement | null = null;
+
+        const render = () => {
+          const shot = photos[index];
+          imgEl.src = shot.src;
+          imgEl.alt = shot.caption || `Photo ${index + 1}`;
+          capEl.textContent = shot.caption;
+          counterEl.textContent = `${index + 1} / ${photos.length}`;
+        };
+        const go = (delta: number) => {
+          index = (index + delta + photos.length) % photos.length;
+          render();
+        };
+        const open = (i: number, trigger: HTMLElement) => {
+          index = i;
+          render();
+          lastFocused = trigger;
+          lightbox.hidden = false;
+          requestAnimationFrame(() => lightbox.classList.add("is-open"));
+          document.body.style.overflow = "hidden";
+          closeBtn.focus();
+        };
+        const close = () => {
+          lightbox.classList.remove("is-open");
+          document.body.style.overflow = "";
+          const done = () => (lightbox.hidden = true);
+          if (reduced) done();
+          else setTimeout(done, 220);
+          lastFocused?.focus();
+          lastFocused = null;
+        };
+
+        grid
+          .querySelectorAll<HTMLButtonElement>("[data-bento-tile]")
+          .forEach((tile) => {
+            tile.addEventListener("click", () =>
+              open(Number(tile.dataset.index) || 0, tile),
+            );
+          });
+
+        prevBtn.addEventListener("click", () => go(-1));
+        nextBtn.addEventListener("click", () => go(1));
+        closeBtn.addEventListener("click", close);
+        lightbox.addEventListener("click", (e) => {
+          if (e.target === lightbox) close();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (lightbox.hidden) return;
+          if (e.key === "Escape") close();
+          else if (e.key === "ArrowLeft") go(-1);
+          else if (e.key === "ArrowRight") go(1);
+        });
+
+        // Touch swipe inside the lightbox
+        let startX = 0;
+        lightbox.addEventListener(
+          "touchstart",
+          (e) => (startX = e.touches[0].clientX),
+          { passive: true },
+        );
+        lightbox.addEventListener(
+          "touchend",
+          (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
+          },
+          { passive: true },
+        );
+      });
+  }
+
+  initBentoGalleries();
+  document.addEventListener("astro:after-swap", initBentoGalleries);
+</script>

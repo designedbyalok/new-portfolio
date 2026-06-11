@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import TopBar from "../components/TopBar.astro";
 import ListeningTo from "../components/ListeningTo.astro";
 import GithubHeatmap from "../components/GithubHeatmap.astro";
+import BentoGallery from "../components/BentoGallery.astro";
 import { Image } from "astro:assets";
 
 type Photo = { src: string; aspect: string; caption: string; alt?: string };
@@ -145,26 +146,7 @@ const photography: Photo[] = [
 
     <section class="section">
       <p class="eyebrow">In the world</p>
-      <ul class="gallery gallery-3">
-        {
-          friends.map((item) => (
-            <li>
-              <figure>
-                <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
-                  <Image
-                    src={item.src}
-                    alt={item.alt ?? item.caption}
-                    width={1200} height={1200}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <figcaption class="gallery-caption">{item.caption}</figcaption>
-              </figure>
-            </li>
-          ))
-        }
-      </ul>
+      <BentoGallery label="In the world" photos={friends} />
     </section>
 
     <section class="section">
@@ -248,50 +230,12 @@ const photography: Photo[] = [
 
     <section class="section">
       <p class="eyebrow">Art</p>
-      <ul class="gallery gallery-4">
-        {
-          art.map((item) => (
-            <li>
-              <figure>
-                <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
-                  <Image
-                    src={item.src}
-                    alt={item.caption}
-                    width={1200} height={1200}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <figcaption class="gallery-caption">{item.caption}</figcaption>
-              </figure>
-            </li>
-          ))
-        }
-      </ul>
+      <BentoGallery label="Art" photos={art} />
     </section>
 
     <section class="section">
       <p class="eyebrow">Photography</p>
-      <ul class="gallery gallery-3">
-        {
-          photography.map((item) => (
-            <li>
-              <figure>
-                <div class="photo-frame" style={`aspect-ratio: ${item.aspect};`}>
-                  <Image
-                    src={item.src}
-                    alt={item.caption}
-                    width={1200} height={1200}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <figcaption class="gallery-caption">{item.caption}</figcaption>
-              </figure>
-            </li>
-          ))
-        }
-      </ul>
+      <BentoGallery label="Photography" photos={photography} />
     </section>
 
     <footer class="about-footer">
@@ -325,12 +269,12 @@ const photography: Photo[] = [
 
 <style>
   .about {
-    padding-block: clamp(4rem, 8vw, 7rem) clamp(4rem, 8vw, 6rem);
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(3rem, 6vw, 4.5rem);
   }
 
   .about-header {
     max-width: 60ch;
-    margin-bottom: clamp(4rem, 8vw, 6rem);
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
   }
   .about-header .display {
     font-family: var(--font-serif);
@@ -366,7 +310,7 @@ const photography: Photo[] = [
   }
 
   .section {
-    margin-top: clamp(4rem, 8vw, 6rem);
+    margin-top: clamp(2.75rem, 5vw, 4rem);
   }
   .section-prose {
     max-width: 65ch;
@@ -403,7 +347,6 @@ const photography: Photo[] = [
     display: block;
     transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
   }
-  .gallery li:hover .photo-frame img,
   .section-me .photo-frame:hover img,
   .section-legos .photo-frame:hover img {
     transform: scale(1.02);
@@ -517,38 +460,6 @@ const photography: Photo[] = [
   }
   .social-link:hover {
     color: var(--fg);
-  }
-
-  /* Galleries */
-  .gallery {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1.5rem;
-  }
-  .gallery-3 {
-    grid-template-columns: 1fr;
-  }
-  @media (min-width: 640px) {
-    .gallery-3 { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (min-width: 960px) {
-    .gallery-3 { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-  }
-  .gallery-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @media (min-width: 720px) {
-    .gallery-4 { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
-  }
-  .gallery-caption {
-    margin-top: 0.6rem;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--text-sm);
-    color: var(--fg-secondary);
-    line-height: 1.4;
   }
 
   /* Side-by-side blocks (Legos) */
