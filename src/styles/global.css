@@ -6,12 +6,12 @@
 
 
 @theme {
-  --font-sans: "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-serif: "Fraunces Variable", "Fraunces", Georgia, serif;
+  --font-serif: "Averia Serif Libre", Georgia, serif;
 
-  /* Type scale — UI/body is fixed (Geist): 12 / 14 / 16 / 18 on a 4px grid.
-     The larger sizes drive the editorial serif (Fraunces) display headings. */
+  /* Type scale — UI/body is fixed (IBM Plex Sans): 12 / 14 / 16 / 18 on a 4px grid.
+     The larger sizes drive the editorial serif (Averia Serif Libre) display headings. */
   --text-xs: 12px;   /* labels, eyebrows, captions */
   --text-sm: 14px;   /* secondary body */
   --text-base: 16px; /* body */
@@ -48,7 +48,7 @@
 
   [data-theme="dark"] {
     color-scheme: dark;
-    /* Warm dark palette + dark-only fonts (Averia Serif Libre / IBM Plex Sans) */
+    /* Warm dark palette — fonts come from the global :root defaults */
     --bg: #1B1917;
     --fg: #FCF2E1;
     --fg-secondary: #A69D8D;
@@ -58,8 +58,6 @@
     --tag-bg: rgba(252,242,225,0.07);
     --accent: #FCF2E1;
     --thumb-border: #d9cdb8;
-    --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-serif: "Averia Serif Libre", "Fraunces Variable", Georgia, serif;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -74,8 +72,6 @@
       --tag-bg: rgba(252,242,225,0.07);
       --accent: #FCF2E1;
       --thumb-border: #d9cdb8;
-      --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      --font-serif: "Averia Serif Libre", "Fraunces Variable", Georgia, serif;
     }
   }
 
