@@ -4,37 +4,97 @@ interface Props {
   showSearch?: boolean;
 }
 const { showSearch = true } = Astro.props;
+
+const navItems = [
+  { label: "home", href: "/" },
+  { label: "works", href: "/work" },
+  { label: "ideas", href: "/projects", mobile: false },
+  { label: "writings", href: "/blog" },
+  { label: "about", href: "/about" },
+];
 ---
 
 <header class="top-bar animate a1">
-  <!-- Logo -->
-  <a href="/" aria-label="Home"><img src="/favicon.svg" alt="Alok Logo" class="logo-avatar" style="margin-bottom: 0;" /></a>
+  <!-- Logo opens the nav menu -->
+  <button
+    type="button"
+    class="logo-btn"
+    id="navOpenBtn"
+    aria-label="Open menu"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="navMenu"
+  >
+    <img src="/favicon.svg" alt="Alok Logo" class="logo-avatar" />
+  </button>
 
   <div class="top-bar-actions">
-  <!-- Search -->
-  {showSearch && (
-  <a class="theme-toggle-btn search-btn" href="/search" aria-label="Search the site">
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-  </a>
-  )}
-  <!-- Theme Toggle Circle Button -->
-  <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle theme">
-    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-  </button>
+    {
+      showSearch && (
+        <a class="theme-toggle-btn search-btn" href="/search" aria-label="Search the site">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+        </a>
+      )
+    }
+    <!-- Theme Toggle Circle Button -->
+    <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle theme">
+      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
+      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+    </button>
   </div>
 </header>
 
+<!-- Nav menu overlay -->
+<div
+  class="nav-menu"
+  id="navMenu"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site navigation"
+  hidden
+>
+  <button
+    type="button"
+    class="nav-close"
+    id="navCloseBtn"
+    aria-label="Close menu"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+  </button>
+
+  <nav class="nav-list" aria-label="Primary">
+    {
+      navItems.map((item, i) => (
+        <a
+          class:list={["nav-link", item.mobile === false && "nav-link-desktop-only"]}
+          href={item.href}
+          style={`--i: ${i}`}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  <!-- Mobile-only ALOK badge at the bottom (closes the menu) -->
+  <button
+    type="button"
+    class="nav-foot-logo"
+    id="navFootBtn"
+    aria-label="Close menu"
+  >
+    <img src="/favicon.svg" alt="" />
+  </button>
+</div>
+
 <script>
-  // Setup theme toggle logic globally, handled in TopBar since it's everywhere
   function setupTheme() {
     const toggle = document.getElementById("themeToggle");
     const html = document.documentElement;
-
     if (!toggle) return;
 
-    // Reset old listeners if running multiple times (view transitions)
-    const newToggle = toggle.cloneNode(true);
+    // Reset old listeners after view transitions
+    const newToggle = toggle.cloneNode(true) as HTMLButtonElement;
     toggle.parentNode?.replaceChild(newToggle, toggle);
 
     newToggle.addEventListener("click", () => {
@@ -45,8 +105,7 @@ const { showSearch = true } = Astro.props;
         localStorage.setItem("theme", next);
       } catch (e) {}
     });
-
-    newToggle.addEventListener("keydown", (e: any) => {
+    newToggle.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         newToggle.click();
@@ -54,11 +113,59 @@ const { showSearch = true } = Astro.props;
     });
   }
 
-  // Run on first load
-  setupTheme();
+  function setupNav() {
+    const openBtn = document.getElementById("navOpenBtn");
+    const closeBtn = document.getElementById("navCloseBtn");
+    const footBtn = document.getElementById("navFootBtn");
+    const menu = document.getElementById("navMenu");
+    if (!openBtn || !closeBtn || !menu) return;
+    if (menu.dataset.bound === "true") return;
+    menu.dataset.bound = "true";
 
-  // Run after view transitions
-  document.addEventListener("astro:after-swap", setupTheme);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let lastFocused: HTMLElement | null = null;
+
+    const open = () => {
+      lastFocused = (document.activeElement as HTMLElement) ?? openBtn;
+      menu.hidden = false;
+      requestAnimationFrame(() => menu.classList.add("is-open"));
+      openBtn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+      closeBtn.focus();
+    };
+    const close = () => {
+      menu.classList.remove("is-open");
+      openBtn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      const done = () => (menu.hidden = true);
+      if (reduced) done();
+      else setTimeout(done, 220);
+      lastFocused?.focus();
+      lastFocused = null;
+    };
+
+    openBtn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    footBtn?.addEventListener("click", close);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !menu.hidden) close();
+    });
+    // Same-page nav link clicks close the overlay (view transitions will run)
+    menu.querySelectorAll<HTMLAnchorElement>(".nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        // Close after the click; the navigation continues normally
+        setTimeout(close, 0);
+      });
+    });
+  }
+
+  setupTheme();
+  setupNav();
+  document.addEventListener("astro:after-swap", () => {
+    setupTheme();
+    // The nav menu lives in TopBar, which is re-rendered on swap — re-bind
+    setupNav();
+  });
 </script>
 
 <style>
@@ -77,16 +184,30 @@ const { showSearch = true } = Astro.props;
     z-index: 200;
     pointer-events: none;
   }
-  .top-bar > a,
+  .top-bar > .logo-btn,
   .top-bar-actions {
     pointer-events: auto;
   }
 
+  .logo-btn {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 12px;
+    display: inline-flex;
+    line-height: 0;
+  }
+  .logo-btn:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 4px;
+  }
   .logo-avatar {
     width: 48px;
     height: 48px;
     border-radius: 12px;
     object-fit: cover;
+    display: block;
     animation-delay: 0.05s;
   }
 
@@ -124,8 +245,6 @@ const { showSearch = true } = Astro.props;
     position: absolute;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
   }
-  
-  /* Light mode: show moon, hide sun */
   :global(:root[data-theme="light"]) .theme-toggle-btn .sun-icon {
     opacity: 0;
     transform: rotate(90deg) scale(0);
@@ -134,8 +253,6 @@ const { showSearch = true } = Astro.props;
     opacity: 1;
     transform: rotate(0) scale(1);
   }
-  
-  /* Dark mode: show sun, hide moon */
   :global(:root[data-theme="dark"]) .theme-toggle-btn .sun-icon {
     opacity: 1;
     transform: rotate(0) scale(1);
@@ -143,5 +260,107 @@ const { showSearch = true } = Astro.props;
   :global(:root[data-theme="dark"]) .theme-toggle-btn .moon-icon {
     opacity: 0;
     transform: rotate(-90deg) scale(0);
+  }
+
+  /* ---- Nav menu overlay ---- */
+  .nav-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+  .nav-menu[hidden] {
+    display: none;
+  }
+  .nav-menu.is-open {
+    opacity: 1;
+  }
+
+  .nav-close {
+    position: fixed;
+    top: var(--chrome-top, 32px);
+    left: var(--chrome-side, 24px);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--tag-bg);
+    color: var(--fg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1;
+  }
+  .nav-close:hover,
+  .nav-close:focus-visible {
+    background: var(--hover-bg);
+  }
+
+  .nav-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(20px, 3vw, 32px);
+  }
+  .nav-link {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    line-height: 1;
+    color: var(--fg);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: opacity 0.18s ease, transform 0.22s ease;
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  .nav-menu.is-open .nav-link {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(0.04s * var(--i, 0) + 0.06s);
+  }
+  .nav-link:hover {
+    opacity: 0.6;
+  }
+
+  /* Mobile: full-page menu with the ALOK badge at the bottom */
+  .nav-foot-logo {
+    display: none;
+    position: fixed;
+    bottom: clamp(40px, 8vh, 64px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    line-height: 0;
+  }
+  .nav-foot-logo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+  @media (max-width: 640px) {
+    .nav-foot-logo {
+      display: inline-flex;
+    }
+    /* Hide "ideas" on mobile per the Figma */
+    .nav-link-desktop-only {
+      display: none;
+    }
   }
 </style>
