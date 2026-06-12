@@ -392,21 +392,6 @@
   }
   .back-link:hover { color: var(--fg); }
 
-  /* Logo Avatar */
-  .logo-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
-    object-fit: cover;
-    margin-bottom: 24px;
-    border: 1px solid var(--border);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-  .logo-avatar:hover {
-    transform: scale(1.02);
-    border-color: var(--fg-tertiary);
-  }
-
   /* Back Link Circle */
   .back-link-circle {
     display: inline-flex;

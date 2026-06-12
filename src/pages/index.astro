@@ -572,7 +572,8 @@ const resources = [
       --chrome-top: 32px;
       --chrome-side: 24px;
       /* clear the fixed logo (32 + 48) so content starts below it */
-      padding: 96px 24px 40px;
+      /* 32 (chrome top) + 48 (chrome height) + 40 (breathing room) = 120 */
+      padding: 120px 24px 40px;
     }
     .portrait-frame {
       width: 140px;
