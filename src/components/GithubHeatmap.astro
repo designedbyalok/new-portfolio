@@ -403,8 +403,8 @@ const SKELETON_CELLS = 53 * 7;
     width: 452px;
     max-width: 88vw;
     padding: 20px;
-    background: #1c1c1c;
-    border: 1px solid #353535;
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
   }
@@ -414,19 +414,11 @@ const SKELETON_CELLS = 53 * 7;
     font-style: italic;
     font-weight: 500;
     font-size: var(--text-lg);
-    color: #fcf2e1;
+    color: var(--fg);
   }
   .gh-as-card .gh-months {
-    color: #8a8a8a;
+    color: var(--fg-tertiary);
   }
-  .gh-as-card .gh-grid :global(.gh-cell) {
-    background: #353535;
-  }
-  .gh-as-card .gh-grid :global(.gh-l0) { background: #353535; }
-  .gh-as-card .gh-grid :global(.gh-l1) { background: #00501f; }
-  .gh-as-card .gh-grid :global(.gh-l2) { background: #236c36; }
-  .gh-as-card .gh-grid :global(.gh-l3) { background: #259038; }
-  .gh-as-card .gh-grid :global(.gh-l4) { background: #45a448; }
   .gh-card-foot {
     display: flex;
     align-items: center;
@@ -450,10 +442,10 @@ const SKELETON_CELLS = 53 * 7;
     font-style: italic;
     font-weight: 500;
     font-size: var(--text-base);
-    color: #fcf2e1;
+    color: var(--fg);
   }
   .gh-card-handle {
     font-size: var(--text-sm);
-    color: #a69d8d;
+    color: var(--fg-secondary);
   }
 </style>

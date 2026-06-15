@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Prevent horizontal scroll on all pages */
+html, body { overflow-x: clip !important; }
+
 /* Override Tailwind v4's purple ::selection with site colours */
 ::selection { background: var(--fg) !important; color: var(--bg) !important; }
 ::-moz-selection { background: var(--fg) !important; color: var(--bg) !important; }

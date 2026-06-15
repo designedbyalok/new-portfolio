@@ -6,37 +6,311 @@ import { getCollection } from "astro:content";
 const entries = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order,
 );
+
+const yearOf = (period: string) => {
+  const m = period.match(/(\d{4})(?!.*\d{4})/);
+  return m ? m[1] : "";
+};
+
+const cards = entries.map((e) => ({
+  slug: e.id,
+  title: e.data.title,
+  tagline: e.data.tagline,
+  year: yearOf(e.data.period),
+  category: e.data.tags[0] ?? "All",
+  hero: e.data.hero,
+}));
+
+const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))];
 ---
 
 <Layout
-  title="Projects — Alok Kumar"
-  description="Projects worth telling you about: idea, problem, solution, and why it was unique."
+  title="Ideas — Alok Kumar"
+  description="A glimpse into my creative mind — explorations, side projects, and ideas worth sharing."
 >
-  <div class="container container-content page">
-    <!-- Logo -->
+  <div class="ideas page">
     <TopBar />
-    <div class="back-wrapper animate a1">
-      <a class="back-link-circle" href="/" aria-label="Back Home">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      </a>
-    </div>
-    <div style="width: 100%; margin-bottom: 2rem;">
-      <h1 class="name animate a2">Projects</h1>
-      <p class="title animate a3">Projects worth telling you about.</p>
+
+    <header class="ideas-head animate a1">
+      <h1 class="ideas-title">Ideas</h1>
+      <p class="ideas-sub">A glimpse into my creative mind</p>
+    </header>
+
+    <div class="ideas-filter animate a2">
+      <button
+        type="button"
+        class="cat-btn"
+        id="catBtn"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+      >
+        <span id="catLabel">Category</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <ul class="cat-menu" id="catMenu" role="listbox" hidden>
+        {
+          categories.map((c) => (
+            <li role="option" data-value={c}>{c}</li>
+          ))
+        }
+      </ul>
     </div>
 
-    <div class="work-list animate a3" style="width: 100%;">
+    <div class="idea-grid animate a3">
       {
-        entries.map((entry) => (
-          <a class="work-item" href={`/projects/${entry.id}`}>
-            <div class="work-left" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-              <span class="nav-label">{entry.data.title}</span>
-              <span class="work-years">{entry.data.tagline}</span>
+        cards.map((c) => (
+          <a class="idea-card" href={`/projects/${c.slug}`} data-category={c.category}>
+            <div class="idea-preview">
+              {c.hero ? (
+                <img src={c.hero} alt="" loading="lazy" decoding="async" />
+              ) : (
+                <div class="idea-preview-empty" aria-hidden="true" />
+              )}
             </div>
-            <span class="work-icon">→</span>
+            <div class="idea-meta">
+              <span class="idea-title">
+                {c.title} <span class="idea-year">{c.year}</span>
+              </span>
+              <span class="idea-desc">{c.tagline}</span>
+            </div>
           </a>
         ))
       }
     </div>
   </div>
 </Layout>
+
+<style>
+  .ideas {
+    --chrome-top: 80px;
+    --chrome-side: 48px;
+    width: 100%;
+    padding: 80px 48px;
+    align-items: center;
+  }
+
+  .ideas-head {
+    width: 100%;
+    max-width: 1200px;
+    text-align: center;
+    margin: 24px 0 56px;
+  }
+  .ideas-title {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+  }
+  .ideas-sub {
+    margin: 12px 0 0;
+    font-size: var(--text-lg);
+    color: var(--fg-secondary);
+  }
+
+  .ideas-filter {
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .cat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--tag-bg);
+    color: var(--fg-secondary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .cat-btn:hover {
+    background: var(--hover-bg);
+    color: var(--fg);
+  }
+  .cat-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.35);
+    min-width: 180px;
+    z-index: 50;
+  }
+  .cat-menu[hidden] {
+    display: none;
+  }
+  .cat-menu li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    color: var(--fg);
+    cursor: pointer;
+  }
+  .cat-menu li:hover,
+  .cat-menu li[aria-selected="true"] {
+    background: var(--hover-bg);
+  }
+
+  .idea-grid {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px 24px;
+  }
+  .idea-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .idea-card[hidden] {
+    display: none;
+  }
+
+  .idea-preview {
+    aspect-ratio: 1 / 1;
+    border-radius: 24px;
+    background: var(--tag-bg);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.25s ease;
+  }
+  .idea-card:hover .idea-preview {
+    transform: translateY(-2px);
+  }
+  .idea-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    background: var(--bg);
+    display: block;
+  }
+  .idea-preview-empty {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    background: var(--bg);
+  }
+
+  .idea-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 4px;
+  }
+  .idea-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  .idea-year {
+    font-weight: 400;
+    color: var(--fg-tertiary);
+    margin-left: 4px;
+  }
+  .idea-desc {
+    font-size: var(--text-base);
+    line-height: 1.5;
+    color: var(--fg-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 960px) {
+    .ideas {
+      padding: 80px 32px;
+    }
+    .idea-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 20px;
+    }
+  }
+  @media (max-width: 600px) {
+    .ideas {
+      --chrome-top: 32px;
+      --chrome-side: 24px;
+      padding: 120px 20px 40px;
+    }
+    .ideas-head {
+      margin: 8px 0 28px;
+    }
+    .ideas-sub {
+      font-size: var(--text-base);
+    }
+    .idea-grid {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .idea-preview {
+      border-radius: 20px;
+      padding: 16px;
+    }
+  }
+</style>
+
+<script>
+  function initCategoryFilter() {
+    const btn = document.getElementById("catBtn");
+    const menu = document.getElementById("catMenu");
+    const label = document.getElementById("catLabel");
+    const cards = document.querySelectorAll<HTMLElement>(".idea-card");
+    if (!btn || !menu || !label) return;
+    if (menu.dataset.bound === "true") return;
+    menu.dataset.bound = "true";
+
+    const close = () => {
+      menu.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+    };
+    const open = () => {
+      menu.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+    };
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.hidden ? open() : close();
+    });
+    document.addEventListener("click", (e) => {
+      if (!menu.hidden && !menu.contains(e.target as Node) && e.target !== btn) close();
+    });
+    menu.querySelectorAll<HTMLLIElement>("li").forEach((li) => {
+      li.addEventListener("click", () => {
+        const value = li.dataset.value ?? "All";
+        label.textContent = value === "All" ? "Category" : value;
+        menu.querySelectorAll("li").forEach((x) =>
+          x.setAttribute("aria-selected", x === li ? "true" : "false"),
+        );
+        cards.forEach((card) => {
+          const cat = card.dataset.category ?? "";
+          card.hidden = value !== "All" && cat !== value;
+        });
+        close();
+      });
+    });
+  }
+
+  initCategoryFilter();
+  document.addEventListener("astro:after-swap", initCategoryFilter);
+</script>
