@@ -1,23 +1,19 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { getWorks, type Work } from "../../lib/works";
 
-const entries = (await getCollection("work")).sort(
-  (a, b) => b.data.order - a.data.order,
-);
+const entries = await getWorks();
 
-const getImages = (entry: CollectionEntry<"work">) => {
+const getImages = (work: Work) => {
   const images: string[] = [];
-  if (entry.data.hero) images.push(entry.data.hero);
-  if (entry.data.photos && entry.data.photos.length > 0) {
-    images.push(entry.data.photos[0].src);
-    if (entry.data.photos.length > 1) {
-      images.push(entry.data.photos[1].src);
-    }
+  if (work.metadata.hero) images.push(work.metadata.hero);
+  const photos = work.metadata.photos ?? [];
+  if (photos.length > 0) {
+    images.push(photos[0].src);
+    if (photos.length > 1) images.push(photos[1].src);
   }
-  if (entry.data.logo) images.push(entry.data.logo);
+  if (work.metadata.logo) images.push(work.metadata.logo);
 
   // Ensure we have exactly 3 images by repeating if necessary
   while (images.length > 0 && images.length < 3) {
@@ -45,10 +41,10 @@ const getImages = (entry: CollectionEntry<"work">) => {
 
     <div class="blur-list animate a3">
       {
-        entries.map((entry) => {
-          const imgs = getImages(entry);
+        entries.map((work) => {
+          const imgs = getImages(work);
           return (
-            <a class="blur-item" href={`/work/${entry.id}`}>
+            <a class="blur-item" href={`/work/${work.slug}`}>
               <div class="blur-item-left">
                 <div class="card-stack">
                   {imgs.length >= 3 ? (
@@ -57,15 +53,15 @@ const getImages = (entry: CollectionEntry<"work">) => {
                       <img src={imgs[1]} alt="" class="card card-middle" loading="lazy" decoding="async" />
                       <img src={imgs[0]} alt="" class="card card-top" loading="lazy" decoding="async" />
                     </>
-                  ) : entry.data.logo ? (
-                    <img src={entry.data.logo} alt="" class="card card-top" loading="lazy" decoding="async" />
+                  ) : work.metadata.logo ? (
+                    <img src={work.metadata.logo} alt="" class="card card-top" loading="lazy" decoding="async" />
                   ) : (
                     <div class="card card-top" style="background: var(--border);"></div>
                   )}
                 </div>
-                <span class="blur-item-title">{entry.data.company}</span>
+                <span class="blur-item-title">{work.metadata.company}</span>
               </div>
-              <span class="blur-item-meta">{entry.data.period}</span>
+              <span class="blur-item-meta">{work.metadata.period}</span>
             </a>
           );
         })

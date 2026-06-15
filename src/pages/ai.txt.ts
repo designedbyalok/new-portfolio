@@ -1,6 +1,7 @@
 import type { APIContext } from "astro";
-import { getCollection } from "astro:content";
 import { getAllPosts } from "../lib/cms";
+import { getWorks } from "../lib/works";
+import { getIdeas } from "../lib/ideas";
 
 export const prerender = true;
 
@@ -34,12 +35,10 @@ export async function GET(context: APIContext) {
   const site = context.site ?? new URL("https://designedbyalok.com");
   const abs = (path: string) => new URL(path, site).href;
 
-  const work = (await getCollection("work")).sort(
-    (a, b) => periodRecency(b.data.period) - periodRecency(a.data.period),
+  const work = (await getWorks()).sort(
+    (a, b) => periodRecency(b.metadata.period) - periodRecency(a.metadata.period),
   );
-  const projects = (await getCollection("projects")).sort(
-    (a, b) => a.data.order - b.data.order,
-  );
+  const projects = await getIdeas();
   const posts = await getAllPosts();
 
   const text = `ALOK KUMAR — PRODUCT DESIGNER
@@ -59,16 +58,15 @@ like architecture, photography, branding, and digital products.
 ${underline("Experience")}
 ${work
   .map(
-    (entry) =>
-      `${entry.data.company} — ${entry.data.role} (${entry.data.period})\n  ${entry.data.summary}`,
+    (w) =>
+      `${w.metadata.company} — ${w.metadata.role} (${w.metadata.period})\n  ${w.metadata.summary}`,
   )
   .join("\n\n")}
 
 ${underline("Projects")}
 ${projects
   .map(
-    (entry) =>
-      `${entry.data.title} (${entry.data.period})\n  ${entry.data.tagline}`,
+    (p) => `${p.title} (${p.metadata.period})\n  ${p.metadata.tagline}`,
   )
   .join("\n\n")}
 

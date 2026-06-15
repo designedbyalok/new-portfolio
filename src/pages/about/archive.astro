@@ -1,27 +1,21 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getCollection, render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { getArchive, type ArchiveEntry } from "../../lib/archive";
+import { marked } from "marked";
 
-type ArchiveEntry = CollectionEntry<"archive">;
-type RenderedEntry = {
-  entry: ArchiveEntry;
-  Content: Awaited<ReturnType<typeof render>>["Content"];
-};
+const entries = await getArchive();
 
-const entries = await getCollection("archive");
-const rendered: RenderedEntry[] = await Promise.all(
-  entries.map(async (entry) => {
-    const { Content } = await render(entry);
-    return { entry, Content };
-  }),
-);
+const rendered = entries.map((entry) => ({
+  entry,
+  html: entry.markdownContent ? marked.parse(entry.markdownContent) : "",
+}));
 
-// Sort by date desc within a group; undated entries go last.
-const byDateDesc = (a: RenderedEntry, b: RenderedEntry) => {
-  const da = a.entry.data.date?.valueOf();
-  const db = b.entry.data.date?.valueOf();
+const toDate = (iso?: string) => (iso ? new Date(iso) : undefined);
+
+const byDateDesc = (a: { entry: ArchiveEntry }, b: { entry: ArchiveEntry }) => {
+  const da = toDate(a.entry.metadata.date)?.valueOf();
+  const db = toDate(b.entry.metadata.date)?.valueOf();
   if (da == null && db == null) return 0;
   if (da == null) return 1;
   if (db == null) return -1;
@@ -40,7 +34,7 @@ const groups = groupOrder
   .map((group) => ({
     ...group,
     items: rendered
-      .filter((item) => item.entry.data.type === group.type)
+      .filter((item) => item.entry.metadata.type === group.type)
       .sort(byDateDesc),
   }))
   .filter((group) => group.items.length > 0);
@@ -73,34 +67,30 @@ const fmtDate = (d: Date) =>
 
           {group.type === "quote" ? (
             <div class="quote-list">
-              {group.items.map(({ entry, Content }) => (
+              {group.items.map(({ entry, html }) => (
                 <figure class="quote">
-                  <blockquote class="quote-body">
-                    <Content />
-                  </blockquote>
+                  <blockquote class="quote-body" set:html={html}></blockquote>
                   <figcaption class="quote-source">
-                    {entry.data.source && <span>— {entry.data.source}</span>}
-                    <a class="quote-permalink" href={`/about/archive/${entry.id}`} aria-label={`Open ${entry.data.title}`}>↗</a>
+                    {entry.metadata.source && <span>— {entry.metadata.source}</span>}
+                    <a class="quote-permalink" href={`/about/archive/${entry.slug}`} aria-label={`Open ${entry.title}`}>↗</a>
                   </figcaption>
                 </figure>
               ))}
             </div>
           ) : (
             <div class="card-list">
-              {group.items.map(({ entry, Content }) => (
-                <a class="entry-card" href={`/about/archive/${entry.id}`}>
+              {group.items.map(({ entry, html }) => (
+                <a class="entry-card" href={`/about/archive/${entry.slug}`}>
                   <div class="entry-head">
-                    <h3 class="entry-title">{entry.data.title}</h3>
-                    {entry.data.date && (
-                      <span class="entry-date">{fmtDate(entry.data.date)}</span>
+                    <h3 class="entry-title">{entry.title}</h3>
+                    {entry.metadata.date && (
+                      <span class="entry-date">{fmtDate(toDate(entry.metadata.date)!)}</span>
                     )}
                   </div>
-                  <div class="prose entry-body">
-                    <Content />
-                  </div>
-                  {entry.data.tags.length > 0 && (
+                  <div class="prose entry-body" set:html={html}></div>
+                  {entry.metadata.tags && entry.metadata.tags.length > 0 && (
                     <div class="entry-tags">
-                      {entry.data.tags.map((tag) => (
+                      {entry.metadata.tags.map((tag) => (
                         <span class="entry-tag">{tag}</span>
                       ))}
                     </div>

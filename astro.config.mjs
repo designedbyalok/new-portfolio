@@ -8,6 +8,7 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://designedbyalok.com',
+  trailingSlash: 'never',
   adapter: vercel(),
   prefetch: {
     prefetchAll: true,

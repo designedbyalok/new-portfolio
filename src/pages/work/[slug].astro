@@ -2,30 +2,28 @@
 import "@fontsource/jetbrains-mono/400.css";
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getCollection, render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import { Image } from "astro:assets";
+import { getWorks, type Work } from "../../lib/works";
+import { marked } from "marked";
 
 export async function getStaticPaths() {
-  const entries = await getCollection("work");
-  return entries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  const works = await getWorks();
+  return works.map((work) => ({ params: { slug: work.slug }, props: { work } }));
 }
 
-type Props = { entry: CollectionEntry<"work"> };
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+type Props = { work: Work };
+const { work } = Astro.props;
+const m = work.metadata;
+const photos = m.photos ?? [];
+const projects = m.projects ?? [];
+const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
 ---
 
 <Layout
-  title={`${entry.data.company} — Alok Kumar`}
-  description={entry.data.summary}
+  title={`${m.company} — Alok Kumar`}
+  description={m.summary}
   article={true}
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
-    <!-- Logo -->
     <TopBar />
     <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/work" aria-label="Back to Work">
@@ -34,99 +32,89 @@ const { Content } = await render(entry);
     </div>
 
     <header class="post-header">
-      <h1 class="post-title animate a1">{entry.data.company}</h1>
-      <p class="post-date animate a2">{entry.data.role} · {entry.data.period}</p>
-      <p class="post-summary animate a3">{entry.data.summary}</p>
-      
-      {entry.data.website && (
-        <a class="link-pill animate a4" href={entry.data.website} target="_blank" rel="noopener noreferrer">
+      <h1 class="post-title animate a1">{m.company}</h1>
+      <p class="post-date animate a2">{m.role} · {m.period}</p>
+      <p class="post-summary animate a3">{m.summary}</p>
+
+      {m.website && (
+        <a class="link-pill animate a4" href={m.website} target="_blank" rel="noopener noreferrer">
           View project <span class="pill-icon">↗</span>
         </a>
       )}
     </header>
 
-    {
-      entry.data.hero && (
-        <div class="post-hero-image animate a4" style="margin-top: 32px; width: 100%;">
-          <Image
-            src={entry.data.hero}
-            alt={`${entry.data.company} — hero image`}
-            width={1200} height={1200}
-            loading="eager"
-            decoding="async"
-            style="width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border);"
-          />
-        </div>
-      )
-    }
+    {m.hero && (
+      <div class="post-hero-image animate a4" style="margin-top: 32px; width: 100%;">
+        <img
+          src={m.hero}
+          alt={`${m.company} — hero image`}
+          loading="eager"
+          decoding="async"
+          style="width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border);"
+        />
+      </div>
+    )}
 
-    <div class="prose animate a5" style="margin-top: 40px; width: 100%;">
-      <Content />
-    </div>
+    {htmlBody && (
+      <div class="prose animate a5" style="margin-top: 40px; width: 100%;" set:html={htmlBody}></div>
+    )}
 
-    {
-      entry.data.photos.length > 0 && (
-        <section class="animate a6" style="margin-top: 60px; width: 100%;">
-          <p class="eyebrow" style="margin-bottom: 16px;">Visuals</p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
-            {entry.data.photos.map((photo) => (
-              <figure style="margin: 0;">
-                <div style={`overflow: hidden; border-radius: 8px; border: 1px solid var(--border); aspect-ratio: ${photo.aspect};`}>
-                  <Image
-                    src={photo.src}
-                    alt={photo.caption ?? ""}
-                    width={1200} height={1200}
-                    loading="lazy"
-                    decoding="async"
-                    style="width: 100%; height: 100%; object-fit: cover; display: block;"
-                  />
-                </div>
-                {photo.caption && (
-                  <figcaption style="margin-top: 8px; font-size: 12px; color: var(--fg-secondary);">
-                    {photo.caption}
-                  </figcaption>
-                )}
-              </figure>
-            ))}
-          </div>
-        </section>
-      )
-    }
-
-    {
-      entry.data.projects.length > 0 && (
-        <section class="animate a7" style="margin-top: 60px; width: 100%;">
-          <p class="eyebrow" style="margin-bottom: 16px;">Key metrics</p>
-          <div class="work-list">
-            {entry.data.projects.map((project) => (
-              <div class="work-item" style="flex-direction: column; align-items: flex-start; padding: 16px 0; gap: 8px;">
-                <h3 style="font-size: 16px; font-weight: 500; margin: 0;">{project.title}</h3>
-                <p style="font-size: 14px; color: var(--fg-secondary); margin: 0;">{project.description}</p>
-                {project.href && (
-                  <a href={project.href} target="_blank" rel="noopener noreferrer" style="font-size: 12px; color: var(--fg); text-decoration: underline; text-underline-offset: 4px;">
-                    Read more ↗
-                  </a>
-                )}
+    {photos.length > 0 && (
+      <section class="animate a6" style="margin-top: 60px; width: 100%;">
+        <p class="eyebrow" style="margin-bottom: 16px;">Visuals</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+          {photos.map((photo) => (
+            <figure style="margin: 0;">
+              <div style={`overflow: hidden; border-radius: 8px; border: 1px solid var(--border); aspect-ratio: ${photo.aspect ?? "3 / 2"};`}>
+                <img
+                  src={photo.src}
+                  alt={photo.caption ?? ""}
+                  loading="lazy"
+                  decoding="async"
+                  style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                />
               </div>
-            ))}
-          </div>
-        </section>
-      )
-    }
+              {photo.caption && (
+                <figcaption style="margin-top: 8px; font-size: 12px; color: var(--fg-secondary);">
+                  {photo.caption}
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
 
-    {
-      entry.data.testimonial && (
-        <section class="animate a8" style="margin-top: 60px; padding: 32px; border: 1px solid var(--border); border-radius: 8px; background: var(--tag-bg); width: 100%;">
-          <blockquote style="font-size: 16px; margin: 0; color: var(--fg);">
-            "{entry.data.testimonial.quote}"
-          </blockquote>
-          <p style="margin-top: 16px; font-size: 14px; color: var(--fg-secondary); margin-bottom: 0;">
-            — {entry.data.testimonial.author}
-            {entry.data.testimonial.role && `, ${entry.data.testimonial.role}`}
-          </p>
-        </section>
-      )
-    }
+    {projects.length > 0 && (
+      <section class="animate a7" style="margin-top: 60px; width: 100%;">
+        <p class="eyebrow" style="margin-bottom: 16px;">Key metrics</p>
+        <div class="work-list">
+          {projects.map((project) => (
+            <div class="work-item" style="flex-direction: column; align-items: flex-start; padding: 16px 0; gap: 8px;">
+              <h3 style="font-size: 16px; font-weight: 500; margin: 0;">{project.title}</h3>
+              <p style="font-size: 14px; color: var(--fg-secondary); margin: 0;">{project.description}</p>
+              {project.href && (
+                <a href={project.href} target="_blank" rel="noopener noreferrer" style="font-size: 12px; color: var(--fg); text-decoration: underline; text-underline-offset: 4px;">
+                  Read more ↗
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {m.testimonial && (
+      <section class="animate a8" style="margin-top: 60px; padding: 32px; border: 1px solid var(--border); border-radius: 8px; background: var(--tag-bg); width: 100%;">
+        <blockquote style="font-size: 16px; margin: 0; color: var(--fg);">
+          "{m.testimonial.quote}"
+        </blockquote>
+        <p style="margin-top: 16px; font-size: 14px; color: var(--fg-secondary); margin-bottom: 0;">
+          — {m.testimonial.author}
+          {m.testimonial.role && `, ${m.testimonial.role}`}
+        </p>
+      </section>
+    )}
   </div>
 </Layout>
 
@@ -159,12 +147,10 @@ const { Content } = await render(entry);
     max-width: 60ch;
   }
 
-  /* Allow prose to go full-width on work pages so tables/code don't clip */
   .prose {
     max-width: 100% !important;
   }
 
-  /* Headings in serif to match the page title */
   .prose :global(h1),
   .prose :global(h2),
   .prose :global(h3),
@@ -177,7 +163,6 @@ const { Content } = await render(entry);
     letter-spacing: -0.02em;
   }
 
-  /* Always show underlines on links */
   .prose :global(a) {
     text-decoration: underline;
     text-decoration-color: var(--fg);

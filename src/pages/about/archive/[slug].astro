@@ -1,18 +1,17 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import TopBar from "../../../components/TopBar.astro";
-import { getCollection, render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { getArchive, type ArchiveEntry } from "../../../lib/archive";
+import { marked } from "marked";
 
 export async function getStaticPaths() {
-  const entries = await getCollection("archive");
-  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  const entries = await getArchive();
+  return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
-type Props = { entry: CollectionEntry<"archive"> };
+type Props = { entry: ArchiveEntry };
 const { entry } = Astro.props;
-const { Content } = await render(entry);
-const a = entry.data;
+const a = entry.metadata;
 
 const typeLabel: Record<string, string> = {
   note: "Note",
@@ -22,13 +21,17 @@ const typeLabel: Record<string, string> = {
   observation: "Observation",
 };
 
+const date = a.date ? new Date(a.date) : undefined;
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+const html = entry.markdownContent ? marked.parse(entry.markdownContent) : "";
+const tags = a.tags ?? [];
 ---
 
 <Layout
-  title={`${a.title} — Archive — Alok Kumar`}
-  headline={a.title}
+  title={`${entry.title} — Archive — Alok Kumar`}
+  headline={entry.title}
   description={`${typeLabel[a.type]}${a.source ? ` · ${a.source}` : ""} — from Alok Kumar's archive.`}
   article={true}
 >
@@ -42,23 +45,21 @@ const fmtDate = (d: Date) =>
 
     <article class="archive-entry animate a2">
       <p class="eyebrow">{typeLabel[a.type]}</p>
-      <h1 class="archive-entry-title">{a.title}</h1>
+      <h1 class="archive-entry-title">{entry.title}</h1>
 
-      {(a.source || a.date) && (
+      {(a.source || date) && (
         <p class="archive-entry-meta">
           {a.source}
-          {a.source && a.date && " · "}
-          {a.date && fmtDate(a.date)}
+          {a.source && date && " · "}
+          {date && fmtDate(date)}
         </p>
       )}
 
-      <div class:list={["prose", "archive-entry-body", a.type === "quote" && "is-quote"]}>
-        <Content />
-      </div>
+      <div class:list={["prose", "archive-entry-body", a.type === "quote" && "is-quote"]} set:html={html}></div>
 
-      {a.tags.length > 0 && (
+      {tags.length > 0 && (
         <div class="archive-entry-tags">
-          {a.tags.map((tag) => <span class="entry-tag">{tag}</span>)}
+          {tags.map((tag) => <span class="entry-tag">{tag}</span>)}
         </div>
       )}
     </article>

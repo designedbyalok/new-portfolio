@@ -1,11 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getCollection } from "astro:content";
+import { getIdeas } from "../../lib/ideas";
 
-const entries = (await getCollection("projects")).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const entries = await getIdeas();
 
 const yearOf = (period: string) => {
   const m = period.match(/(\d{4})(?!.*\d{4})/);
@@ -13,12 +11,12 @@ const yearOf = (period: string) => {
 };
 
 const cards = entries.map((e) => ({
-  slug: e.id,
-  title: e.data.title,
-  tagline: e.data.tagline,
-  year: yearOf(e.data.period),
-  category: e.data.tags[0] ?? "All",
-  hero: e.data.hero,
+  slug: e.slug,
+  title: e.title,
+  tagline: e.metadata.tagline,
+  year: yearOf(e.metadata.period),
+  category: e.metadata.tags?.[0] ?? "All",
+  hero: e.metadata.hero ?? e.thumbnail,
 }));
 
 const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))];

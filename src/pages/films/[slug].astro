@@ -1,18 +1,17 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getCollection, render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { getFilms, type Film } from "../../lib/films";
+import { marked } from "marked";
 
 export async function getStaticPaths() {
-  const films = await getCollection("films");
-  return films.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  const films = await getFilms();
+  return films.map((film) => ({ params: { slug: film.slug }, props: { film } }));
 }
 
-type Props = { entry: CollectionEntry<"films"> };
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-const f = entry.data;
+type Props = { film: Film };
+const { film } = Astro.props;
+const f = film.metadata;
 
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
@@ -25,12 +24,15 @@ const starParts = (rating: number): ("full" | "half" | "empty")[] =>
   });
 
 const byline = [f.year, f.director].filter(Boolean).join(" · ");
+const watchedAt = f.watchedAt ? new Date(f.watchedAt) : undefined;
+const lists = f.lists ?? [];
+const htmlNotes = film.markdownContent ? marked.parse(film.markdownContent) : "";
 ---
 
 <Layout
-  title={`${f.title} (${f.year}) — Cinema — Alok Kumar`}
-  headline={f.title}
-  description={f.review ?? `${f.title} (${f.year})${f.director ? `, dir. ${f.director}` : ""}.`}
+  title={`${film.title} (${f.year}) — Cinema — Alok Kumar`}
+  headline={film.title}
+  description={f.review ?? `${film.title} (${f.year})${f.director ? `, dir. ${f.director}` : ""}.`}
   article={true}
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
@@ -44,17 +46,17 @@ const byline = [f.year, f.director].filter(Boolean).join(" · ");
     <article class="film-page animate a2">
       <div class="film-page-poster">
         {f.poster ? (
-          <img src={f.poster} alt={`Poster for ${f.title}`} loading="lazy" decoding="async" />
+          <img src={f.poster} alt={`Poster for ${film.title}`} loading="lazy" decoding="async" />
         ) : (
           <div class="film-poster-fallback" aria-hidden="true">
-            <span class="film-poster-title">{f.title}</span>
+            <span class="film-poster-title">{film.title}</span>
             <span class="film-poster-year">{f.year}</span>
           </div>
         )}
       </div>
 
       <div class="film-page-body">
-        <h1 class="film-page-title">{f.title}</h1>
+        <h1 class="film-page-title">{film.title}</h1>
         <p class="film-page-byline">{byline}</p>
 
         <div class="film-page-meta">
@@ -69,12 +71,12 @@ const byline = [f.year, f.director].filter(Boolean).join(" · ");
               )}
             </span>
           )}
-          {f.watchedAt && <span class="film-page-when">Watched {fmtDate(f.watchedAt)}</span>}
+          {watchedAt && <span class="film-page-when">Watched {fmtDate(watchedAt)}</span>}
         </div>
 
-        {f.lists.length > 0 && (
+        {lists.length > 0 && (
           <ul class="film-page-lists">
-            {f.lists.map((l) => <li class="film-chip">{l}</li>)}
+            {lists.map((l) => <li class="film-chip">{l}</li>)}
           </ul>
         )}
 
@@ -94,9 +96,7 @@ const byline = [f.year, f.director].filter(Boolean).join(" · ");
           </div>
         )}
 
-        <div class="prose film-page-notes">
-          <Content />
-        </div>
+        {htmlNotes && <div class="prose film-page-notes" set:html={htmlNotes}></div>}
       </div>
     </article>
   </div>

@@ -1,9 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getCollection } from "astro:content";
+import { getFilms, type Film } from "../../lib/films";
 
-const films = await getCollection("films");
+const films = await getFilms();
 
 const LIST_ORDER = [
   "Comfort Films",
@@ -12,24 +12,23 @@ const LIST_ORDER = [
   "Movies That Changed How I Think",
 ];
 
-type Film = (typeof films)[number];
-
 const byRatingThenYear = (a: Film, b: Film) => {
-  const ra = a.data.rating ?? -1;
-  const rb = b.data.rating ?? -1;
+  const ra = a.metadata.rating ?? -1;
+  const rb = b.metadata.rating ?? -1;
   if (rb !== ra) return rb - ra;
-  return b.data.year - a.data.year;
+  return (b.metadata.year ?? 0) - (a.metadata.year ?? 0);
 };
+
+const inList = (f: Film, name: string) =>
+  (f.metadata.lists ?? []).includes(name);
 
 const sections: { name: string; films: Film[] }[] = LIST_ORDER.map((name) => ({
   name,
-  films: films
-    .filter((f) => f.data.lists.includes(name))
-    .sort(byRatingThenYear),
+  films: films.filter((f) => inList(f, name)).sort(byRatingThenYear),
 })).filter((s) => s.films.length > 0);
 
 const everythingElse = films
-  .filter((f) => !f.data.lists.some((l) => LIST_ORDER.includes(l)))
+  .filter((f) => !(f.metadata.lists ?? []).some((l) => LIST_ORDER.includes(l)))
   .sort(byRatingThenYear);
 
 if (everythingElse.length > 0) {
@@ -50,7 +49,12 @@ const slugify = (s: string) =>
     .replace(/^-+|-+$/g, "");
 
 const hasDetail = (f: Film) =>
-  Boolean(f.data.review || f.data.favoriteMoment || f.data.recommendedFor);
+  Boolean(
+    f.metadata.review || f.metadata.favoriteMoment || f.metadata.recommendedFor,
+  );
+
+const watchedYear = (f: Film) =>
+  f.metadata.watchedAt ? new Date(f.metadata.watchedAt).getFullYear() : undefined;
 ---
 
 <Layout
@@ -75,7 +79,7 @@ const hasDetail = (f: Film) =>
           <p class="eyebrow film-section-label">{section.name}</p>
           <div class="blur-list film-list">
             {section.films.map((film) => {
-              const panelId = `film-${slugify(section.name)}-${film.id}`;
+              const panelId = `film-${slugify(section.name)}-${film.slug}`;
               const expandable = hasDetail(film);
               return (
                 <div class="film-entry">
@@ -88,20 +92,20 @@ const hasDetail = (f: Film) =>
                       aria-controls={panelId}
                     >
                       <span class="film-left">
-                        <span class="blur-item-title">{film.data.title}</span>
+                        <span class="blur-item-title">{film.title}</span>
                         <span class="film-byline">
-                          {film.data.year}
-                          {film.data.director ? ` · ${film.data.director}` : ""}
+                          {film.metadata.year}
+                          {film.metadata.director ? ` · ${film.metadata.director}` : ""}
                         </span>
                       </span>
                       <span class="film-right">
-                        {typeof film.data.rating === "number" ? (
+                        {typeof film.metadata.rating === "number" ? (
                           <span
                             class="stars"
                             role="img"
-                            aria-label={`Rated ${film.data.rating} out of 5`}
+                            aria-label={`Rated ${film.metadata.rating} out of 5`}
                           >
-                            {starParts(film.data.rating).map((p) =>
+                            {starParts(film.metadata.rating).map((p) =>
                               p === "half" ? (
                                 <span class="star star-half" aria-hidden="true">
                                   <span class="star-half-fill">★</span>☆
@@ -113,30 +117,28 @@ const hasDetail = (f: Film) =>
                               ),
                             )}
                           </span>
-                        ) : film.data.watchedAt ? (
-                          <span class="blur-item-meta">
-                            {film.data.watchedAt.getFullYear()}
-                          </span>
+                        ) : watchedYear(film) ? (
+                          <span class="blur-item-meta">{watchedYear(film)}</span>
                         ) : null}
                       </span>
                     </button>
                   ) : (
-                    <a class="blur-item film-row film-row-link" href={`/films/${film.id}`}>
+                    <a class="blur-item film-row film-row-link" href={`/films/${film.slug}`}>
                       <span class="film-left">
-                        <span class="blur-item-title">{film.data.title}</span>
+                        <span class="blur-item-title">{film.title}</span>
                         <span class="film-byline">
-                          {film.data.year}
-                          {film.data.director ? ` · ${film.data.director}` : ""}
+                          {film.metadata.year}
+                          {film.metadata.director ? ` · ${film.metadata.director}` : ""}
                         </span>
                       </span>
                       <span class="film-right">
-                        {typeof film.data.rating === "number" ? (
+                        {typeof film.metadata.rating === "number" ? (
                           <span
                             class="stars"
                             role="img"
-                            aria-label={`Rated ${film.data.rating} out of 5`}
+                            aria-label={`Rated ${film.metadata.rating} out of 5`}
                           >
-                            {starParts(film.data.rating).map((p) =>
+                            {starParts(film.metadata.rating).map((p) =>
                               p === "half" ? (
                                 <span class="star star-half" aria-hidden="true">
                                   <span class="star-half-fill">★</span>☆
@@ -148,10 +150,8 @@ const hasDetail = (f: Film) =>
                               ),
                             )}
                           </span>
-                        ) : film.data.watchedAt ? (
-                          <span class="blur-item-meta">
-                            {film.data.watchedAt.getFullYear()}
-                          </span>
+                        ) : watchedYear(film) ? (
+                          <span class="blur-item-meta">{watchedYear(film)}</span>
                         ) : null}
                       </span>
                     </a>
@@ -159,22 +159,22 @@ const hasDetail = (f: Film) =>
                   {expandable && (
                     <div class="film-detail" id={panelId} data-film-panel>
                       <div class="film-detail-inner">
-                        {film.data.review && (
-                          <p class="film-review">{film.data.review}</p>
+                        {film.metadata.review && (
+                          <p class="film-review">{film.metadata.review}</p>
                         )}
-                        {film.data.favoriteMoment && (
+                        {film.metadata.favoriteMoment && (
                           <div class="film-field">
                             <p class="eyebrow">Favorite moment</p>
-                            <p class="film-moment">{film.data.favoriteMoment}</p>
+                            <p class="film-moment">{film.metadata.favoriteMoment}</p>
                           </div>
                         )}
-                        {film.data.recommendedFor && (
+                        {film.metadata.recommendedFor && (
                           <div class="film-field">
                             <p class="eyebrow">Watch it if</p>
-                            <p class="film-recommend">{film.data.recommendedFor}</p>
+                            <p class="film-recommend">{film.metadata.recommendedFor}</p>
                           </div>
                         )}
-                        <a class="film-page-link" href={`/films/${film.id}`}>Full page →</a>
+                        <a class="film-page-link" href={`/films/${film.slug}`}>Full page →</a>
                       </div>
                     </div>
                   )}
@@ -197,7 +197,6 @@ const hasDetail = (f: Film) =>
     margin: 0 0 12px;
   }
 
-  /* Button reset so .blur-item styles apply cleanly */
   button.film-row {
     width: 100%;
     background: none;
@@ -249,33 +248,12 @@ const hasDetail = (f: Film) =>
     margin-left: 16px;
   }
 
-  /* Stars */
-  .stars {
-    display: inline-flex;
-    gap: 1px;
-    font-size: var(--text-sm);
-    line-height: 1;
-  }
-  .star-full {
-    color: var(--fg);
-  }
-  .star-empty {
-    color: var(--fg-tertiary);
-  }
-  .star-half {
-    position: relative;
-    color: var(--fg-tertiary);
-  }
-  .star-half-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 52%;
-    overflow: hidden;
-    color: var(--fg);
-  }
+  .stars { display: inline-flex; gap: 1px; font-size: var(--text-sm); line-height: 1; }
+  .star-full { color: var(--fg); }
+  .star-empty { color: var(--fg-tertiary); }
+  .star-half { position: relative; color: var(--fg-tertiary); }
+  .star-half-fill { position: absolute; left: 0; top: 0; width: 52%; overflow: hidden; color: var(--fg); }
 
-  /* Accordion panel */
   .film-detail {
     max-height: 0;
     overflow: hidden;
@@ -284,9 +262,7 @@ const hasDetail = (f: Film) =>
       opacity 0.3s ease;
     opacity: 0;
   }
-  .film-detail.is-open {
-    opacity: 1;
-  }
+  .film-detail.is-open { opacity: 1; }
   .film-detail-inner {
     padding: 16px 0 28px;
     border-bottom: 1px solid var(--border);
@@ -298,12 +274,8 @@ const hasDetail = (f: Film) =>
     font-size: var(--text-sm);
     line-height: 1.7;
   }
-  .film-field {
-    margin-top: 18px;
-  }
-  .film-field .eyebrow {
-    margin: 0 0 4px;
-  }
+  .film-field { margin-top: 18px; }
+  .film-field .eyebrow { margin: 0 0 4px; }
   .film-moment {
     margin: 0;
     max-width: 65ch;
@@ -321,28 +293,20 @@ const hasDetail = (f: Film) =>
     line-height: 1.7;
   }
 
-  /* Keep an open panel in step with the sibling-blur hover effect */
   .film-list:hover .film-detail {
     filter: blur(3px);
     opacity: 0.4;
     transition: all 0.3s ease;
   }
-  .film-list:hover .film-detail:not(.is-open) {
-    opacity: 0;
-  }
-  .film-list .film-entry:hover .film-detail {
-    filter: blur(0);
-  }
-  .film-list .film-entry:hover .film-detail.is-open {
-    opacity: 1;
-  }
+  .film-list:hover .film-detail:not(.is-open) { opacity: 0; }
+  .film-list .film-entry:hover .film-detail { filter: blur(0); }
+  .film-list .film-entry:hover .film-detail.is-open { opacity: 1; }
 </style>
 
 <script>
   function closePanel(btn: HTMLElement, panel: HTMLElement) {
     btn.setAttribute("aria-expanded", "false");
     panel.classList.remove("is-open");
-    // Pin current height, then collapse on the next frame so it animates.
     panel.style.maxHeight = `${panel.scrollHeight}px`;
     requestAnimationFrame(() => {
       panel.style.maxHeight = "0px";
@@ -353,7 +317,6 @@ const hasDetail = (f: Film) =>
     btn.setAttribute("aria-expanded", "true");
     panel.classList.add("is-open");
     panel.style.maxHeight = `${panel.scrollHeight}px`;
-    // Release the pinned height once the transition settles so content reflows freely.
     const onEnd = (e: TransitionEvent) => {
       if (e.propertyName !== "max-height") return;
       if (panel.classList.contains("is-open")) panel.style.maxHeight = "none";
@@ -374,7 +337,6 @@ const hasDetail = (f: Film) =>
         if (!panel) return;
         const isOpen = btn.getAttribute("aria-expanded") === "true";
 
-        // Only one open at a time — close any other open panel first.
         document
           .querySelectorAll<HTMLElement>('[data-film-toggle][aria-expanded="true"]')
           .forEach((other) => {
@@ -386,7 +348,6 @@ const hasDetail = (f: Film) =>
           });
 
         if (isOpen) {
-          // "max-height: none" needs re-pinning before it can animate closed.
           if (panel.style.maxHeight === "none") {
             panel.style.maxHeight = `${panel.scrollHeight}px`;
           }

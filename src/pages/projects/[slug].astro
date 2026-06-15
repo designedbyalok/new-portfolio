@@ -2,111 +2,103 @@
 import "@fontsource/jetbrains-mono/400.css";
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getCollection, render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import { Image } from "astro:assets";
+import { getIdeas, type Idea } from "../../lib/ideas";
+import { marked } from "marked";
 
 export async function getStaticPaths() {
-  const entries = await getCollection("projects");
-  return entries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  const ideas = await getIdeas();
+  return ideas.map((idea) => ({ params: { slug: idea.slug }, props: { idea } }));
 }
 
-type Props = { entry: CollectionEntry<"projects"> };
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+type Props = { idea: Idea };
+const { idea } = Astro.props;
+const m = idea.metadata;
+const photos = m.photos ?? [];
+const heroSrc = m.hero ?? idea.thumbnail;
+const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
 ---
 
 <Layout
-  title={`${entry.data.title} — Alok Kumar`}
-  description={entry.data.tagline}
+  title={`${idea.title} — Alok Kumar`}
+  description={m.tagline}
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
-    <!-- Logo -->
     <TopBar />
     <div class="back-wrapper animate a1">
-      <a class="back-link-circle" href="/projects" aria-label="Back to Projects">
+      <a class="back-link-circle" href="/projects" aria-label="Back to Ideas">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </a>
     </div>
 
     <header class="post-header">
-      <h1 class="name animate a1" style="margin-bottom: 8px;">{entry.data.title}</h1>
-      <p class="title animate a2">{entry.data.tagline} · {entry.data.period}</p>
-      
-      {entry.data.external && (
-        <a class="link-pill animate a3" href={entry.data.external} target="_blank" rel="noopener noreferrer" style="margin-top: 16px;">
+      <h1 class="name animate a1" style="margin-bottom: 8px;">{idea.title}</h1>
+      <p class="title animate a2">{m.tagline} · {m.period}</p>
+
+      {m.external && (
+        <a class="link-pill animate a3" href={m.external} target="_blank" rel="noopener noreferrer" style="margin-top: 16px;">
           Visit Project <span class="pill-icon">↗</span>
         </a>
       )}
     </header>
 
-    {
-      entry.data.hero && (
-        <div class="post-hero-image animate a4" style="margin-top: 32px; width: 100%;">
-          <Image
-            src={entry.data.hero}
-            alt={`${entry.data.title} — hero image`}
-            width={1200} height={1200}
-            loading="eager"
-            decoding="async"
-            style="width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border);"
-          />
-        </div>
-      )
-    }
+    {heroSrc && (
+      <div class="post-hero-image animate a4" style="margin-top: 32px; width: 100%;">
+        <img
+          src={heroSrc}
+          alt={`${idea.title} — hero image`}
+          loading="eager"
+          decoding="async"
+          style="width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border);"
+        />
+      </div>
+    )}
 
     <section class="animate a5" style="margin-top: 40px; width: 100%; display: flex; flex-direction: column; gap: 32px;">
       <div>
         <p class="eyebrow" style="margin-bottom: 8px;">The idea</p>
-        <p style="font-size: 16px; margin: 0;">{entry.data.idea}</p>
+        <p style="font-size: 16px; margin: 0;">{m.idea}</p>
       </div>
       <div>
         <p class="eyebrow" style="margin-bottom: 8px;">The problem</p>
-        <p style="font-size: 16px; margin: 0;">{entry.data.problem}</p>
+        <p style="font-size: 16px; margin: 0;">{m.problem}</p>
       </div>
       <div>
         <p class="eyebrow" style="margin-bottom: 8px;">The solution</p>
-        <p style="font-size: 16px; margin: 0;">{entry.data.solution}</p>
+        <p style="font-size: 16px; margin: 0;">{m.solution}</p>
       </div>
       <div>
         <p class="eyebrow" style="margin-bottom: 8px;">Why this is unique</p>
-        <p style="font-size: 16px; margin: 0;">{entry.data.whyUnique}</p>
+        <p style="font-size: 16px; margin: 0;">{m.whyUnique}</p>
       </div>
     </section>
 
-    <div class="prose animate a6" style="margin-top: 40px; width: 100%;">
-      <Content />
-    </div>
+    {htmlBody && (
+      <div class="prose animate a6" style="margin-top: 40px; width: 100%;" set:html={htmlBody}></div>
+    )}
 
-    {
-      entry.data.photos.length > 0 && (
-        <section class="animate a7" style="margin-top: 60px; width: 100%;">
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
-            {entry.data.photos.map((photo) => (
-              <figure style="margin: 0;">
-                <div style={`overflow: hidden; border-radius: 8px; border: 1px solid var(--border); aspect-ratio: ${photo.aspect};`}>
-                  <Image
-                    src={photo.src}
-                    alt={photo.caption ?? ""}
-                    width={1200} height={1200}
-                    loading="lazy"
-                    decoding="async"
-                    style="width: 100%; height: 100%; object-fit: cover; display: block;"
-                  />
-                </div>
-                {photo.caption && (
-                  <figcaption style="margin-top: 8px; font-size: 12px; color: var(--fg-secondary);">
-                    {photo.caption}
-                  </figcaption>
-                )}
-              </figure>
-            ))}
-          </div>
-        </section>
-      )
-    }
+    {photos.length > 0 && (
+      <section class="animate a7" style="margin-top: 60px; width: 100%;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+          {photos.map((photo) => (
+            <figure style="margin: 0;">
+              <div style={`overflow: hidden; border-radius: 8px; border: 1px solid var(--border); aspect-ratio: ${photo.aspect ?? "3 / 2"};`}>
+                <img
+                  src={photo.src}
+                  alt={photo.caption ?? ""}
+                  loading="lazy"
+                  decoding="async"
+                  style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                />
+              </div>
+              {photo.caption && (
+                <figcaption style="margin-top: 8px; font-size: 12px; color: var(--fg-secondary);">
+                  {photo.caption}
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
   </div>
 </Layout>

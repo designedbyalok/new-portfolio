@@ -1,29 +1,28 @@
 import type { APIContext } from "astro";
-import { getCollection } from "astro:content";
 import { getAllPosts } from "../lib/cms";
+import { getWorks } from "../lib/works";
+import { getIdeas } from "../lib/ideas";
+import { getBooks } from "../lib/books";
+import { getFilms } from "../lib/films";
+import { getArchive } from "../lib/archive";
 
 export const prerender = true;
 
 /**
  * /llms.txt — machine-readable site map for LLMs, per https://llmstxt.org.
- * Everything below is generated from the content collections and the CMS;
- * nothing that a collection can supply is hardcoded.
+ * Everything below is generated from WriterPro collections — nothing hardcoded.
  */
 export async function GET(context: APIContext) {
   const site = context.site ?? new URL("https://designedbyalok.com");
   const abs = (path: string) => new URL(path, site).href;
 
-  const work = (await getCollection("work")).sort(
-    (a, b) => a.data.order - b.data.order,
+  const work = await getWorks();
+  const projects = await getIdeas();
+  const books = await getBooks();
+  const films = (await getFilms()).sort(
+    (a, b) => (b.metadata.year ?? 0) - (a.metadata.year ?? 0),
   );
-  const projects = (await getCollection("projects")).sort(
-    (a, b) => a.data.order - b.data.order,
-  );
-  const books = await getCollection("books");
-  const films = (await getCollection("films")).sort(
-    (a, b) => b.data.year - a.data.year,
-  );
-  const archive = await getCollection("archive");
+  const archive = await getArchive();
   const posts = await getAllPosts();
 
   const lines: string[] = [
@@ -34,15 +33,14 @@ export async function GET(context: APIContext) {
     "## Work",
     "",
     ...work.map(
-      (entry) =>
-        `- [${entry.data.company}](${abs(`/work/${entry.id}`)}): ${entry.data.summary}`,
+      (w) =>
+        `- [${w.metadata.company}](${abs(`/work/${w.slug}`)}): ${w.metadata.summary}`,
     ),
     "",
     "## Projects",
     "",
     ...projects.map(
-      (entry) =>
-        `- [${entry.data.title}](${abs(`/projects/${entry.id}`)}): ${entry.data.tagline}`,
+      (p) => `- [${p.title}](${abs(`/projects/${p.slug}`)}): ${p.metadata.tagline}`,
     ),
     "",
     "## Writing",
@@ -56,7 +54,7 @@ export async function GET(context: APIContext) {
     `- [Books](${abs("/books")}): The bookshelf — what Alok is reading, has finished, and recommends.`,
     ...books.map(
       (b) =>
-        `- [${b.data.title}](${abs(`/books/${b.id}`)}): ${b.data.author} — ${b.data.status}.`,
+        `- [${b.title}](${abs(`/books/${b.slug}`)}): ${b.metadata.author} — ${b.metadata.status}.`,
     ),
     "",
     "## Cinema",
@@ -64,14 +62,14 @@ export async function GET(context: APIContext) {
     `- [Films](${abs("/films")}): The film log — what Alok has watched and rated.`,
     ...films.map(
       (f) =>
-        `- [${f.data.title} (${f.data.year})](${abs(`/films/${f.id}`)})${f.data.director ? `: dir. ${f.data.director}` : ""}.`,
+        `- [${f.title} (${f.metadata.year})](${abs(`/films/${f.slug}`)})${f.metadata.director ? `: dir. ${f.metadata.director}` : ""}.`,
     ),
     "",
     "## Archive",
     "",
     `- [Archive](${abs("/about/archive")}): Notes, quotes, mental models, and observations collected over time.`,
     ...archive.map(
-      (a) => `- [${a.data.title}](${abs(`/about/archive/${a.id}`)}): ${a.data.type}.`,
+      (a) => `- [${a.title}](${abs(`/about/archive/${a.slug}`)}): ${a.metadata.type}.`,
     ),
     "",
     "## Meta",

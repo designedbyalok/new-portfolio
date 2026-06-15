@@ -2,18 +2,21 @@
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import BookCover from "../../components/BookCover.astro";
-import { getCollection, render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { getBooks, type Book } from "../../lib/books";
+import { marked } from "marked";
 
 export async function getStaticPaths() {
-  const books = await getCollection("books");
-  return books.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  const books = await getBooks();
+  return books.map((book) => ({ params: { slug: book.slug }, props: { book } }));
 }
 
-type Props = { entry: CollectionEntry<"books"> };
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-const b = entry.data;
+type Props = { book: Book };
+const { book } = Astro.props;
+const b = book.metadata;
+
+const toDate = (iso?: string) => (iso ? new Date(iso) : undefined);
+const startedAt = toDate(b.startedAt);
+const finishedAt = toDate(b.finishedAt);
 
 const fmtMonth = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
@@ -27,20 +30,22 @@ const statusLabel: Record<string, string> = {
 };
 
 const whenRead = (() => {
-  if (b.status === "finished" && b.finishedAt) return `Finished ${fmtMonth(b.finishedAt)}`;
-  if (b.status === "currently-reading" && b.startedAt) return `Reading since ${fmtMonth(b.startedAt)}`;
-  if (b.startedAt && b.finishedAt) return `${fmtMonth(b.startedAt)} – ${fmtMonth(b.finishedAt)}`;
-  if (b.startedAt) return `Started ${fmtMonth(b.startedAt)}`;
+  if (b.status === "finished" && finishedAt) return `Finished ${fmtMonth(finishedAt)}`;
+  if (b.status === "currently-reading" && startedAt)
+    return `Reading since ${fmtMonth(startedAt)}`;
+  if (startedAt && finishedAt) return `${fmtMonth(startedAt)} – ${fmtMonth(finishedAt)}`;
+  if (startedAt) return `Started ${fmtMonth(startedAt)}`;
   return statusLabel[b.status];
 })();
 
 const rating = b.rating ? Math.round(b.rating) : 0;
+const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : "";
 ---
 
 <Layout
-  title={`${b.title} — Reading — Alok Kumar`}
-  headline={b.title}
-  description={b.review ?? `${b.title} by ${b.author} — ${statusLabel[b.status]}.`}
+  title={`${book.title} — Reading — Alok Kumar`}
+  headline={book.title}
+  description={b.review ?? `${book.title} by ${b.author} — ${statusLabel[b.status]}.`}
   article={true}
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
@@ -54,17 +59,17 @@ const rating = b.rating ? Math.round(b.rating) : 0;
     <article class="book-page animate a2">
       <div class="book-page-cover">
         <BookCover
-          title={b.title}
+          title={book.title}
           author={b.author}
-          spineColor={b.spineColor}
-          textColor={b.textColor}
+          spineColor={b.spineColor ?? "#333333"}
+          textColor={b.textColor ?? "#ffffff"}
           cover={b.cover}
         />
       </div>
 
       <div class="book-page-body">
         <p class="eyebrow">{statusLabel[b.status]}</p>
-        <h1 class="book-page-title">{b.title}</h1>
+        <h1 class="book-page-title">{book.title}</h1>
         <p class="book-page-author">{b.author}</p>
 
         <div class="book-page-meta">
@@ -89,9 +94,9 @@ const rating = b.rating ? Math.round(b.rating) : 0;
           </div>
         )}
 
-        <div class="prose book-page-notes">
-          <Content />
-        </div>
+        {htmlNotes && (
+          <div class="prose book-page-notes" set:html={htmlNotes}></div>
+        )}
       </div>
     </article>
   </div>

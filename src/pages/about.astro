@@ -4,6 +4,7 @@ import TopBar from "../components/TopBar.astro";
 import ListeningTo from "../components/ListeningTo.astro";
 import GithubHeatmap from "../components/GithubHeatmap.astro";
 import BentoGallery from "../components/BentoGallery.astro";
+import { getPhotos } from "../lib/photos";
 import { Image } from "astro:assets";
 
 type Photo = { src: string; aspect: string; caption: string; alt?: string };
@@ -32,14 +33,7 @@ const legos: Photo = {
   caption: "Eiffel Tower, in pieces on the dining table.",
 };
 
-const photography: Photo[] = [
-  { src: "https://picsum.photos/seed/photo-pune/1200/800", aspect: "3 / 2", caption: "Pune morning, 2024" },
-  { src: "https://picsum.photos/seed/photo-goa/900/1100", aspect: "4 / 5", caption: "Goa, 2023" },
-  { src: "https://picsum.photos/seed/photo-kerala/1000/1000", aspect: "1 / 1", caption: "Backwaters, Kerala" },
-  { src: "https://picsum.photos/seed/photo-street/1000/1000", aspect: "1 / 1", caption: "Streetlight study" },
-  { src: "https://picsum.photos/seed/photo-mumbai/1200/800", aspect: "3 / 2", caption: "Window, Mumbai" },
-  { src: "https://picsum.photos/seed/photo-delhi/900/1100", aspect: "4 / 5", caption: "Old Delhi" },
-];
+const photography = await getPhotos();
 ---
 
 <Layout

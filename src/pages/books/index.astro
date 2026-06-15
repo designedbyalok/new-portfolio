@@ -2,26 +2,28 @@
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import BookCover from "../../components/BookCover.astro";
-import { getCollection } from "astro:content";
+import { getBooks, type Book } from "../../lib/books";
 
-const books = await getCollection("books");
+const books = await getBooks();
 
-type Book = (typeof books)[number];
+const toDate = (iso?: string) => (iso ? new Date(iso) : undefined);
 
 const fmtMonth = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
 const statusLine = (b: Book) => {
-  const { status, startedAt, finishedAt } = b.data;
+  const { status, startedAt, finishedAt } = b.metadata;
+  const started = toDate(startedAt);
+  const finished = toDate(finishedAt);
   switch (status) {
     case "finished":
-      return finishedAt ? `Finished · ${fmtMonth(finishedAt)}` : "Finished";
+      return finished ? `Finished · ${fmtMonth(finished)}` : "Finished";
     case "currently-reading":
-      return startedAt
-        ? `Currently reading · started ${fmtMonth(startedAt)}`
+      return started
+        ? `Currently reading · started ${fmtMonth(started)}`
         : "Currently reading";
     case "paused":
-      return startedAt ? `Paused · started ${fmtMonth(startedAt)}` : "Paused";
+      return started ? `Paused · started ${fmtMonth(started)}` : "Paused";
     case "abandoned":
       return "Abandoned";
     default:
@@ -30,11 +32,10 @@ const statusLine = (b: Book) => {
 };
 
 const timelineMeta = (b: Book) => {
-  switch (b.data.status) {
+  const finished = toDate(b.metadata.finishedAt);
+  switch (b.metadata.status) {
     case "finished":
-      return b.data.finishedAt
-        ? String(b.data.finishedAt.getFullYear())
-        : "Finished";
+      return finished ? String(finished.getFullYear()) : "Finished";
     case "currently-reading":
       return "Reading";
     case "paused":
@@ -46,32 +47,36 @@ const timelineMeta = (b: Book) => {
   }
 };
 
-/* ---- Shelf: every non-wishlist book; currently-reading last (leaning) ---- */
-const finishedAtMs = (b: Book) => b.data.finishedAt?.getTime() ?? 0;
-const startedAtMs = (b: Book) => b.data.startedAt?.getTime() ?? 0;
+const finishedAtMs = (b: Book) => toDate(b.metadata.finishedAt)?.getTime() ?? 0;
+const startedAtMs = (b: Book) => toDate(b.metadata.startedAt)?.getTime() ?? 0;
 
 const reading = books
-  .filter((b) => b.data.status === "currently-reading")
+  .filter((b) => b.metadata.status === "currently-reading")
   .sort((a, b) => startedAtMs(a) - startedAtMs(b));
 
 const shelfRest = books
   .filter(
-    (b) => b.data.status !== "wishlist" && b.data.status !== "currently-reading",
+    (b) =>
+      b.metadata.status !== "wishlist" &&
+      b.metadata.status !== "currently-reading",
   )
   .sort((a, b) => finishedAtMs(b) - finishedAtMs(a));
 
 const shelf = [...shelfRest, ...reading];
 
-/* ---- Timeline groups ---- */
-const byTitle = (a: Book, b: Book) => a.data.title.localeCompare(b.data.title);
+const byTitle = (a: Book, b: Book) => a.title.localeCompare(b.title);
 
-const finished = books.filter((b) => b.data.status === "finished");
+const finished = books.filter((b) => b.metadata.status === "finished");
 const finishedDated = finished
-  .filter((b) => b.data.finishedAt)
+  .filter((b) => b.metadata.finishedAt)
   .sort((a, b) => finishedAtMs(b) - finishedAtMs(a));
-const finishedUndated = finished.filter((b) => !b.data.finishedAt).sort(byTitle);
+const finishedUndated = finished
+  .filter((b) => !b.metadata.finishedAt)
+  .sort(byTitle);
 const years = [
-  ...new Set(finishedDated.map((b) => b.data.finishedAt!.getFullYear())),
+  ...new Set(
+    finishedDated.map((b) => toDate(b.metadata.finishedAt)!.getFullYear()),
+  ),
 ].sort((a, b) => b - a);
 
 const groups: { label: string; items: Book[] }[] = [];
@@ -84,7 +89,9 @@ if (reading.length > 0) {
 for (const year of years) {
   groups.push({
     label: `Finished ${year}`,
-    items: finishedDated.filter((b) => b.data.finishedAt!.getFullYear() === year),
+    items: finishedDated.filter(
+      (b) => toDate(b.metadata.finishedAt)!.getFullYear() === year,
+    ),
   });
 }
 if (finishedUndated.length > 0) {
@@ -95,11 +102,14 @@ for (const [label, status] of [
   ["Abandoned", "abandoned"],
   ["Wishlist", "wishlist"],
 ] as const) {
-  const items = books.filter((b) => b.data.status === status).sort(byTitle);
+  const items = books
+    .filter((b) => b.metadata.status === status)
+    .sort(byTitle);
   if (items.length > 0) groups.push({ label, items });
 }
 
-const ratingOf = (b: Book) => (b.data.rating ? Math.round(b.data.rating) : 0);
+const ratingOf = (b: Book) =>
+  b.metadata.rating ? Math.round(b.metadata.rating) : 0;
 ---
 
 <Layout
@@ -126,15 +136,15 @@ const ratingOf = (b: Book) => (b.data.rating ? Math.round(b.data.rating) : 0);
               type="button"
               class:list={[
                 "spine",
-                book.data.status === "currently-reading" && "spine-leaning",
+                book.metadata.status === "currently-reading" && "spine-leaning",
               ]}
-              style={`background-color: ${book.data.spineColor}; color: ${book.data.textColor};`}
+              style={`background-color: ${book.metadata.spineColor ?? "#333333"}; color: ${book.metadata.textColor ?? "#ffffff"};`}
               data-book-spine
-              data-book-id={book.id}
-              aria-label={`Open ${book.data.title} by ${book.data.author}`}
+              data-book-id={book.slug}
+              aria-label={`Open ${book.title} by ${book.metadata.author}`}
               aria-haspopup="dialog"
             >
-              <span class="spine-title">{book.data.title}</span>
+              <span class="spine-title">{book.title}</span>
             </button>
           ))
         }
@@ -153,12 +163,12 @@ const ratingOf = (b: Book) => (b.data.rating ? Math.round(b.data.rating) : 0);
                   type="button"
                   class="blur-item book-row"
                   data-book-row
-                  data-book-id={book.id}
+                  data-book-id={book.slug}
                   aria-haspopup="dialog"
                 >
                   <span class="blur-item-left">
-                    <span class="blur-item-title">{book.data.title}</span>
-                    <span class="book-author">{book.data.author}</span>
+                    <span class="blur-item-title">{book.title}</span>
+                    <span class="book-author">{book.metadata.author}</span>
                   </span>
                   <span class="blur-item-meta">{timelineMeta(book)}</span>
                 </button>
@@ -173,21 +183,21 @@ const ratingOf = (b: Book) => (b.data.rating ? Math.round(b.data.rating) : 0);
     <div hidden>
       {
         books.map((book) => (
-          <template data-book-template={book.id}>
+          <template data-book-template={book.slug}>
             <div class="book-card">
               <div class="book-card-cover">
                 <BookCover
-                  title={book.data.title}
-                  author={book.data.author}
-                  spineColor={book.data.spineColor}
-                  textColor={book.data.textColor}
-                  cover={book.data.cover}
+                  title={book.title}
+                  author={book.metadata.author}
+                  spineColor={book.metadata.spineColor ?? "#333333"}
+                  textColor={book.metadata.textColor ?? "#ffffff"}
+                  cover={book.metadata.cover}
                 />
               </div>
               <div class="book-card-body">
                 <p class="eyebrow">{statusLine(book)}</p>
-                <p class="book-card-title">{book.data.title}</p>
-                <p class="book-card-author">{book.data.author}</p>
+                <p class="book-card-title">{book.title}</p>
+                <p class="book-card-author">{book.metadata.author}</p>
                 {ratingOf(book) > 0 && (
                   <p class="book-card-stars">
                     <span class="stars" aria-label={`Rated ${ratingOf(book)} of 5`}>
@@ -195,8 +205,8 @@ const ratingOf = (b: Book) => (b.data.rating ? Math.round(b.data.rating) : 0);
                     </span>
                   </p>
                 )}
-                {book.data.review && <p class="book-card-review">{book.data.review}</p>}
-                <a class="book-card-link" href={`/books/${book.id}`}>Read full →</a>
+                {book.metadata.review && <p class="book-card-review">{book.metadata.review}</p>}
+                <a class="book-card-link" href={`/books/${book.slug}`}>Read full →</a>
               </div>
             </div>
           </template>
@@ -388,7 +398,6 @@ const ratingOf = (b: Book) => (b.data.rating ? Math.round(b.data.rating) : 0);
       mount.replaceChildren(tpl.content.cloneNode(true));
       lastFocused = trigger;
       modal.hidden = false;
-      // next frame so the opacity/transform transition runs
       requestAnimationFrame(() => modal.classList.add("is-open"));
       document.body.style.overflow = "hidden";
       closeBtn.focus();
