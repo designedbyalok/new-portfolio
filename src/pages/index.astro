@@ -15,20 +15,22 @@ const fmtDate = (iso?: string) =>
       })
     : "";
 
+// Each card links to the case study page (/work/<slug>). The detail page
+// shows the "View project" link to the live URL.
 const projects = [
   {
     title: "WritrPro",
     sub: "A Minimal Editor & CMS",
-    href: "https://writrpro.com",
+    href: "/work/writrpro",
     icon: "/icon-writerpro.svg",
-    external: true,
+    external: false,
   },
   {
     title: "JobStax",
     sub: "The Calm Job Tracker",
-    href: "https://jobstax.vercel.app/",
+    href: "/work/jobstax",
     icon: "/icon-stax.svg",
-    external: true,
+    external: false,
   },
 ];
 
@@ -77,7 +79,7 @@ const resources = [
             email</a> or see my code on
           <span class="gh-wrap"><a class="bio-link" href="https://github.com/designedbyalok" target="_blank" rel="noopener noreferrer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-            GitHub</a><span class="gh-hover-card" aria-hidden="true"><GithubHeatmap card /><a class="gh-card-overlay" href="https://github.com/designedbyalok" target="_blank" rel="noopener noreferrer" aria-label="Open GitHub profile"></a></span></span>.
+            GitHub</a><span class="gh-hover-card" aria-hidden="true"><GithubHeatmap card /></span></span>.
         </div>
       </div>
 
@@ -111,50 +113,54 @@ const resources = [
         </div>
       </section>
 
-      <!-- Writing — same listing as the blog index -->
-      <section class="block animate a5">
-        <h2 class="block-label">Writing</h2>
-        <div class="blur-list">
-          {
-            posts.map((post) => (
-              <a class="blur-item" href={`/blog/${post.slug}`} data-astro-prefetch="hover">
-                <div class="blur-item-left">
-                  {post.thumbnail ? (
-                    <img class="thumb-frame" src={post.thumbnail} alt="" width="64" height="40" loading="lazy" decoding="async" />
-                  ) : (
-                    <div class="thumb-frame" aria-hidden="true"></div>
-                  )}
-                  <span class="blur-item-title">{post.title}</span>
-                </div>
-                <span class="blur-item-meta">{fmtDate(post.date)}</span>
-              </a>
-            ))
-          }
-        </div>
-      </section>
+      <!-- Writing + Resources share one blur scope: hovering an item
+           blurs siblings across both sections, not just within one. -->
+      <div class="blur-scope">
+        <!-- Writing — same listing as the blog index -->
+        <section class="block animate a5">
+          <h2 class="block-label">Writing</h2>
+          <div class="blur-list">
+            {
+              posts.map((post) => (
+                <a class="blur-item" href={`/blog/${post.slug}`} data-astro-prefetch="hover">
+                  <div class="blur-item-left">
+                    {post.thumbnail ? (
+                      <img class="thumb-frame" src={post.thumbnail} alt="" width="64" height="40" loading="lazy" decoding="async" />
+                    ) : (
+                      <div class="thumb-frame" aria-hidden="true"></div>
+                    )}
+                    <span class="blur-item-title">{post.title}</span>
+                  </div>
+                  <span class="blur-item-meta">{fmtDate(post.date)}</span>
+                </a>
+              ))
+            }
+          </div>
+        </section>
 
-      <!-- Resources -->
-      <section class="block animate a6">
-        <h2 class="block-label">Resources</h2>
-        <div class="row-list">
-          {
-            resources.map((r) => (
-              <a class="row" href={r.href} target="_blank" rel="noopener noreferrer">
-                <span class="res-thumb" aria-hidden="true">
-                  <span class="res-line"></span>
-                  <span class="res-line"></span>
-                  <span class="res-line"></span>
-                  <span class="res-bar"></span>
-                </span>
-                <span class="row-text">
-                  <span class="row-title">{r.title}</span>
-                  <span class="row-meta">{r.sub}</span>
-                </span>
-              </a>
-            ))
-          }
-        </div>
-      </section>
+        <!-- Resources -->
+        <section class="block animate a6">
+          <h2 class="block-label">Resources</h2>
+          <div class="row-list">
+            {
+              resources.map((r) => (
+                <a class="row" href={r.href} target="_blank" rel="noopener noreferrer">
+                  <span class="res-thumb" aria-hidden="true">
+                    <span class="res-line"></span>
+                    <span class="res-line"></span>
+                    <span class="res-line"></span>
+                    <span class="res-bar"></span>
+                  </span>
+                  <span class="row-text">
+                    <span class="row-title">{r.title}</span>
+                    <span class="row-meta">{r.sub}</span>
+                  </span>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      </div>
 
       <!-- Follow me -->
       <section class="block follow animate a7">
@@ -408,15 +414,6 @@ const resources = [
     transform: translateY(0) scale(1);
     pointer-events: auto;
   }
-  /* Full-card click target — sits on top of the heatmap so the whole
-     popover navigates to the GitHub profile. */
-  .gh-card-overlay {
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    text-decoration: none;
-    z-index: 1;
-  }
 
   /* Section blocks */
   .block {
@@ -494,6 +491,18 @@ const resources = [
   .project-sub {
     font-size: var(--text-base);
     color: var(--fg-secondary);
+  }
+
+  /* Cross-section blur: hovering any item in Writing or Resources
+     blurs every other item across BOTH sections, not just within one list. */
+  .blur-scope:hover :is(.blur-item, .row) {
+    filter: blur(3px);
+    opacity: 0.4;
+  }
+  .blur-scope :is(.blur-item, .row):hover {
+    filter: blur(0);
+    opacity: 1;
+    background-color: var(--hover-bg);
   }
 
   /* Row lists (Writing, Resources) */

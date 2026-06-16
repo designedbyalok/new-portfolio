@@ -23,13 +23,19 @@ const SKELETON_CELLS = 53 * 7;
       </div>
       <div class="gh-tooltip" data-gh-tooltip hidden role="tooltip" />
       <p class="gh-sr" data-gh-summary>Loading GitHub contribution activity.</p>
-      <div class="gh-card-foot">
+      <a
+        class="gh-card-foot"
+        href="https://github.com/designedbyalok"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open Alok Kumar's GitHub profile"
+      >
         <img class="gh-card-avatar" src="/favicon.svg" alt="" width="36" height="36" />
         <span class="gh-card-id">
           <span class="gh-card-name">Alok Kumar</span>
           <span class="gh-card-handle">@designedbyalok</span>
         </span>
-      </div>
+      </a>
     </div>
   ) : (
     <section class="gh-heatmap" data-pagefind-ignore>
@@ -104,10 +110,11 @@ const SKELETON_CELLS = 53 * 7;
   function render(card: HTMLElement, json: any) {
     const grid = card.querySelector<HTMLElement>("[data-gh-grid]");
     const monthsRow = card.querySelector<HTMLElement>("[data-gh-months]");
+    // Optional — the card variant on the homepage has no total readout.
     const totalEl = card.querySelector<HTMLElement>("[data-gh-total]");
     const summaryEl = card.querySelector<HTMLElement>("[data-gh-summary]");
     const scroller = card.querySelector<HTMLElement>("[data-gh-scroll]");
-    if (!grid || !monthsRow || !totalEl || !summaryEl || !scroller) {
+    if (!grid || !monthsRow || !summaryEl || !scroller) {
       throw new Error("missing heatmap markup");
     }
 
@@ -158,7 +165,7 @@ const SKELETON_CELLS = 53 * 7;
     let total = Number(json?.total?.lastYear);
     if (!Number.isFinite(total)) total = days.reduce((sum, d) => sum + d.count, 0);
     const totalText = total.toLocaleString("en-US") + " contributions in the last year";
-    totalEl.textContent = totalText;
+    if (totalEl) totalEl.textContent = totalText;
     summaryEl.textContent = "GitHub activity: " + totalText + ".";
 
     // Keep the most recent weeks in view
@@ -424,6 +431,17 @@ const SKELETON_CELLS = 53 * 7;
     align-items: center;
     gap: 12px;
     margin-top: 18px;
+    padding: 6px;
+    margin-left: -6px;
+    margin-right: -6px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease;
+  }
+  .gh-card-foot:hover,
+  .gh-card-foot:focus-visible {
+    background: var(--hover-bg);
   }
   .gh-card-avatar {
     width: 36px;
