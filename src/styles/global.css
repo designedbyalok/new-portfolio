@@ -59,6 +59,9 @@ html, body { overflow-x: clip !important; }
     --tag-bg: rgba(0,0,0,0.05);
     --accent: #181818;
     --thumb-border: #ffffff;
+    /* Frosted background for the fixed chrome buttons (back / search / theme) —
+       opaque enough to hide content scrolling behind them. */
+    --chrome-btn-bg: rgba(245, 245, 240, 0.78);
   }
 
   [data-theme="dark"] {
@@ -73,6 +76,7 @@ html, body { overflow-x: clip !important; }
     --tag-bg: rgba(252,242,225,0.07);
     --accent: #FCF2E1;
     --thumb-border: #d9cdb8;
+    --chrome-btn-bg: rgba(43, 40, 37, 0.75);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -87,6 +91,7 @@ html, body { overflow-x: clip !important; }
       --tag-bg: rgba(252,242,225,0.07);
       --accent: #FCF2E1;
       --thumb-border: #d9cdb8;
+      --chrome-btn-bg: rgba(43, 40, 37, 0.75);
     }
   }
 
@@ -324,6 +329,14 @@ html, body { overflow-x: clip !important; }
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
 
+  /* Opacity-only fade for elements that must keep a working backdrop-filter:
+     a transform/filter on the element (left behind by fadeUp's forwards fill)
+     would establish a containing block and break a child's backdrop blur. */
+  @keyframes fadeInOnly {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   .animate {
     opacity: 0;
     animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -427,9 +440,9 @@ html, body { overflow-x: clip !important; }
        logo. The desktop gutter shift lives in the min-width: 1024px block. */
     left: 0;
     z-index: 100;
-    background-color: var(--tag-bg);
-    backdrop-filter: blur(100px);
-    -webkit-backdrop-filter: blur(100px);
+    background: var(--chrome-btn-bg);
+    backdrop-filter: blur(2.5px);
+    -webkit-backdrop-filter: blur(2.5px);
   }
   .back-link-circle:hover {
     background: var(--hover-bg);
@@ -526,6 +539,13 @@ html, body { overflow-x: clip !important; }
   /* Sticky circular back button wrapper, shared by all subpages.
      On wide screens it floats into the left gutter (beside the heading)
      instead of taking a row above the content. */
+  /* Use the opacity-only fade so no transform/filter lingers on these wrappers —
+     a transform/filter on them would break the backdrop-filter blur on the back
+     button and the search / theme-toggle buttons over scrolled content. */
+  .back-wrapper.animate,
+  .top-bar.animate {
+    animation-name: fadeInOnly;
+  }
   .back-wrapper {
     margin-bottom: 24px;
     position: sticky;
