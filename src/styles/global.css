@@ -25,14 +25,26 @@ html, body { overflow-x: clip !important; }
   --text-4xl: clamp(2rem, 1.8rem + 2vw, 3rem); /* 32px -> 48px */
   --text-5xl: clamp(2.5rem, 2rem + 3vw, 4rem); /* 40px -> 64px */
 
-  /* Layout Spacing — 4px grid */
-  --page-pad-top: 32px;
-  --page-pad-bottom: clamp(64px, 6vh, 80px);
-  --container-pad-x: clamp(24px, 4vw, 32px);
+  /* Layout Spacing — consistent across every page: 80px top/bottom, 48px sides.
+     Tightened on small screens via the mobile override below. */
+  --page-pad-top: 80px;
+  --page-pad-bottom: 80px;
+  --container-pad-x: 48px;
 
-  /* Fixed chrome (logo + theme toggle) inset — overridden on the homepage */
-  --chrome-top: 32px;
-  --chrome-side: clamp(24px, 4vw, 32px);
+  /* Fixed chrome (logo + theme toggle) inset — kept in lockstep with the page
+     padding so the back button and top bar line up on every page. */
+  --chrome-top: 80px;
+  --chrome-side: 48px;
+}
+
+/* Mobile: pull the fixed chrome and side gutters in so content isn't cramped.
+   Same values on every page → the layout stays consistent on phones too. */
+@media (max-width: 640px) {
+  :root {
+    --chrome-top: 32px;
+    --chrome-side: 24px;
+    --container-pad-x: 24px;
+  }
 }
 
 @layer base {
@@ -411,9 +423,13 @@ html, body { overflow-x: clip !important; }
     top: 0;
     right: 0;
     bottom: 0;
-    left: -29px;
+    /* Default: flush with the content/padding edge so it lines up under the
+       logo. The desktop gutter shift lives in the min-width: 1024px block. */
+    left: 0;
     z-index: 100;
-    background-color: rgba(252, 242, 225, 0.07);
+    background-color: var(--tag-bg);
+    backdrop-filter: blur(100px);
+    -webkit-backdrop-filter: blur(100px);
   }
   .back-link-circle:hover {
     background: var(--hover-bg);
@@ -442,13 +458,15 @@ html, body { overflow-x: clip !important; }
     gap: 0;
     width: 100%;
   }
-  .blur-list:hover .blur-item {
+  /* Hovering any row dims every OTHER row on the page — including rows in other
+     categories/sections (e.g. "Finished 2026", "Finished 2025") — while the
+     hovered row stays sharp. The :not(:hover) keeps the hovered row out of the
+     blur entirely (avoids a specificity fight). Scoped to .page per page. */
+  .page:has(.blur-item:hover) .blur-item:not(:hover) {
     filter: blur(3px);
     opacity: 0.4;
   }
-  .blur-list .blur-item:hover {
-    filter: blur(0);
-    opacity: 1;
+  .blur-item:hover {
     background-color: var(--hover-bg);
   }
   .blur-item {
@@ -511,20 +529,33 @@ html, body { overflow-x: clip !important; }
   .back-wrapper {
     margin-bottom: 24px;
     position: sticky;
-    top: 32px;
+    /* Stick at exactly the page's top padding so the button sits at its natural
+       resting spot and never moves — not even slightly — while scrolling. */
+    top: var(--page-pad-top);
     z-index: 100;
     width: fit-content;
   }
   @media (min-width: 1024px) {
     .back-wrapper {
       position: sticky;
-      top: 32px;
+      top: var(--page-pad-top);
       width: 0;
       height: 0;
       margin-bottom: 0;
       /* float the circle into the left gutter, beside the heading.
          margin-left (not transform) — .animate's fadeUp fills `transform`. */
       margin-left: -64px;
+    }
+    /* Nudge the circle further into the gutter on wide screens only. */
+    .back-wrapper .back-link-circle {
+      left: -29px;
+    }
+  }
+  /* On phones the content is pushed below the fixed chrome, so the back button's
+     resting position is chrome-top + 64px. Match it so it stays glued there. */
+  @media (max-width: 768px) {
+    .back-wrapper {
+      top: calc(var(--chrome-top) + 64px);
     }
   }
 
@@ -627,20 +658,18 @@ html, body { overflow-x: clip !important; }
   .cover-modal.is-open .cover-modal-dialog {
     transform: translateY(0) scale(1);
   }
+  /* Stacked: book cover on top, details (status, title, author, rating,
+     review) flow below it. */
   .cover-modal-mount {
-    display: grid;
-    grid-template-columns: minmax(150px, 190px) 1fr;
-    gap: clamp(20px, 4vw, 36px);
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 4vw, 28px);
+    align-items: flex-start;
   }
   @media (max-width: 560px) {
     .cover-modal-mount {
-      grid-template-columns: 1fr;
-      justify-items: center;
+      align-items: center;
       text-align: center;
-    }
-    .cover-modal-mount .bookcover {
-      max-width: 170px;
     }
   }
   .cover-modal-close {

@@ -40,7 +40,7 @@ const photography = await getPhotos();
   title="About — Alok Kumar"
   description="The things I think about when I'm not designing."
 >
-  <div class="container-edge container-content page about" style="padding: 0; gap: 12px 0px; --chrome-top: 80px; --chrome-side: 48px;">
+  <div class="container-edge container-content page about" style="padding: 0; gap: 12px 0px;">
     <!-- Logo -->
     <TopBar />
     <div class="back-wrapper animate a1" style="width: 100%;">
@@ -224,7 +224,7 @@ const photography = await getPhotos();
 
 <style is:global>
   main#main:has(.about) {
-    padding: 80px 48px;
+    padding: var(--page-pad-top) var(--container-pad-x);
   }
 
   .about .top-bar {

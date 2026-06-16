@@ -22,7 +22,7 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
   title={`${idea.title} — Alok Kumar`}
   description={m.tagline}
 >
-  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start; padding: 0; --chrome-top: 80px; --chrome-side: 48px;">
+  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start; padding: 0;">
     <TopBar />
     <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/projects" aria-label="Back to Ideas">
@@ -105,7 +105,7 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
 
 <style is:global>
   main#main:has(.container > .back-wrapper > a[href="/projects"]) {
-    padding: 80px 48px;
+    padding: var(--page-pad-top) var(--container-pad-x);
   }
 </style>
 
