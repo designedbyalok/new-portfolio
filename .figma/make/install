@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+
+# Load nvm to get the right Node version
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+nvm use 24 --silent 2>/dev/null || nvm use 22 --silent 2>/dev/null || true
+
+if ! bun install 2>&1; then
+  echo "bun install failed, falling back to npm install"
+  npm install
+fi

@@ -57,10 +57,10 @@ const formattedDate = post.date
   modifiedDate={post.updated || undefined}
   image={post.thumbnail || "/og.png"}
 >
-  <div class="container-edge container-prose page blog-post-page" style="align-items: flex-start; justify-content: flex-start; position: relative;">
+  <div class="container-edge container-prose page blog-post-page" style="align-items: flex-start; justify-content: flex-start; position: relative; padding: 0; margin-left: 320px; margin-right: 320px; --chrome-top: 80px; --chrome-side: 48px;">
     <!-- Logo -->
     <TopBar />
-    <div class="top-bar-wrapper animate a1">
+    <div class="top-bar-wrapper">
       <a class="back-link-circle" href="/blog" aria-label="Back to Notes">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </a>
@@ -94,29 +94,35 @@ const formattedDate = post.date
   </div>
 </Layout>
 
+<style is:global>
+  main#main:has(.blog-post-page) {
+    padding: 80px 48px;
+  }
+
+  .blog-post-page .back-link-circle {
+    position: fixed !important;
+    top: 80px !important;
+    left: calc(48px + 320px - 72px) !important;
+    right: auto !important;
+    bottom: auto !important;
+    backdrop-filter: blur(100px);
+    z-index: 200;
+  }
+
+  .blog-post-page .top-bar-wrapper {
+    width: 0;
+    height: 0;
+    margin: 0;
+    position: static;
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+</style>
+
 <style>
   .blog-post-page {
-    padding-top: 32px !important;
-    padding-bottom: 120px;
-  }
-
-  .top-bar-wrapper {
-    position: sticky;
-    top: 32px;
-    z-index: 100;
-    width: fit-content;
-  }
-
-  @media (min-width: 1024px) {
-    .top-bar-wrapper {
-      position: sticky;
-      top: 32px;
-      left: -60px;
-      width: 0;
-      height: 0;
-      margin-bottom: 0;
-      z-index: 100;
-    }
+    padding-bottom: 0;
   }
 
   .post-hero-image {

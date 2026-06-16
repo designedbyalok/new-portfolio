@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+URL="${FIGMA_MAKE_URL:-http://localhost:${PORT:-4321}}"
+TRIES=30
+DELAY=1
+
+for i in $(seq 1 "$TRIES"); do
+  if curl -sf --max-time 2 "$URL" -o /dev/null; then
+    echo "Dev server is up at $URL"
+    exit 0
+  fi
+  sleep "$DELAY"
+done
+
+echo "ERROR: Dev server not reachable at $URL after ${TRIES}s" >&2
+exit 1

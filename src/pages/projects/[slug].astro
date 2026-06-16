@@ -22,7 +22,7 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
   title={`${idea.title} — Alok Kumar`}
   description={m.tagline}
 >
-  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
+  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start; padding: 0; --chrome-top: 80px; --chrome-side: 48px;">
     <TopBar />
     <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/projects" aria-label="Back to Ideas">
@@ -31,7 +31,7 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
     </div>
 
     <header class="post-header">
-      <h1 class="name animate a1" style="margin-bottom: 8px;">{idea.title}</h1>
+      <h1 class="name animate a1" style="margin-bottom: 8px; font-size: 48px; line-height: 48px; font-family: var(--font-serif); font-style: italic;">{idea.title}</h1>
       <p class="title animate a2">{m.tagline} · {m.period}</p>
 
       {m.external && (
@@ -102,3 +102,18 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
     )}
   </div>
 </Layout>
+
+<style is:global>
+  main#main:has(.container > .back-wrapper > a[href="/projects"]) {
+    padding: 80px 48px;
+  }
+</style>
+
+<style>
+  .back-link-circle {
+    top: 0;
+    width: 48px;
+    height: 48px;
+    background-color: rgba(252, 242, 225, 0.07);
+  }
+</style>

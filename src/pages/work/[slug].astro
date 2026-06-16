@@ -23,7 +23,7 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
   description={m.summary}
   article={true}
 >
-  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
+  <div class="container container-content page work-detail-page" style="align-items: flex-start; justify-content: flex-start; padding: 0; margin-left: 320px; margin-right: 320px; --chrome-top: 80px; --chrome-side: 48px;">
     <TopBar />
     <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/work" aria-label="Back to Work">
@@ -118,7 +118,31 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
   </div>
 </Layout>
 
+<style is:global>
+  main#main:has(.work-detail-page) {
+    padding: 80px 48px;
+  }
+
+  .work-detail-page .back-link-circle {
+    position: fixed !important;
+    top: 0px !important;
+    left: calc(48px + 320px - 24px) !important;
+    right: auto !important;
+    bottom: auto !important;
+    backdrop-filter: blur(100px);
+    z-index: 200;
+  }
+
+  .work-detail-page .back-wrapper {
+    width: 0;
+    height: 0;
+    margin: 0;
+    position: static;
+  }
+</style>
+
 <style>
+
   .post-header {
     margin-bottom: 40px;
   }

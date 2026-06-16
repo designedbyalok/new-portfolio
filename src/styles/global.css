@@ -400,17 +400,20 @@ html, body { overflow-x: clip !important; }
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     border: 1px solid var(--border);
     color: var(--fg);
     transition: all 0.2s ease;
     text-decoration: none;
-    position: sticky;
-    top: 32px;
+    position: relative;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: -29px;
     z-index: 100;
-    background: var(--bg);
+    background-color: rgba(252, 242, 225, 0.07);
   }
   .back-link-circle:hover {
     background: var(--hover-bg);
@@ -460,12 +463,10 @@ html, body { overflow-x: clip !important; }
     cursor: pointer;
     margin-left: -12px;
     margin-right: -12px;
-    border-radius: 8px;
+    border-radius: 0;
   }
   .blur-item:first-child {
     border-top: 1px solid var(--border);
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
   }
   .blur-item-left {
     display: flex;
@@ -500,6 +501,7 @@ html, body { overflow-x: clip !important; }
     font-size: 40px;
     font-weight: 500;
     letter-spacing: -0.02em;
+    line-height: 50px;
     margin: 0;
   }
 

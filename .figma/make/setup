@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euo pipefail
+
+# Load nvm if available (common on macOS)
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+
+# Use Node 22+ via nvm if the current version is too old
+NODE_MAJOR=$(node -e "console.log(process.versions.node.split('.')[0])")
+if [ "$NODE_MAJOR" -lt 22 ]; then
+  if command -v nvm &>/dev/null; then
+    nvm use 24 --silent 2>/dev/null || nvm use 22 --silent 2>/dev/null || {
+      echo "ERROR: Node >= 22 required. Install with: nvm install 22" >&2
+      exit 1
+    }
+  else
+    echo "ERROR: Node >= 22 required, found $(node -v)" >&2
+    exit 1
+  fi
+fi
+
+# Ensure Bun is available (project uses bun.lock)
+if ! command -v bun &>/dev/null; then
+  echo "ERROR: bun is not installed" >&2
+  exit 1
+fi
+
+echo "Node $(node -v), Bun $(bun -v) — OK"
