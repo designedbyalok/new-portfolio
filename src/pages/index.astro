@@ -71,7 +71,7 @@ const resources = [
           my work.
         </div>
         <div class="bio">
-          Previously, I worked at <span class="bc-wrap" data-bc-link><a class="fh-pill-link" href="https://banyancloud.com" target="_blank" rel="noopener noreferrer">Banyan Cloud</a><span class="bc-card" aria-hidden="true"><span class="bc-frame-wrap"><iframe class="bc-frame" title="Banyan Cloud website preview" loading="lazy" scrolling="no" tabindex="-1" data-bc-frame></iframe></span></span></span>, as the founding
+          Previously, I worked at <span class="bc-wrap" data-bc-link><a class="fh-pill-link" href="https://banyancloud.com" target="_blank" rel="noopener noreferrer">Banyan Cloud</a><span class="bc-card" aria-hidden="true"><span class="bc-frame-wrap"><img class="bc-frame" src="/banyan-cloud-preview.png" alt="" loading="lazy" decoding="async" /></span></span></span>, as the founding
           designer and built a holistic cyber security platform from scratch. You
           can reach me at <a class="bio-link" href="https://x.com/designedbyalok">@designedbyalok</a> and via
           <a class="bio-link" href="mailto:designedbyalok@gmail.com">
@@ -317,7 +317,6 @@ const resources = [
     transform: translateX(-50%) translateY(6px) scale(0.96);
     transform-origin: bottom center;
     width: 244px;
-    overflow: hidden;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.18s ease, transform 0.18s ease;
@@ -333,10 +332,13 @@ const resources = [
     width: 244px;
     height: 320px;
     overflow: hidden;
-    border: 4px solid #fcf2e1;
+    border: 4px solid var(--thumb-border);
     border-radius: 16px;
     box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.55);
     background: #ffffff;
+    /* Own compositing layer so the rounded corners clip the transformed
+       iframe child cleanly (no square corners poking past the radius). */
+    transform: translateZ(0);
   }
   .fh-frame {
     width: 900px;
@@ -360,7 +362,6 @@ const resources = [
     transform: translateX(-50%) translateY(6px) scale(0.96);
     transform-origin: bottom center;
     width: 244px;
-    overflow: hidden;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.18s ease, transform 0.18s ease;
@@ -376,17 +377,19 @@ const resources = [
     width: 244px;
     height: 320px;
     overflow: hidden;
-    border: 4px solid #fcf2e1;
+    border: 4px solid var(--thumb-border);
     border-radius: 16px;
     box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.55);
     background: #ffffff;
+    transform: translateZ(0);
   }
   .bc-frame {
-    width: 900px;
-    height: 1181px;
+    display: block;
+    width: 100%;
+    height: 100%;
     border: 0;
-    transform: scale(0.262);
-    transform-origin: top left;
+    object-fit: cover;
+    object-position: top center;
     pointer-events: none;
   }
 
@@ -671,22 +674,8 @@ const resources = [
     });
   }
 
-  function initBanyanPreview() {
-    document.querySelectorAll<HTMLElement>("[data-bc-link]").forEach((link) => {
-      if (link.dataset.bcBound === "true") return;
-      link.dataset.bcBound = "true";
-      const load = () => {
-        const frame = link.querySelector<HTMLIFrameElement>("[data-bc-frame]");
-        if (frame && !frame.src) frame.src = "https://banyancloud.com";
-      };
-      link.addEventListener("mouseenter", load, { once: true });
-      link.addEventListener("focusin", load, { once: true });
-    });
-  }
-
   function initPreviews() {
     initFoldPreview();
-    initBanyanPreview();
   }
 
   initPreviews();
