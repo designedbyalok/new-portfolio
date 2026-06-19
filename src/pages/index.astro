@@ -71,7 +71,7 @@ const resources = [
           my work.
         </div>
         <div class="bio">
-          Previously, I worked at <span class="bc-wrap" data-bc-link><a class="fh-pill-link" href="https://banyancloud.com" target="_blank" rel="noopener noreferrer">Banyan Cloud</a><span class="bc-card" aria-hidden="true"><span class="bc-frame-wrap"><img class="bc-frame" src="/banyan-cloud-preview.png" alt="" loading="lazy" decoding="async" /></span></span></span>, as the founding
+          Previously, I worked at <span class="bc-wrap" data-bc-link><a class="bc-pill-link" href="https://banyancloud.com" target="_blank" rel="noopener noreferrer"><svg class="bc-pill-logo" width="12" height="15" viewBox="0 0 12 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.3017 9.18022H9.09683C9.00685 9.18022 8.93349 9.25072 8.92861 9.3407C8.82287 11.3902 6.78479 12.9285 4.60086 12.1688C3.73313 11.8671 3.04622 11.1799 2.74475 10.3122C1.965 8.06977 3.60876 5.98068 5.74054 5.98068C5.74283 5.98068 5.74512 5.98068 5.74742 5.98068V3.61134C5.74742 3.51591 5.66832 3.43968 5.5729 3.44255C4.44726 3.47493 3.40329 3.83199 2.5304 4.4229V0H0V9.14211H0.00802388C0.0051582 9.69862 0.0808122 10.2735 0.247022 10.8566C0.770869 12.6947 2.21718 14.1419 4.05523 14.6663C7.8792 15.7575 11.3579 12.9807 11.4708 9.35531C11.4736 9.2596 11.3974 9.18022 11.302 9.18022H11.3017Z" fill="url(#paint0_linear_431_9827)"/><path d="M8.67555 8.85667C8.74003 8.92115 8.85064 8.88475 8.86382 8.79449L9.31058 5.77234C9.32147 5.69869 9.25814 5.63535 9.18449 5.64624L6.16234 6.093C6.07207 6.10647 6.03539 6.2168 6.10016 6.28128L8.67584 8.85696L8.67555 8.85667Z" fill="url(#paint1_linear_431_9827)"/><path d="M10.6761 6.85918C10.74 6.92308 10.8492 6.88697 10.8626 6.79756L11.31 3.7714C11.3209 3.69861 11.2581 3.63585 11.1853 3.64674L8.15915 4.09408C8.06974 4.10726 8.03363 4.21673 8.09754 4.28063L10.6764 6.85946L10.6761 6.85918Z" fill="url(#paint2_linear_431_9827)"/><defs><linearGradient id="paint0_linear_431_9827" x1="11.9321" y1="0.212347" x2="-1.14914" y2="12.123" gradientUnits="userSpaceOnUse"><stop stop-color="#FF1597"/><stop offset="1" stop-color="#FF892A"/></linearGradient><linearGradient id="paint1_linear_431_9827" x1="13.5312" y1="1.96814" x2="0.449885" y2="13.8785" gradientUnits="userSpaceOnUse"><stop stop-color="#FF1597"/><stop offset="1" stop-color="#FF892A"/></linearGradient><linearGradient id="paint2_linear_431_9827" x1="13.442" y1="1.8703" x2="0.36076" y2="13.7807" gradientUnits="userSpaceOnUse"><stop stop-color="#FF1597"/><stop offset="1" stop-color="#FF892A"/></linearGradient></defs></svg><span class="bc-pill-banyan">Banyan</span><span class="bc-pill-cloud">Cloud</span></a><span class="bc-card" aria-hidden="true"><span class="bc-frame-wrap"><img class="bc-frame" src="/banyan-cloud-preview.png" alt="" loading="lazy" decoding="async" /></span></span></span>, as the founding
           designer and built a holistic cyber security platform from scratch. You
           can reach me at <a class="bio-link" href="https://x.com/designedbyalok">@designedbyalok</a> and via
           <a class="bio-link" href="mailto:designedbyalok@gmail.com">
@@ -355,6 +355,57 @@ const resources = [
     display: inline-flex;
     vertical-align: baseline;
   }
+  /* Banyan Cloud pill — on hover it becomes the brand badge (white, navy
+     "Banyan" + pink→orange gradient "Cloud" and mark), not the Foldhealth purple. */
+  .bc-pill-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px 2px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--fg);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+  /* Mark is always visible (like the Foldhealth pill) so the pill width — and
+     the line layout — stays identical between the rest and hover states. */
+  .bc-pill-logo {
+    width: 12px;
+    height: 15px;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+  /* Mark matches the text colour at rest; reveals the brand gradient on hover. */
+  .bc-pill-logo path {
+    fill: currentColor;
+    transition: fill 0.15s ease;
+  }
+  .bc-pill-link:hover .bc-pill-logo path:nth-of-type(1) {
+    fill: url(#paint0_linear_431_9827);
+  }
+  .bc-pill-link:hover .bc-pill-logo path:nth-of-type(2) {
+    fill: url(#paint1_linear_431_9827);
+  }
+  .bc-pill-link:hover .bc-pill-logo path:nth-of-type(3) {
+    fill: url(#paint2_linear_431_9827);
+  }
+  .bc-pill-link:hover {
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16);
+  }
+  .bc-pill-link:hover .bc-pill-banyan {
+    color: #00037c;
+  }
+  .bc-pill-link:hover .bc-pill-cloud {
+    background: linear-gradient(135deg, #ff1597, #ff892a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
   .bc-card {
     position: absolute;
     left: 50%;
@@ -403,7 +454,12 @@ const resources = [
   .gh-hover-card {
     position: absolute;
     left: 0;
-    bottom: calc(100% + 8px);
+    /* Anchor flush to the text and turn the visual gap into padding so the
+       8px space stays part of the hoverable card — lets the pointer travel
+       from "GitHub" onto the card (to read the contributions) without
+       crossing a dead zone that would close it. */
+    bottom: 100%;
+    padding-bottom: 8px;
     transform: translateY(6px) scale(0.97);
     transform-origin: bottom left;
     opacity: 0;
