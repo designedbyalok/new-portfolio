@@ -23,7 +23,7 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
   description={m.summary}
   article={true}
 >
-  <div class="container container-content page work-detail-page" style="align-items: flex-start; justify-content: flex-start; padding: 0;">
+  <div class="container container-content page work-detail-page detail-page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />
     <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/work" aria-label="Back to Work">
@@ -37,8 +37,8 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
       <p class="post-summary animate a3">{m.summary}</p>
 
       {m.website && (
-        <a class="link-pill animate a4" href={m.website} target="_blank" rel="noopener noreferrer">
-          View project <span class="pill-icon">↗</span>
+        <a class="link-pill animate a4" href={m.website} target="_blank" rel="noopener noreferrer" aria-label="View project">
+          <span class="pill-label">View project</span> <span class="pill-icon">↗</span>
         </a>
       )}
     </header>
@@ -118,12 +118,6 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
   </div>
 </Layout>
 
-<style is:global>
-  main#main:has(.work-detail-page) {
-    padding: var(--page-pad-top) var(--container-pad-x);
-  }
-</style>
-
 <style>
 
   .post-header {
@@ -154,47 +148,6 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
     max-width: 60ch;
   }
 
-  /* "View project" pill — same bordered, frosted style as the back button. */
-  .link-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 48px;
-    padding: 0 20px;
-    margin-top: 20px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--chrome-btn-bg);
-    -webkit-backdrop-filter: blur(2.5px);
-    backdrop-filter: blur(2.5px);
-    color: var(--fg);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background 0.2s ease;
-  }
-  .link-pill:hover {
-    background: var(--hover-bg);
-  }
-  .pill-icon {
-    font-size: 1em;
-    line-height: 1;
-  }
-
-  /* On wide screens float it into the right gutter, level with the title and
-     the same distance from the content column as the back button on the left. */
-  @media (min-width: 1024px) {
-    .work-detail-page {
-      position: relative;
-    }
-    .link-pill {
-      position: absolute;
-      top: 0;
-      left: calc(100% + 45px);
-      margin-top: 0;
-    }
-  }
 
   .prose {
     max-width: 100% !important;

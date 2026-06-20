@@ -3,6 +3,11 @@
 /* Prevent horizontal scroll on all pages */
 html, body { overflow-x: clip !important; }
 
+/* Always reserve the scrollbar gutter so short pages (lists) and long pages
+   (detail/preview) keep the exact same content width and fixed-chrome position
+   — no shift when navigating between them. */
+html { scrollbar-gutter: stable; }
+
 /* Override Tailwind v4's purple ::selection with site colours */
 ::selection { background: var(--fg) !important; color: var(--bg) !important; }
 ::-moz-selection { background: var(--fg) !important; color: var(--bg) !important; }
@@ -446,6 +451,70 @@ html, body { overflow-x: clip !important; }
   }
   .back-link-circle:hover {
     background: var(--hover-bg);
+  }
+
+  /* Detail-page CTA pill (e.g. "View project") — same bordered, frosted style
+     as the back button. Responsive:
+       < 1160px            inline under the title, full label
+       1160px – 1339px     floated into the right gutter, arrow-only circle
+                           (keeps clear of the fixed search/theme chrome)
+       >= 1340px           floated, full label + arrow */
+  .link-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 48px;
+    padding: 0 20px;
+    margin-top: 20px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--chrome-btn-bg);
+    -webkit-backdrop-filter: blur(2.5px);
+    backdrop-filter: blur(2.5px);
+    color: var(--fg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+  .link-pill:hover {
+    background: var(--hover-bg);
+  }
+  .link-pill .pill-icon {
+    font-size: 1em;
+    line-height: 1;
+  }
+
+  @media (min-width: 1160px) {
+    .detail-page {
+      position: relative;
+    }
+    .detail-page .link-pill {
+      position: absolute;
+      /* Align with the title: the container's content starts below its top
+         padding, and the inline edge sits inside its inline padding. */
+      top: var(--page-pad-top);
+      left: calc(100% - var(--container-pad-x) + 45px);
+      margin-top: 0;
+      width: 48px;
+      padding: 0;
+      gap: 0;
+    }
+    .detail-page .link-pill .pill-label {
+      display: none;
+    }
+  }
+  @media (min-width: 1340px) {
+    .detail-page .link-pill {
+      width: auto;
+      padding: 0 20px;
+      gap: 6px;
+    }
+    .detail-page .link-pill .pill-label {
+      display: inline;
+    }
   }
 
   .page {

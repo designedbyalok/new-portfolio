@@ -27,8 +27,6 @@ projects:
 
 ## The problem
 
-<!-- TODO: replace this stub with the real case study. -->
-
 Most writing tools force a tradeoff: either you get a distraction-free editor that's beautiful but lives in its own walled garden, or you get a CMS that publishes everywhere but feels like a database admin panel. Neither respects the rhythm of actual writing — the long focused stretches, the half-finished drafts you might never publish, the privacy of thinking on the page.
 
 WritrPro started as a way to draft without performing. Every note is encrypted on your device before it leaves the browser, so the database holds ciphertext only. When a note is ready for the world, one click decrypts it into a separate public table and a webhook tells your blog to rebuild.
@@ -51,4 +49,3 @@ A note isn't just "a blog post." It's a book review, a film note, a quote, a cas
 
 A production app at [writrpro.com](https://writrpro.com) with end-to-end encrypted notes, one-click publishing, webhook-triggered rebuilds, custom collections, structured metadata, and an editor people actually want to write in.
 
-<!-- TODO: expand with the full case study — stack, timeline, hard parts. -->
