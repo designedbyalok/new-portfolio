@@ -1,0 +1,42 @@
+---
+// Currently Working on — floating bottom-left widget on the homepage.
+interface Props {
+  title: string;
+  sub: string;
+  href: string;
+  icon: string;
+}
+const { title, sub, href, icon } = Astro.props;
+---
+
+<a
+  class="now-widget now-widget--left nw"
+  href={href}
+  aria-label={`Currently working on ${title}`}
+  data-now-working
+>
+  <span class="nw-icon">
+    <img src={icon} alt="" loading="lazy" decoding="async" />
+  </span>
+  <span class="now-text">
+    <span class="now-eyebrow">Currently Working on</span>
+    <span class="now-title">{title}</span>
+    <span class="now-sub">{sub}</span>
+  </span>
+  <svg class="now-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="7" y1="17" x2="17" y2="7"></line>
+    <polyline points="7 7 17 7 17 17"></polyline>
+  </svg>
+</a>
+
+<script>
+  // Gentle fade-in once mounted (kept out of the entrance-stagger to avoid a
+  // transform lingering on a position:fixed element).
+  function showNowWorking() {
+    document.querySelectorAll<HTMLElement>("[data-now-working]").forEach((el) => {
+      requestAnimationFrame(() => el.classList.add("is-in"));
+    });
+  }
+  showNowWorking();
+  document.addEventListener("astro:after-swap", showNowWorking);
+</script>

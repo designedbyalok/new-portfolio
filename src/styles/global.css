@@ -517,6 +517,180 @@ html { scrollbar-gutter: stable; }
     }
   }
 
+  /* ---- Floating corner widgets (homepage): Now Playing + Currently Working ---- */
+  .now-widget {
+    position: fixed;
+    bottom: 40px;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 320px;
+    padding: 10px 20px 10px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--chrome-btn-bg);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--fg);
+    text-decoration: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease, background 0.2s ease;
+  }
+  .now-widget.is-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .now-widget:hover {
+    background: var(--hover-bg);
+  }
+  .now-widget[hidden] {
+    display: none !important;
+  }
+  .now-widget--left { left: 48px; }
+  .now-widget--right { right: 48px; }
+
+  .now-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 1px;
+  }
+  .now-eyebrow {
+    font-size: 12px;
+    color: var(--fg-secondary);
+    line-height: 1.25;
+  }
+  .now-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--fg);
+    line-height: 1.15;
+    max-width: 190px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .now-sub {
+    font-size: 13px;
+    color: var(--fg-tertiary);
+    line-height: 1.25;
+    max-width: 190px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .now-arrow {
+    flex-shrink: 0;
+    margin-left: 8px;
+    color: var(--fg-secondary);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .now-widget:hover .now-arrow {
+    color: var(--fg);
+    transform: translate(2px, -2px);
+  }
+
+  /* Currently Working — rounded-square project icon */
+  .nw-icon {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--tag-bg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nw-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Listening Now — spinning CD + notes drifting up on hover */
+  .np-disc-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+  }
+  .np-disc {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  }
+  .np-disc img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* CD spindle hole */
+  .np-disc::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    transform: translate(-50%, -50%);
+  }
+  .np.is-playing .np-disc {
+    animation: npSpin 7s linear infinite;
+  }
+  @keyframes npSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  .np-notes {
+    position: absolute;
+    left: 26px;
+    top: 4px;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  .np-note {
+    position: absolute;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .np-note:nth-child(1) { --nx: -16px; --nr: -16deg; animation-delay: 0s; }
+  .np-note:nth-child(2) { --nx: -2px;  --nr: 10deg;  animation-delay: 0.3s; font-size: 18px; }
+  .np-note:nth-child(3) { --nx: 12px;  --nr: -8deg;  animation-delay: 0.6s; }
+  .np-note:nth-child(4) { --nx: -10px; --nr: 14deg;  animation-delay: 0.9s; font-size: 13px; }
+  .np-note:nth-child(5) { --nx: 6px;   --nr: -12deg; animation-delay: 1.2s; }
+  .np:hover .np-note {
+    animation: npNote 1.6s ease-out infinite;
+  }
+  @keyframes npNote {
+    0%   { opacity: 0; transform: translate(-50%, 0) scale(0.5) rotate(0deg); }
+    15%  { opacity: 1; }
+    70%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--nx)), -40px) scale(1) rotate(var(--nr)); }
+  }
+
+  /* Not enough room beside the centered content on small screens — hide. */
+  @media (max-width: 1100px) {
+    .now-widget { display: none !important; }
+  }
+
   .page {
     min-height: 100vh;
     display: flex;

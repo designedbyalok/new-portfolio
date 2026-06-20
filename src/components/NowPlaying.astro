@@ -1,0 +1,93 @@
+---
+// Listening Now — floating bottom-right widget on the homepage.
+// Reads /api/spotify.json client-side (live), so it stays current on the
+// statically-built homepage. Cover art spins like a CD while playing; the
+// music notes drift up out of the disc on hover. Stays hidden when there's
+// nothing to show.
+---
+
+<a
+  class="now-widget now-widget--right np"
+  href="#"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Listening now on Spotify"
+  data-now-playing
+  hidden
+>
+  <span class="np-disc-wrap">
+    <span class="np-notes" aria-hidden="true">
+      <span class="np-note">&#9834;</span>
+      <span class="np-note">&#9835;</span>
+      <span class="np-note">&#9833;</span>
+      <span class="np-note">&#9836;</span>
+      <span class="np-note">&#9834;</span>
+    </span>
+    <span class="np-disc">
+      <img data-np-cover src="" alt="" />
+    </span>
+  </span>
+  <span class="now-text">
+    <span class="now-eyebrow" data-np-label>Listening Now</span>
+    <span class="now-title" data-np-title></span>
+    <span class="now-sub" data-np-artist></span>
+  </span>
+  <svg class="now-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="7" y1="17" x2="17" y2="7"></line>
+    <polyline points="7 7 17 7 17 17"></polyline>
+  </svg>
+</a>
+
+<script>
+  type Track = {
+    title: string;
+    artist: string;
+    album?: string;
+    coverImage: string;
+    songUrl: string;
+  };
+  type ListeningData = {
+    isPlaying: boolean;
+    current: Track | null;
+    recent: Track[];
+  };
+
+  async function initNowPlaying() {
+    const el = document.querySelector<HTMLAnchorElement>("[data-now-playing]");
+    if (!el) return;
+
+    let data: ListeningData | null = null;
+    try {
+      const res = await fetch("/api/spotify.json");
+      if (res.ok) data = await res.json();
+    } catch {
+      /* offline / no creds — stay hidden */
+    }
+    if (!data) return;
+
+    const playing = !!(data.isPlaying && data.current);
+    const track = playing ? data.current : data.recent?.[0] ?? null;
+    if (!track || !track.title) return;
+
+    const cover = el.querySelector<HTMLImageElement>("[data-np-cover]");
+    const label = el.querySelector<HTMLElement>("[data-np-label]");
+    const title = el.querySelector<HTMLElement>("[data-np-title]");
+    const artist = el.querySelector<HTMLElement>("[data-np-artist]");
+
+    if (cover) {
+      cover.src = track.coverImage || "";
+      cover.alt = track.album ? `${track.title} — ${track.album}` : track.title;
+    }
+    if (label) label.textContent = playing ? "Listening Now" : "Last played";
+    if (title) title.textContent = track.title;
+    if (artist) artist.textContent = track.artist;
+    if (track.songUrl) el.href = track.songUrl;
+
+    el.classList.toggle("is-playing", playing);
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add("is-in"));
+  }
+
+  initNowPlaying();
+  document.addEventListener("astro:after-swap", initNowPlaying);
+</script>
