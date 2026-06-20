@@ -520,13 +520,13 @@ html { scrollbar-gutter: stable; }
   /* ---- Floating corner widgets (homepage): Now Playing + Currently Working ---- */
   .now-widget {
     position: fixed;
-    bottom: 40px;
+    bottom: 32px;
     z-index: 50;
     display: inline-flex;
     align-items: center;
-    gap: 14px;
-    max-width: 320px;
-    padding: 10px 20px 10px 10px;
+    gap: 10px;
+    max-width: 260px;
+    padding: 7px 14px 7px 7px;
     border-radius: 999px;
     border: 1px solid var(--border);
     background: var(--chrome-btn-bg);
@@ -548,44 +548,46 @@ html { scrollbar-gutter: stable; }
   .now-widget[hidden] {
     display: none !important;
   }
-  .now-widget--left { left: 48px; }
-  .now-widget--right { right: 48px; }
+  .now-widget--left { left: 40px; }
+  .now-widget--right { right: 40px; }
 
   .now-text {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    gap: 1px;
+    gap: 0;
   }
   .now-eyebrow {
-    font-size: 12px;
+    font-size: 10px;
     color: var(--fg-secondary);
-    line-height: 1.25;
+    line-height: 1.3;
   }
   .now-title {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 500;
-    font-size: 17px;
+    font-size: 14px;
     color: var(--fg);
-    line-height: 1.15;
-    max-width: 190px;
+    line-height: 1.2;
+    max-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .now-sub {
-    font-size: 13px;
+    font-size: 11px;
     color: var(--fg-tertiary);
-    line-height: 1.25;
-    max-width: 190px;
+    line-height: 1.3;
+    max-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .now-arrow {
     flex-shrink: 0;
-    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+    margin-left: 6px;
     color: var(--fg-secondary);
     transition: transform 0.2s ease, color 0.2s ease;
   }
@@ -597,9 +599,9 @@ html { scrollbar-gutter: stable; }
   /* Currently Working — rounded-square project icon */
   .nw-icon {
     flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     overflow: hidden;
     background: var(--tag-bg);
     display: inline-flex;
@@ -613,69 +615,67 @@ html { scrollbar-gutter: stable; }
     display: block;
   }
 
-  /* Listening Now — spinning CD + notes drifting up on hover */
+  /* Listening Now — circular cover that spins like a CD; notes drift up on hover.
+     border-radius lives on the <img> itself (not an overflow:hidden parent) so
+     the rounded clip survives the spin transform. */
   .np-disc-wrap {
     position: relative;
     flex-shrink: 0;
-    width: 52px;
-    height: 52px;
+    width: 38px;
+    height: 38px;
   }
   .np-disc {
-    position: relative;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-  }
-  .np-disc img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     display: block;
-  }
-  /* CD spindle hole */
-  .np-disc::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 9px;
-    height: 9px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background: var(--bg);
+    object-fit: cover;
     border: 1px solid var(--border);
-    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   }
   .np.is-playing .np-disc {
-    animation: npSpin 7s linear infinite;
+    animation: npSpin 6s linear infinite;
   }
   @keyframes npSpin {
     to { transform: rotate(360deg); }
   }
+  /* CD spindle hole — on the static wrapper so it stays centered, not spinning */
+  .np-disc-wrap::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+  }
 
   .np-notes {
     position: absolute;
-    left: 26px;
-    top: 4px;
+    left: 19px;
+    top: 2px;
     width: 0;
     height: 0;
     pointer-events: none;
   }
   .np-note {
     position: absolute;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1;
     color: var(--accent);
     opacity: 0;
     will-change: transform, opacity;
   }
-  .np-note:nth-child(1) { --nx: -16px; --nr: -16deg; animation-delay: 0s; }
-  .np-note:nth-child(2) { --nx: -2px;  --nr: 10deg;  animation-delay: 0.3s; font-size: 18px; }
-  .np-note:nth-child(3) { --nx: 12px;  --nr: -8deg;  animation-delay: 0.6s; }
-  .np-note:nth-child(4) { --nx: -10px; --nr: 14deg;  animation-delay: 0.9s; font-size: 13px; }
-  .np-note:nth-child(5) { --nx: 6px;   --nr: -12deg; animation-delay: 1.2s; }
+  .np-note:nth-child(1) { --nx: -14px; --nr: -16deg; animation-delay: 0s; }
+  .np-note:nth-child(2) { --nx: -2px;  --nr: 10deg;  animation-delay: 0.3s; font-size: 17px; }
+  .np-note:nth-child(3) { --nx: 11px;  --nr: -8deg;  animation-delay: 0.6s; }
+  .np-note:nth-child(4) { --nx: -9px;  --nr: 14deg;  animation-delay: 0.9s; font-size: 12px; }
+  .np-note:nth-child(5) { --nx: 5px;   --nr: -12deg; animation-delay: 1.2s; }
   .np:hover .np-note {
     animation: npNote 1.6s ease-out infinite;
   }
@@ -683,7 +683,7 @@ html { scrollbar-gutter: stable; }
     0%   { opacity: 0; transform: translate(-50%, 0) scale(0.5) rotate(0deg); }
     15%  { opacity: 1; }
     70%  { opacity: 1; }
-    100% { opacity: 0; transform: translate(calc(-50% + var(--nx)), -40px) scale(1) rotate(var(--nr)); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--nx)), -34px) scale(1) rotate(var(--nr)); }
   }
 
   /* Not enough room beside the centered content on small screens — hide. */
