@@ -1,0 +1,158 @@
+---
+// X (Twitter) profile preview — shown on hover of the @handle in the bio.
+// Live data from fxtwitter; styled to match the site's other hover cards.
+---
+
+<div class="x-card" data-x-card data-pagefind-ignore>
+  <img
+    class="x-card-avatar"
+    data-x-pfp
+    src="/favicon.svg"
+    alt=""
+    width="56"
+    height="56"
+    loading="lazy"
+    decoding="async"
+  />
+  <div class="x-card-info">
+    <span class="x-card-name-row">
+      <span class="x-card-name" data-x-name>Alok Kumar</span>
+      <span class="x-card-verified" data-x-verified hidden aria-label="Verified account">
+        <svg viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path></svg>
+      </span>
+    </span>
+    <span class="x-card-handle" data-x-handle>@designedbyalok</span>
+    <p class="x-card-bio" data-x-bio></p>
+  </div>
+</div>
+
+<script>
+  const X_USERNAME = "designedbyalok";
+
+  const esc = (s: string) =>
+    s.replace(/[&<>"]/g, (c) => (({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }) as Record<string, string>)[c]);
+
+  function linkify(text: string): string {
+    if (!text) return "";
+    let html = esc(text);
+    // URLs first — otherwise the @mention pass below produces href URLs that
+    // this pass would then re-wrap, mangling the markup.
+    html = html.replace(
+      /(https?:\/\/[^\s<]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+    html = html.replace(
+      /@(\w+)/g,
+      '<a href="https://x.com/$1" target="_blank" rel="noopener noreferrer">@$1</a>'
+    );
+    return html;
+  }
+
+  async function loadXProfile() {
+    const card = document.querySelector<HTMLElement>("[data-x-card]");
+    if (!card) return;
+    try {
+      const res = await fetch(`https://api.fxtwitter.com/${X_USERNAME}`);
+      if (!res.ok) return;
+      const data: any = await res.json();
+      const u = data?.user;
+      if (!u) return;
+
+      const nameEl = card.querySelector<HTMLElement>("[data-x-name]");
+      const handleEl = card.querySelector<HTMLElement>("[data-x-handle]");
+      const bioEl = card.querySelector<HTMLElement>("[data-x-bio]");
+      const pfpEl = card.querySelector<HTMLImageElement>("[data-x-pfp]");
+      const verEl = card.querySelector<HTMLElement>("[data-x-verified]");
+
+      if (nameEl && u.name) nameEl.textContent = u.name;
+      if (handleEl && u.screen_name) handleEl.textContent = "@" + u.screen_name;
+      if (bioEl) bioEl.innerHTML = linkify(u.description || "");
+      if (pfpEl) {
+        let pfp = u.avatar_url || u.profile_image_url_https || "";
+        if (pfp) pfpEl.src = pfp.replace("_normal", "_400x400");
+      }
+      if (verEl) verEl.hidden = !(u.verification?.verified === true || u.verified === true);
+    } catch {
+      /* network/API failure — keep the seeded defaults */
+    }
+  }
+
+  loadXProfile();
+  document.addEventListener("astro:after-swap", loadXProfile);
+</script>
+
+<style>
+  .x-card {
+    width: 340px;
+    max-width: 86vw;
+    padding: 18px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .x-card-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    background: var(--tag-bg);
+  }
+  .x-card-info {
+    min-width: 0;
+  }
+  .x-card-name-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .x-card-name {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--text-lg);
+    color: var(--fg);
+    line-height: 1.2;
+  }
+  .x-card-verified {
+    display: inline-flex;
+    align-items: center;
+    color: #1d9bf0;
+    flex-shrink: 0;
+  }
+  .x-card-verified[hidden] {
+    display: none;
+  }
+  .x-card-verified svg {
+    fill: #1d9bf0;
+  }
+  .x-card-handle {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    margin-top: 1px;
+  }
+  .x-card-bio {
+    margin: 8px 0 0;
+    font-size: var(--text-sm);
+    line-height: 1.45;
+    color: var(--fg-secondary);
+  }
+  .x-card-bio:empty {
+    display: none;
+  }
+  .x-card-bio :global(a) {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 2px;
+  }
+  .x-card-bio :global(a:hover) {
+    text-decoration-color: var(--fg);
+  }
+</style>
