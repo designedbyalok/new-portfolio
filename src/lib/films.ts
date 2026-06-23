@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { getPostsByCollection, type CMSPost } from "./cms";
+import { fetchFilmMeta, tmdbConfigured } from "./tmdb";
 
 export interface FilmMetadata {
   year: number;
@@ -18,8 +19,32 @@ export type Film = CMSPost<FilmMetadata>;
 
 export async function getFilms(): Promise<Film[]> {
   const remote = await getPostsByCollection<FilmMetadata>("films");
-  if (remote.length > 0) return remote;
-  return readLocalFilms();
+  const base = remote.length > 0 ? remote : await readLocalFilms();
+  return enrichFilms(base);
+}
+
+/** Fill missing poster / director / year from TMDB. Frontmatter always wins. */
+async function enrichFilms(films: Film[]): Promise<Film[]> {
+  if (!tmdbConfigured()) return films;
+  return Promise.all(
+    films.map(async (film) => {
+      const m = film.metadata;
+      if (m.poster && m.director && m.year) return film;
+      const meta = await fetchFilmMeta(film.title, m.year);
+      if (!meta) return film;
+      const poster = m.poster ?? meta.poster;
+      return {
+        ...film,
+        thumbnail: film.thumbnail ?? poster,
+        metadata: {
+          ...m,
+          poster,
+          director: m.director ?? meta.director,
+          year: m.year ?? meta.year ?? m.year,
+        },
+      } satisfies Film;
+    })
+  );
 }
 
 export async function getFilmBySlug(slug: string): Promise<Film | undefined> {

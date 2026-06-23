@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { getPostsByCollection, type CMSPost } from "./cms";
+import { fetchBookMeta } from "./openlibrary";
 
 /** Per-book metadata stored on the WriterPro post. Mirrors the old MDX frontmatter. */
 export interface BookMetadata {
@@ -27,8 +28,24 @@ export type Book = CMSPost<BookMetadata>;
  */
 export async function getBooks(): Promise<Book[]> {
   const remote = await getPostsByCollection<BookMetadata>("books");
-  if (remote.length > 0) return remote;
-  return readLocalBooks();
+  const base = remote.length > 0 ? remote : await readLocalBooks();
+  return enrichBooks(base);
+}
+
+/** Fill a missing cover from Open Library (keyless). Frontmatter always wins. */
+async function enrichBooks(books: Book[]): Promise<Book[]> {
+  return Promise.all(
+    books.map(async (book) => {
+      if (book.metadata.cover) return book;
+      const meta = await fetchBookMeta(book.title, book.metadata.author);
+      if (!meta?.cover) return book;
+      return {
+        ...book,
+        thumbnail: book.thumbnail ?? meta.cover,
+        metadata: { ...book.metadata, cover: meta.cover },
+      } satisfies Book;
+    })
+  );
 }
 
 export async function getBookBySlug(slug: string): Promise<Book | undefined> {

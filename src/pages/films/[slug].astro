@@ -44,42 +44,46 @@ const htmlNotes = film.markdownContent ? marked.parse(film.markdownContent) : ""
     </div>
 
     <article class="film-page animate a2">
-      <div class="film-page-poster">
-        {f.poster ? (
-          <img src={f.poster} alt={`Poster for ${film.title}`} loading="lazy" decoding="async" />
-        ) : (
-          <div class="film-poster-fallback" aria-hidden="true">
-            <span class="film-poster-title">{film.title}</span>
-            <span class="film-poster-year">{f.year}</span>
-          </div>
-        )}
-      </div>
-
-      <div class="film-page-body">
-        <h1 class="film-page-title">{film.title}</h1>
-        <p class="film-page-byline">{byline}</p>
-
-        <div class="film-page-meta">
-          {typeof f.rating === "number" && (
-            <span class="stars" role="img" aria-label={`Rated ${f.rating} out of 5`}>
-              {starParts(f.rating).map((p) =>
-                p === "half" ? (
-                  <span class="star star-half" aria-hidden="true"><span class="star-half-fill">★</span>☆</span>
-                ) : (
-                  <span class={`star star-${p}`} aria-hidden="true">{p === "full" ? "★" : "☆"}</span>
-                ),
-              )}
-            </span>
+      <div class="film-page-top">
+        <div class="film-page-poster">
+          {f.poster ? (
+            <img src={f.poster} alt={`Poster for ${film.title}`} loading="lazy" decoding="async" />
+          ) : (
+            <div class="film-poster-fallback" aria-hidden="true">
+              <span class="film-poster-title">{film.title}</span>
+              <span class="film-poster-year">{f.year}</span>
+            </div>
           )}
-          {watchedAt && <span class="film-page-when">Watched {fmtDate(watchedAt)}</span>}
         </div>
 
-        {lists.length > 0 && (
-          <ul class="film-page-lists">
-            {lists.map((l) => <li class="film-chip">{l}</li>)}
-          </ul>
-        )}
+        <header class="film-page-head">
+          <h1 class="film-page-title">{film.title}</h1>
+          <p class="film-page-byline">{byline}</p>
 
+          <div class="film-page-meta">
+            {typeof f.rating === "number" && (
+              <span class="stars" role="img" aria-label={`Rated ${f.rating} out of 5`}>
+                {starParts(f.rating).map((p) =>
+                  p === "half" ? (
+                    <span class="star star-half" aria-hidden="true"><span class="star-half-fill">★</span>☆</span>
+                  ) : (
+                    <span class={`star star-${p}`} aria-hidden="true">{p === "full" ? "★" : "☆"}</span>
+                  ),
+                )}
+              </span>
+            )}
+            {watchedAt && <span class="film-page-when">Watched {fmtDate(watchedAt)}</span>}
+          </div>
+
+          {lists.length > 0 && (
+            <ul class="film-page-lists">
+              {lists.map((l) => <li class="film-chip">{l}</li>)}
+            </ul>
+          )}
+        </header>
+      </div>
+
+      <div class="film-page-content">
         {f.review && <p class="film-page-review">{f.review}</p>}
 
         {f.favoriteMoment && (
@@ -105,23 +109,36 @@ const htmlNotes = film.markdownContent ? marked.parse(film.markdownContent) : ""
 <style>
   .film-page {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(32px, 5vw, 48px);
+  }
+  /* Top row: poster + title/byline/meta beside it. */
+  .film-page-top {
     display: grid;
-    grid-template-columns: minmax(160px, 240px) 1fr;
-    gap: clamp(24px, 5vw, 56px);
-    align-items: start;
+    grid-template-columns: minmax(150px, 190px) 1fr;
+    gap: clamp(24px, 5vw, 44px);
+    align-items: center;
+  }
+  .film-page-head {
+    min-width: 0;
   }
   @media (max-width: 640px) {
-    .film-page {
+    .film-page-top {
       grid-template-columns: 1fr;
-      gap: 28px;
+      gap: 24px;
+      align-items: start;
     }
     .film-page-poster {
-      max-width: 220px;
+      max-width: 200px;
     }
   }
-  .film-page-poster {
-    position: sticky;
-    top: 32px;
+  /* Everything below spans the full content width. */
+  .film-page-content {
+    width: 100%;
+  }
+  .film-page-content > :first-child {
+    margin-top: 0;
   }
   .film-page-poster img,
   .film-poster-fallback {
@@ -195,15 +212,13 @@ const htmlNotes = film.markdownContent ? marked.parse(film.markdownContent) : ""
     color: var(--fg-secondary);
   }
   .film-page-review {
-    margin: 24px 0 0;
-    max-width: 60ch;
+    margin: 0 0 1.75rem;
     font-size: var(--text-lg);
     color: var(--fg);
     line-height: 1.7;
   }
   .film-page-field {
     margin-top: 1.75rem;
-    max-width: 60ch;
   }
   .film-page-field .eyebrow { margin: 0 0 6px; }
   .film-page-field p:last-child { margin: 0; color: var(--fg-secondary); line-height: 1.7; }

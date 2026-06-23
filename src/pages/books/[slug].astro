@@ -57,30 +57,34 @@ const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : ""
     </div>
 
     <article class="book-page animate a2">
-      <div class="book-page-cover">
-        <BookCover
-          title={book.title}
-          author={b.author}
-          spineColor={b.spineColor ?? "#333333"}
-          textColor={b.textColor ?? "#ffffff"}
-          cover={b.cover}
-        />
-      </div>
-
-      <div class="book-page-body">
-        <p class="eyebrow">{statusLabel[b.status]}</p>
-        <h1 class="book-page-title">{book.title}</h1>
-        <p class="book-page-author">{b.author}</p>
-
-        <div class="book-page-meta">
-          {rating > 0 && (
-            <span class="stars" aria-label={`Rated ${rating} of 5`}>
-              <span class="stars-filled" aria-hidden="true">{"★".repeat(rating)}</span><span class="stars-empty" aria-hidden="true">{"☆".repeat(5 - rating)}</span>
-            </span>
-          )}
-          <span class="book-page-when">{whenRead}</span>
+      <div class="book-page-top">
+        <div class="book-page-cover">
+          <BookCover
+            title={book.title}
+            author={b.author}
+            spineColor={b.spineColor ?? "#333333"}
+            textColor={b.textColor ?? "#ffffff"}
+            cover={b.cover}
+          />
         </div>
 
+        <header class="book-page-head">
+          <p class="eyebrow">{statusLabel[b.status]}</p>
+          <h1 class="book-page-title">{book.title}</h1>
+          <p class="book-page-author">{b.author}</p>
+
+          <div class="book-page-meta">
+            {rating > 0 && (
+              <span class="stars" aria-label={`Rated ${rating} of 5`}>
+                <span class="stars-filled" aria-hidden="true">{"★".repeat(rating)}</span><span class="stars-empty" aria-hidden="true">{"☆".repeat(5 - rating)}</span>
+              </span>
+            )}
+            <span class="book-page-when">{whenRead}</span>
+          </div>
+        </header>
+      </div>
+
+      <div class="book-page-content">
         {b.review && <p class="book-page-review">{b.review}</p>}
 
         {b.favoriteQuote && (
@@ -105,23 +109,33 @@ const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : ""
 <style>
   .book-page {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(32px, 5vw, 48px);
+  }
+  /* Top row: cover + title/author/meta beside it. */
+  .book-page-top {
     display: grid;
-    grid-template-columns: minmax(160px, 240px) 1fr;
-    gap: clamp(24px, 5vw, 56px);
-    align-items: start;
+    grid-template-columns: minmax(150px, 190px) 1fr;
+    gap: clamp(24px, 5vw, 44px);
+    align-items: center;
+  }
+  .book-page-head {
+    min-width: 0;
   }
   @media (max-width: 640px) {
-    .book-page {
+    .book-page-top {
       grid-template-columns: 1fr;
-      gap: 28px;
+      gap: 24px;
+      align-items: start;
     }
     .book-page-cover {
-      max-width: 200px;
+      max-width: 180px;
     }
   }
-  .book-page-cover {
-    position: sticky;
-    top: 32px;
+  /* Everything below spans the full content width. */
+  .book-page-content {
+    width: 100%;
   }
   .book-page-title {
     font-family: var(--font-serif);
@@ -156,9 +170,11 @@ const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : ""
     font-size: var(--text-sm);
     color: var(--fg-tertiary);
   }
+  .book-page-content > :first-child {
+    margin-top: 0;
+  }
   .book-page-review {
-    margin: 24px 0 0;
-    max-width: 60ch;
+    margin: 0 0 1.75rem;
     font-size: var(--text-lg);
     color: var(--fg);
     line-height: 1.7;
@@ -170,13 +186,11 @@ const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : ""
     color: var(--fg);
     border-left: 3px solid var(--fg);
     padding-left: 1.2em;
-    margin: 2rem 0;
+    margin: 0 0 2rem;
     line-height: 1.5;
-    max-width: 60ch;
   }
   .book-page-field {
     margin-top: 1.75rem;
-    max-width: 60ch;
   }
   .book-page-field .eyebrow {
     margin: 0 0 6px;
