@@ -22,6 +22,7 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
   title={`${m.company} — Alok Kumar`}
   description={m.summary}
   article={true}
+  image={`/og/work/${work.slug}.png`}
 >
   <div class="container container-content page work-detail-page detail-page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />

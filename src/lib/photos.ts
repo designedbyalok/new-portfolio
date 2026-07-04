@@ -1,4 +1,5 @@
 import { getPostsByCollection, type CMSPost } from "./cms";
+import { fetchSanity } from "./sanity";
 
 export interface PhotoMetadata {
   caption?: string;
@@ -34,7 +35,9 @@ const DEFAULT_PLACEHOLDERS: Photo[] = [
  * Falls back to placeholders during the migration so the about page never breaks.
  */
 export async function getPhotos(): Promise<Photo[]> {
-  const remote = await getPostsByCollection<PhotoMetadata>("photos");
+  const sanity = await fetchSanity<PhotoMetadata>("photo");
+  const remote =
+    sanity.length > 0 ? sanity : await getPostsByCollection<PhotoMetadata>("photos");
   if (remote.length === 0) return DEFAULT_PLACEHOLDERS;
   return remote
     .filter((p) => Boolean(p.thumbnail))

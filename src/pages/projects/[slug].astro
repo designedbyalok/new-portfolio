@@ -21,6 +21,7 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
 <Layout
   title={`${idea.title} — Alok Kumar`}
   description={m.tagline}
+  image={`/og/projects/${idea.slug}.png`}
 >
   <div class="container container-content page detail-page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />

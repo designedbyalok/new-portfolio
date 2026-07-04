@@ -20,6 +20,8 @@ interface Props {
   publishDate?: string;
   modifiedDate?: string;
   noindex?: boolean;
+  /** Extra JSON-LD blocks (e.g. Book/Movie Review rich results) */
+  schemas?: Record<string, unknown>[];
 }
 
 const {
@@ -32,6 +34,7 @@ const {
   publishDate,
   modifiedDate,
   noindex = false,
+  schemas = [],
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -120,6 +123,9 @@ const schema = article
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    {schemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
 
     {plausibleDomain && (
       <script

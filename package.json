@@ -22,12 +22,17 @@
     "@fontsource/averia-serif-libre": "^5.2.7",
     "@fontsource/ibm-plex-sans": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
+    "@resvg/resvg-js": "^2.6.2",
+    "@sanity/cli": "^7.5.0",
+    "@sanity/client": "^7.23.0",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "6.4.5",
     "marked": "^18.0.5",
+    "satori": "^0.26.0",
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
-    "pagefind": "^1.5.2"
+    "pagefind": "^1.5.2",
+    "yaml": "^2.9.0"
   }
 }

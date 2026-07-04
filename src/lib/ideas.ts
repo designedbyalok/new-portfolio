@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { getPostsByCollection, type CMSPost } from "./cms";
+import { fetchSanity } from "./sanity";
 
 export interface IdeaPhoto {
   src: string;
@@ -25,6 +26,8 @@ export interface IdeaMetadata {
 export type Idea = CMSPost<IdeaMetadata>;
 
 export async function getIdeas(): Promise<Idea[]> {
+  const sanity = await fetchSanity<IdeaMetadata>("idea");
+  if (sanity.length > 0) return sanity;
   const remote = await getPostsByCollection<IdeaMetadata>("ideas");
   const list = remote.length > 0 ? remote : await readLocalIdeas();
   return list.sort(

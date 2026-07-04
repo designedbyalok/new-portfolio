@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 import { getPostsByCollection, type CMSPost } from "./cms";
 import { fetchBookMeta } from "./openlibrary";
+import { fetchSanity } from "./sanity";
 
 /** Per-book metadata stored on the WriterPro post. Mirrors the old MDX frontmatter. */
 export interface BookMetadata {
@@ -27,6 +28,8 @@ export type Book = CMSPost<BookMetadata>;
  * so the page keeps working during the migration.
  */
 export async function getBooks(): Promise<Book[]> {
+  const sanity = await fetchSanity<BookMetadata>("book");
+  if (sanity.length > 0) return enrichBooks(sanity);
   const remote = await getPostsByCollection<BookMetadata>("books");
   const base = remote.length > 0 ? remote : await readLocalBooks();
   return enrichBooks(base);

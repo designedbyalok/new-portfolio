@@ -27,6 +27,36 @@ const byline = [f.year, f.director].filter(Boolean).join(" · ");
 const watchedAt = f.watchedAt ? new Date(f.watchedAt) : undefined;
 const lists = f.lists ?? [];
 const htmlNotes = film.markdownContent ? marked.parse(film.markdownContent) : "";
+
+// Movie + Review rich-results schema (star snippets in search)
+const movieEntity = {
+  "@type": "Movie",
+  name: film.title,
+  ...(f.director && { director: { "@type": "Person", name: f.director } }),
+  ...(f.year && { dateCreated: String(f.year) }),
+  ...(f.poster && { image: f.poster }),
+};
+const movieSchema =
+  f.rating || f.review
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        itemReviewed: movieEntity,
+        author: {
+          "@type": "Person",
+          name: "Alok Kumar",
+          url: "https://designedbyalok.com",
+        },
+        ...(f.rating && {
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: f.rating,
+            bestRating: 5,
+          },
+        }),
+        ...(f.review && { reviewBody: f.review }),
+      }
+    : { "@context": "https://schema.org", ...movieEntity };
 ---
 
 <Layout
@@ -34,6 +64,8 @@ const htmlNotes = film.markdownContent ? marked.parse(film.markdownContent) : ""
   headline={film.title}
   description={f.review ?? `${film.title} (${f.year})${f.director ? `, dir. ${f.director}` : ""}.`}
   article={true}
+  image={`/og/films/${film.slug}.png`}
+  schemas={[movieSchema]}
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />

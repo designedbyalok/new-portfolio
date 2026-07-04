@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { getPostsByCollection, type CMSPost } from "./cms";
+import { fetchSanity } from "./sanity";
 
 export interface WorkPhoto {
   src: string;
@@ -36,6 +37,8 @@ export interface WorkMetadata {
 export type Work = CMSPost<WorkMetadata>;
 
 export async function getWorks(): Promise<Work[]> {
+  const sanity = await fetchSanity<WorkMetadata>("work");
+  if (sanity.length > 0) return sanity;
   const remote = await getPostsByCollection<WorkMetadata>("work");
   const list = remote.length > 0 ? remote : await readLocalWorks();
   return list.sort(

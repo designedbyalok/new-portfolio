@@ -40,6 +40,35 @@ const whenRead = (() => {
 
 const rating = b.rating ? Math.round(b.rating) : 0;
 const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : "";
+
+// Book + Review rich-results schema (star snippets in search)
+const bookEntity = {
+  "@type": "Book",
+  name: book.title,
+  author: { "@type": "Person", name: b.author },
+  ...(b.cover && { image: b.cover }),
+};
+const bookSchema =
+  b.rating || b.review
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        itemReviewed: bookEntity,
+        author: {
+          "@type": "Person",
+          name: "Alok Kumar",
+          url: "https://designedbyalok.com",
+        },
+        ...(b.rating && {
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: b.rating,
+            bestRating: 5,
+          },
+        }),
+        ...(b.review && { reviewBody: b.review }),
+      }
+    : { "@context": "https://schema.org", ...bookEntity };
 ---
 
 <Layout
@@ -47,6 +76,8 @@ const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : ""
   headline={book.title}
   description={b.review ?? `${book.title} by ${b.author} — ${statusLabel[b.status]}.`}
   article={true}
+  image={`/og/books/${book.slug}.png`}
+  schemas={[bookSchema]}
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />

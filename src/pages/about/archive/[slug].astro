@@ -34,6 +34,7 @@ const tags = a.tags ?? [];
   headline={entry.title}
   description={`${typeLabel[a.type]}${a.source ? ` · ${a.source}` : ""} — from Alok Kumar's archive.`}
   article={true}
+  image={`/og/archive/${entry.slug}.png`}
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />

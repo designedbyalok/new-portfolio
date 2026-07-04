@@ -134,8 +134,14 @@ export function getPostsByCollection<M = Record<string, unknown>>(
   return cache.get(key)! as Promise<CMSPost<M>[]>;
 }
 
-/** Convenience wrapper for the blog — kept for backwards-compat with existing callers. */
-export function getAllPosts(): Promise<CMSPost[]> {
+/**
+ * Blog posts: Sanity first, then WriterPro, then local MDX — so the build
+ * never breaks mid-migration.
+ */
+export async function getAllPosts(): Promise<CMSPost[]> {
+  const { fetchSanity } = await import("./sanity");
+  const sanity = await fetchSanity("post");
+  if (sanity.length > 0) return sanity;
   return getPostsByCollection("blog");
 }
 

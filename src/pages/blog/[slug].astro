@@ -55,7 +55,7 @@ const formattedDate = post.date
   article={true}
   publishDate={post.date || undefined}
   modifiedDate={post.updated || undefined}
-  image={post.thumbnail || "/og.png"}
+  image={post.thumbnail || `/og/blog/${post.slug}.png`}
 >
   <div class="container-edge container-prose page blog-post-page" style="align-items: flex-start; justify-content: flex-start; position: relative; padding: 0;">
     <!-- Logo -->
