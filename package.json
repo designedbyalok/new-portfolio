@@ -25,11 +25,11 @@
     "@resvg/resvg-js": "^2.6.2",
     "@sanity/cli": "^7.5.0",
     "@sanity/client": "^7.23.0",
-    "@tailwindcss/vite": "^4.3.0",
-    "astro": "6.4.5",
+    "@tailwindcss/vite": "^4.3.2",
+    "astro": "^7.0.6",
     "marked": "^18.0.5",
     "satori": "^0.26.0",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
     "pagefind": "^1.5.2",
