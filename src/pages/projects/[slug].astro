@@ -31,6 +31,14 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
       </a>
     </div>
 
+    {m.external && (
+      <div class="pill-wrapper animate a3">
+        <a class="link-pill" href={m.external} target="_blank" rel="noopener noreferrer" aria-label="Visit project">
+          <span class="pill-label">Visit project</span> <span class="pill-icon">↗</span>
+        </a>
+      </div>
+    )}
+
     <header class="post-header">
       <h1 class="name animate a1" style="margin-bottom: 8px; font-size: 48px; line-height: 48px; font-family: var(--font-serif); font-style: italic;">{idea.title}</h1>
       <p class="title animate a2">{m.tagline} · {m.period}</p>

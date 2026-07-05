@@ -32,6 +32,14 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
       </a>
     </div>
 
+    {m.website && (
+      <div class="pill-wrapper animate a4">
+        <a class="link-pill" href={m.website} target="_blank" rel="noopener noreferrer" aria-label="View project">
+          <span class="pill-label">View project</span> <span class="pill-icon">↗</span>
+        </a>
+      </div>
+    )}
+
     <header class="post-header">
       <h1 class="post-title animate a1">{m.company}</h1>
       <p class="post-date animate a2">{m.role} · {m.period}</p>

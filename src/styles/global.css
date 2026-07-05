@@ -487,32 +487,46 @@ html { scrollbar-gutter: stable; }
     line-height: 1;
   }
 
+  /* Sticky right-gutter wrapper for the pill — mirrors .back-wrapper's
+     zero-size sticky trick so the pill stays put while the page scrolls.
+     Hidden below 1160px, where the inline pill in the header shows instead. */
+  .pill-wrapper {
+    display: none;
+  }
   @media (min-width: 1160px) {
-    .detail-page {
-      position: relative;
+    .detail-page .post-header .link-pill {
+      display: none;
     }
-    .detail-page .link-pill {
-      position: absolute;
-      /* Align with the title: the container's content starts below its top
-         padding, and the inline edge sits inside its inline padding. */
+    .pill-wrapper {
+      display: block;
+      position: sticky;
       top: var(--page-pad-top);
-      left: calc(100% - var(--container-pad-x) + 45px);
+      z-index: 100;
+      width: 0;
+      height: 0;
+      /* push the anchor point to the content's right edge */
+      margin-left: 100%;
+    }
+    .pill-wrapper .link-pill {
+      position: absolute;
+      top: 0;
+      left: 45px;
       margin-top: 0;
       width: 48px;
       padding: 0;
       gap: 0;
     }
-    .detail-page .link-pill .pill-label {
+    .pill-wrapper .link-pill .pill-label {
       display: none;
     }
   }
   @media (min-width: 1340px) {
-    .detail-page .link-pill {
+    .pill-wrapper .link-pill {
       width: auto;
       padding: 0 20px;
       gap: 6px;
     }
-    .detail-page .link-pill .pill-label {
+    .pill-wrapper .link-pill .pill-label {
       display: inline;
     }
   }
@@ -786,6 +800,7 @@ html { scrollbar-gutter: stable; }
      a transform/filter on them would break the backdrop-filter blur on the back
      button and the search / theme-toggle buttons over scrolled content. */
   .back-wrapper.animate,
+  .pill-wrapper.animate,
   .top-bar.animate {
     animation-name: fadeInOnly;
   }
