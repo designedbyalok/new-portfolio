@@ -10,13 +10,17 @@ const yearOf = (period: string) => {
   return m ? m[1] : "";
 };
 
-const cards = entries.map((e) => ({
+// Each card gets a small interactive demo in its preview area.
+// Widgets cycle by index so new CMS entries automatically get one.
+const WIDGETS = ["menu", "save", "theme"] as const;
+
+const cards = entries.map((e, i) => ({
   slug: e.slug,
   title: e.title,
   tagline: e.metadata.tagline,
   year: yearOf(e.metadata.period),
   category: e.metadata.tags?.[0] ?? "All",
-  hero: e.metadata.hero ?? e.thumbnail,
+  widget: WIDGETS[i % WIDGETS.length],
 }));
 
 const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))];
@@ -26,15 +30,19 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
   title="Ideas — Alok Kumar"
   description="A glimpse into my creative mind — explorations, side projects, and ideas worth sharing."
 >
-  <div class="ideas page">
+  <div class="container page ideas-page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />
+    <div class="back-wrapper animate a1">
+      <a class="back-link-circle" href="/" aria-label="Back Home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </a>
+    </div>
 
-    <header class="ideas-head animate a1">
-      <h1 class="ideas-title">Ideas</h1>
-      <p class="ideas-sub">A glimpse into my creative mind</p>
-    </header>
+    <div style="width: 100%; margin-bottom: 1.5rem;">
+      <h1 class="page-heading animate a2">ideas</h1>
+    </div>
 
-    <div class="ideas-filter animate a2">
+    <div class="ideas-filter animate a3">
       <button
         type="button"
         class="cat-btn"
@@ -46,32 +54,59 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <ul class="cat-menu" id="catMenu" role="listbox" hidden>
-        {
-          categories.map((c) => (
-            <li role="option" data-value={c}>{c}</li>
-          ))
-        }
+        {categories.map((c) => <li role="option" data-value={c}>{c}</li>)}
       </ul>
     </div>
 
-    <div class="idea-grid animate a3">
+    <div class="idea-grid animate a4">
       {
         cards.map((c) => (
-          <a class="idea-card" href={`/projects/${c.slug}`} data-category={c.category}>
-            <div class="idea-preview">
-              {c.hero ? (
-                <img src={c.hero} alt="" loading="lazy" decoding="async" />
-              ) : (
-                <div class="idea-preview-empty" aria-hidden="true" />
+          <article class="idea-card" data-category={c.category}>
+            {/* Interactive demo — deliberately NOT inside the link */}
+            <div class="idea-preview" data-widget={c.widget}>
+              {c.widget === "menu" && (
+                <div class="w-menu">
+                  <button type="button" class="w-menu-btn" aria-expanded="false">
+                    <span class="w-menu-bar" />
+                    <span class="w-menu-bar" />
+                  </button>
+                  <nav class="w-menu-list" aria-hidden="true">
+                    <span>Home</span>
+                    <span>Work</span>
+                    <span>Ideas</span>
+                    <span>About</span>
+                  </nav>
+                </div>
+              )}
+              {c.widget === "save" && (
+                <button type="button" class="w-save" aria-pressed="false">
+                  <svg class="w-save-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <span class="w-save-label">Save</span>
+                  <span class="w-save-count">128</span>
+                </button>
+              )}
+              {c.widget === "theme" && (
+                <div class="w-card" data-mode="dark">
+                  <div class="w-card-head">
+                    <span class="w-card-dot" />
+                    <span class="w-card-lines">
+                      <span class="w-line" />
+                      <span class="w-line short" />
+                    </span>
+                  </div>
+                  <button type="button" class="w-switch" role="switch" aria-checked="false" aria-label="Toggle preview theme">
+                    <span class="w-knob" />
+                  </button>
+                </div>
               )}
             </div>
-            <div class="idea-meta">
+            <a class="idea-meta" href={`/projects/${c.slug}`}>
               <span class="idea-title">
                 {c.title} <span class="idea-year">{c.year}</span>
               </span>
               <span class="idea-desc">{c.tagline}</span>
-            </div>
-          </a>
+            </a>
+          </article>
         ))
       }
     </div>
@@ -79,39 +114,31 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
 </Layout>
 
 <style>
-  .ideas {
-    --chrome-top: 80px;
-    --chrome-side: 48px;
+  /* Wider than container-content so the grid breathes, same nav chrome. */
+  .ideas-page {
     width: 100%;
-    padding: 80px 48px;
-    align-items: center;
+    max-width: 1080px;
+    margin-inline: auto;
   }
 
-  .ideas-head {
-    width: 100%;
-    max-width: 1200px;
-    text-align: center;
-    margin: 24px 0 56px;
-  }
-  .ideas-title {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--fg);
-  }
-  .ideas-sub {
-    margin: 12px 0 0;
-    font-size: var(--text-lg);
-    color: var(--fg-secondary);
+  /* The global gutter-float for the back button assumes the narrow 640px
+     column. This page is 1080px wide, so between 1024–1439px the gutter
+     would collide with the fixed logo — keep the button above the heading
+     there, and only float it once the viewport has real gutter room. */
+  @media (min-width: 1024px) and (max-width: 1439px) {
+    .ideas-page .back-wrapper {
+      width: fit-content;
+      height: auto;
+      margin-left: 0;
+      margin-bottom: 24px;
+    }
+    .ideas-page .back-wrapper .back-link-circle {
+      left: 0;
+    }
   }
 
   .ideas-filter {
     width: 100%;
-    max-width: 1200px;
     margin-bottom: 24px;
     position: relative;
   }
@@ -147,9 +174,7 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     min-width: 180px;
     z-index: 50;
   }
-  .cat-menu[hidden] {
-    display: none;
-  }
+  .cat-menu[hidden] { display: none; }
   .cat-menu li {
     padding: 8px 12px;
     border-radius: 8px;
@@ -158,13 +183,10 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     cursor: pointer;
   }
   .cat-menu li:hover,
-  .cat-menu li[aria-selected="true"] {
-    background: var(--hover-bg);
-  }
+  .cat-menu li[aria-selected="true"] { background: var(--hover-bg); }
 
   .idea-grid {
     width: 100%;
-    max-width: 1200px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px 24px;
@@ -173,40 +195,19 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     display: flex;
     flex-direction: column;
     gap: 16px;
-    text-decoration: none;
-    color: inherit;
   }
-  .idea-card[hidden] {
-    display: none;
-  }
+  .idea-card[hidden] { display: none; }
 
   .idea-preview {
     aspect-ratio: 1 / 1;
     border-radius: 24px;
     background: var(--tag-bg);
-    padding: 20px;
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: transform 0.25s ease;
-  }
-  .idea-card:hover .idea-preview {
-    transform: translateY(-2px);
-  }
-  .idea-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 16px;
-    background: var(--bg);
-    display: block;
-  }
-  .idea-preview-empty {
-    width: 100%;
-    height: 100%;
-    border-radius: 16px;
-    background: var(--bg);
+    position: relative;
   }
 
   .idea-meta {
@@ -214,6 +215,8 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     flex-direction: column;
     gap: 6px;
     padding: 0 4px;
+    text-decoration: none;
+    color: inherit;
   }
   .idea-title {
     font-size: var(--text-lg);
@@ -221,6 +224,7 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     color: var(--fg);
     letter-spacing: -0.01em;
   }
+  .idea-meta:hover .idea-title { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--border); }
   .idea-year {
     font-weight: 400;
     color: var(--fg-tertiary);
@@ -236,35 +240,168 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     overflow: hidden;
   }
 
+  /* ---- Widget: morphing menu ---- */
+  .w-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .w-menu-btn {
+    width: 56px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .w-menu-btn:hover { transform: scale(1.05); }
+  .w-menu-bar {
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--fg);
+    transition: transform 0.25s ease;
+  }
+  .w-menu.open .w-menu-bar:first-child { transform: translateY(3.5px) rotate(45deg); }
+  .w-menu.open .w-menu-bar:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  .w-menu-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 14px 26px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--fg);
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    pointer-events: none;
+  }
+  .w-menu.open .w-menu-list {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .w-menu-list span { opacity: 0.55; transition: opacity 0.15s ease; cursor: default; }
+  .w-menu-list span:hover { opacity: 1; }
+
+  /* ---- Widget: save button ---- */
+  .w-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 20px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+  .w-save:hover { background: var(--hover-bg); }
+  .w-save:active { transform: scale(0.94); }
+  .w-save.saved .w-save-icon { fill: var(--fg); }
+  .w-save.saved { animation: w-pop 0.3s ease; }
+  @keyframes w-pop {
+    40% { transform: scale(1.08); }
+  }
+  .w-save-count {
+    font-variant-numeric: tabular-nums;
+    color: var(--fg-tertiary);
+    border-left: 1px solid var(--border);
+    padding-left: 10px;
+  }
+
+  /* ---- Widget: theme switch card ---- */
+  .w-card {
+    width: 72%;
+    border-radius: 16px;
+    border: 1px solid #3a352f;
+    background: #211e1b;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: background 0.35s ease, border-color 0.35s ease;
+  }
+  .w-card[data-mode="light"] {
+    background: #f5f5f0;
+    border-color: #dcdcd6;
+  }
+  .w-card-head { display: flex; align-items: center; gap: 10px; }
+  .w-card-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #FCF2E1;
+    flex-shrink: 0;
+    transition: background 0.35s ease;
+  }
+  .w-card[data-mode="light"] .w-card-dot { background: #181818; }
+  .w-card-lines { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .w-line {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(252, 242, 225, 0.55);
+    transition: background 0.35s ease;
+  }
+  .w-line.short { width: 60%; }
+  .w-card[data-mode="light"] .w-line { background: rgba(24, 24, 24, 0.4); }
+  .w-switch {
+    width: 46px;
+    height: 26px;
+    border-radius: 999px;
+    border: 1px solid #3a352f;
+    background: #2c2823;
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  .w-card[data-mode="light"] .w-switch {
+    background: #e6e6df;
+    border-color: #d3d3cb;
+  }
+  .w-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FCF2E1;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
+  }
+  .w-card[data-mode="light"] .w-knob {
+    transform: translateX(20px);
+    background: #181818;
+  }
+
   @media (max-width: 960px) {
-    .ideas {
-      padding: 80px 32px;
-    }
     .idea-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 24px 20px;
     }
   }
   @media (max-width: 600px) {
-    .ideas {
-      --chrome-top: 32px;
-      --chrome-side: 24px;
-      padding: 120px 20px 40px;
-    }
-    .ideas-head {
-      margin: 8px 0 28px;
-    }
-    .ideas-sub {
-      font-size: var(--text-base);
-    }
     .idea-grid {
       grid-template-columns: 1fr;
       gap: 28px;
     }
-    .idea-preview {
-      border-radius: 20px;
-      padding: 16px;
-    }
+    .idea-preview { border-radius: 20px; }
   }
 </style>
 
@@ -282,13 +419,10 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
       menu.hidden = true;
       btn.setAttribute("aria-expanded", "false");
     };
-    const open = () => {
-      menu.hidden = false;
-      btn.setAttribute("aria-expanded", "true");
-    };
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      menu.hidden ? open() : close();
+      menu.hidden = !menu.hidden;
+      btn.setAttribute("aria-expanded", String(!menu.hidden));
     });
     document.addEventListener("click", (e) => {
       if (!menu.hidden && !menu.contains(e.target as Node) && e.target !== btn) close();
@@ -309,6 +443,51 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     });
   }
 
+  function initIdeaWidgets() {
+    // Morphing menu
+    document.querySelectorAll<HTMLElement>(".w-menu").forEach((w) => {
+      if (w.dataset.bound === "true") return;
+      w.dataset.bound = "true";
+      const btn = w.querySelector<HTMLButtonElement>(".w-menu-btn")!;
+      const list = w.querySelector<HTMLElement>(".w-menu-list")!;
+      btn.addEventListener("click", () => {
+        const open = w.classList.toggle("open");
+        btn.setAttribute("aria-expanded", String(open));
+        list.setAttribute("aria-hidden", String(!open));
+      });
+    });
+
+    // Save button with counter
+    document.querySelectorAll<HTMLButtonElement>(".w-save").forEach((btn) => {
+      if (btn.dataset.bound === "true") return;
+      btn.dataset.bound = "true";
+      const label = btn.querySelector<HTMLElement>(".w-save-label")!;
+      const count = btn.querySelector<HTMLElement>(".w-save-count")!;
+      btn.addEventListener("click", () => {
+        const saved = btn.classList.toggle("saved");
+        btn.setAttribute("aria-pressed", String(saved));
+        label.textContent = saved ? "Saved" : "Save";
+        count.textContent = String(Number(count.textContent) + (saved ? 1 : -1));
+      });
+    });
+
+    // Theme switch card
+    document.querySelectorAll<HTMLElement>(".w-card").forEach((card) => {
+      if (card.dataset.bound === "true") return;
+      card.dataset.bound = "true";
+      const sw = card.querySelector<HTMLButtonElement>(".w-switch")!;
+      sw.addEventListener("click", () => {
+        const light = card.dataset.mode !== "light";
+        card.dataset.mode = light ? "light" : "dark";
+        sw.setAttribute("aria-checked", String(light));
+      });
+    });
+  }
+
   initCategoryFilter();
-  document.addEventListener("astro:after-swap", initCategoryFilter);
+  initIdeaWidgets();
+  document.addEventListener("astro:after-swap", () => {
+    initCategoryFilter();
+    initIdeaWidgets();
+  });
 </script>
