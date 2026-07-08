@@ -43,19 +43,14 @@ export type FilmResult = {
   posterUrl?: string;
 };
 
-// Sanity exposes SANITY_STUDIO_* on both import.meta.env and process.env
-// depending on version — read whichever is present.
-function readEnv(name: string): string | undefined {
-  const im = (import.meta as any)?.env?.[name];
-  if (im) return im;
-  try {
-    return typeof process !== "undefined" ? process.env?.[name] : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-const RAW_KEY = readEnv("SANITY_STUDIO_TMDB_API_KEY");
+// Sanity/Vite only inline env vars accessed by LITERAL name — dynamic bracket
+// access (env[name]) can come back undefined in the built bundle. So read the
+// exact key statically from both possible sources.
+const RAW_KEY: string | undefined =
+  (import.meta as any)?.env?.SANITY_STUDIO_TMDB_API_KEY ||
+  (typeof process !== "undefined"
+    ? (process as any)?.env?.SANITY_STUDIO_TMDB_API_KEY
+    : undefined);
 // Treat the example placeholder ("<your …>") and blanks as "not set".
 const TMDB_KEY =
   RAW_KEY && !RAW_KEY.includes("<") && RAW_KEY.trim().length > 0

@@ -99,7 +99,7 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
         <p class="eyebrow" style="margin-bottom: 16px;">Key metrics</p>
         <div class="work-list">
           {projects.map((project) => (
-            <div class="work-item" style="flex-direction: column; align-items: flex-start; padding: 16px 0; gap: 8px;">
+            <div class="work-item" style="flex-direction: column; align-items: flex-start; padding: 16px 0; margin: 0; gap: 8px;">
               <h3 style="font-size: 16px; font-weight: 500; margin: 0;">{project.title}</h3>
               <p style="font-size: 14px; color: var(--fg-secondary); margin: 0;">{project.description}</p>
               {project.href && (
