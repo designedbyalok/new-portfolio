@@ -65,18 +65,62 @@ const schema = article
   : {
       "@context": "https://schema.org",
       "@type": "Person",
+      "@id": "https://designedbyalok.com/#alok",
       name: "Alok Kumar",
+      alternateName: "Alok",
       url: "https://designedbyalok.com",
       jobTitle: "Product Designer",
       description: description,
       image: socialImageURL.toString(),
+      email: "mailto:designedbyalok@gmail.com",
+      worksFor: { "@type": "Organization", name: "Fold Health", url: "https://fold.health" },
+      alumniOf: {
+        "@type": "CollegeOrUniversity",
+        name: "Anna University",
+        address: { "@type": "PostalAddress", addressLocality: "Chennai", addressCountry: "IN" },
+      },
+      homeLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Pune",
+          addressRegion: "Maharashtra",
+          addressCountry: "IN",
+        },
+      },
+      knowsAbout: [
+        "Product Design",
+        "UX Design",
+        "UI Design",
+        "Design Systems",
+        "Interaction Design",
+        "Healthcare Technology",
+      ],
       sameAs: [
         "https://x.com/designedbyalok",
         "https://www.linkedin.com/in/designedbyalok/",
         "https://github.com/designedbyalok",
         "https://dribbble.com/designedbyalok",
+        "https://www.instagram.com/designedbyalok",
       ],
     };
+
+// WebSite entity — only on the homepage. Names the site and ties it to Alok
+// as author/publisher, which helps Google surface it for name searches.
+const isHome = canonicalURL.pathname === "/";
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://designedbyalok.com/#website",
+  url: "https://designedbyalok.com",
+  name: "Alok Kumar",
+  alternateName: ["designedbyalok", "Alok Kumar — Product Designer"],
+  description:
+    "Portfolio of Alok Kumar, a product designer based in Pune, India.",
+  author: { "@id": "https://designedbyalok.com/#alok" },
+  publisher: { "@id": "https://designedbyalok.com/#alok" },
+  inLanguage: "en",
+};
 ---
 
 <!doctype html>
@@ -123,6 +167,9 @@ const schema = article
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    {isHome && (
+      <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    )}
     {schemas.map((s) => (
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
     ))}

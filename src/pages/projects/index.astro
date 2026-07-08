@@ -30,7 +30,7 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
   title="Ideas — Alok Kumar"
   description="A glimpse into my creative mind — explorations, side projects, and ideas worth sharing."
 >
-  <div class="container page ideas-page" style="align-items: flex-start; justify-content: flex-start;">
+  <div class="container container-content page ideas-page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />
     <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/" aria-label="Back Home">
@@ -114,29 +114,6 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
 </Layout>
 
 <style>
-  /* Wider than container-content so the grid breathes, same nav chrome. */
-  .ideas-page {
-    width: 100%;
-    max-width: 1080px;
-    margin-inline: auto;
-  }
-
-  /* The global gutter-float for the back button assumes the narrow 640px
-     column. This page is 1080px wide, so between 1024–1439px the gutter
-     would collide with the fixed logo — keep the button above the heading
-     there, and only float it once the viewport has real gutter room. */
-  @media (min-width: 1024px) and (max-width: 1439px) {
-    .ideas-page .back-wrapper {
-      width: fit-content;
-      height: auto;
-      margin-left: 0;
-      margin-bottom: 24px;
-    }
-    .ideas-page .back-wrapper .back-link-circle {
-      left: 0;
-    }
-  }
-
   .ideas-filter {
     width: 100%;
     margin-bottom: 24px;
@@ -188,7 +165,7 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
   .idea-grid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 32px 24px;
   }
   .idea-card {

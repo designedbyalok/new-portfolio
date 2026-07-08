@@ -52,6 +52,20 @@ html { scrollbar-gutter: stable; }
   }
 }
 
+/* Single source of truth for the "viewing area" — the content column width and
+   the responsive top padding. EVERY page (listing or detail) reads these, so a
+   listing and its detail page can never drift apart. */
+:root {
+  --content-width: 640px;
+  --page-top: var(--page-pad-top);
+}
+@media (max-width: 768px) {
+  :root {
+    /* Push content below the fixed chrome where the gutters collapse. */
+    --page-top: calc(var(--chrome-top) + 64px);
+  }
+}
+
 @layer base {
   :root {
     color-scheme: light;
@@ -402,7 +416,7 @@ html { scrollbar-gutter: stable; }
     margin-inline: auto;
   }
   .container-content {
-    max-width: 640px;
+    max-width: var(--content-width);
     margin-inline: auto;
   }
 
@@ -709,16 +723,9 @@ html { scrollbar-gutter: stable; }
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-top: var(--page-pad-top);
+    padding-top: var(--page-top);
     padding-bottom: var(--page-pad-bottom);
     padding-inline: var(--container-pad-x);
-  }
-  /* On narrow screens the fixed chrome overlaps full-width content, so push
-     content below it (desktop keeps content in the gutter-clear center). */
-  @media (max-width: 768px) {
-    .page {
-      padding-top: calc(var(--chrome-top) + 64px);
-    }
   }
 
   /* Shared list pattern: rows that blur siblings on hover (blog, work, books, films) */

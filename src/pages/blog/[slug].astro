@@ -57,7 +57,7 @@ const formattedDate = post.date
   modifiedDate={post.updated || undefined}
   image={post.thumbnail || `/og/blog/${post.slug}.png`}
 >
-  <div class="container-edge container-prose page blog-post-page" style="align-items: flex-start; justify-content: flex-start; position: relative; padding: 0;">
+  <div class="container container-content page blog-post-page" style="align-items: flex-start; justify-content: flex-start; position: relative;">
     <!-- Logo -->
     <TopBar />
     <div class="back-wrapper animate a1">
@@ -94,17 +94,7 @@ const formattedDate = post.date
   </div>
 </Layout>
 
-<style is:global>
-  main#main:has(.blog-post-page) {
-    padding: var(--page-pad-top) var(--container-pad-x);
-  }
-</style>
-
 <style>
-  .blog-post-page {
-    padding-bottom: 0;
-  }
-
   .post-hero-image {
     margin-bottom: 40px;
     width: 100%;
