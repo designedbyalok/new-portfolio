@@ -1,5 +1,24 @@
 // All portfolio content types. Field names mirror the site's metadata
 // interfaces in src/lib/*.ts — keep them in sync.
+import { BookAutofill, FilmAutofill } from "./components/AutofillInput";
+
+// A search box at the top of the form that fills the fields below it.
+const bookLookup = {
+  name: "lookup",
+  title: "Search & auto-fill",
+  type: "string",
+  description:
+    "Type a book title, pick a result — title, author and slug fill in below. The cover is fetched automatically on publish.",
+  components: { input: BookAutofill },
+};
+const filmLookup = {
+  name: "lookup",
+  title: "Search & auto-fill",
+  type: "string",
+  description:
+    "Type a film title, pick a result — title, director, year and slug fill in below. The poster is fetched automatically on publish.",
+  components: { input: FilmAutofill },
+};
 
 const slug = {
   name: "slug",
@@ -43,6 +62,7 @@ export const schemaTypes = [
     title: "Book",
     type: "document",
     fields: [
+      bookLookup,
       { name: "title", type: "string", validation: (r: any) => r.required() },
       slug,
       { name: "author", type: "string", validation: (r: any) => r.required() },
@@ -73,6 +93,7 @@ export const schemaTypes = [
     title: "Film",
     type: "document",
     fields: [
+      filmLookup,
       { name: "title", type: "string", validation: (r: any) => r.required() },
       slug,
       { name: "year", type: "number", validation: (r: any) => r.required() },
