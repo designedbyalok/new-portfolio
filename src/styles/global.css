@@ -767,14 +767,21 @@ html { scrollbar-gutter: stable; }
     display: flex;
     align-items: center;
     gap: 24px;
+    /* Let a long title shrink here instead of squeezing the trailing meta. */
+    min-width: 0;
   }
   .blur-item-title {
     font-size: var(--text-base);
     font-weight: 500;
+    min-width: 0;
   }
   .blur-item-meta {
     font-size: var(--text-sm);
     color: var(--fg-secondary);
+    /* The date holds its own line — never wrapped or squeezed by a long title. */
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-left: 16px;
   }
   /* Polaroid-style thumbnail used inside list rows */
   .thumb-frame {
