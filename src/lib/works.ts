@@ -36,14 +36,45 @@ export interface WorkMetadata {
 
 export type Work = CMSPost<WorkMetadata>;
 
+const MONTHS: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+};
+
+/**
+ * Turns a free-text `period` into a sortable timestamp for when the role ended:
+ * "Jun 2023 — Present" (ongoing, sorts first), "Aug 2021 — Jun 2023",
+ * "May 2026", "2026". A bare year is read as that year's end, since this is an
+ * end bound. Returns undefined if it can't be parsed, so the caller can fall
+ * back to the manual `order` field.
+ */
+function periodEnd(period?: string): number | undefined {
+  if (!period) return undefined;
+  const parts = period.split(/[—–-]/).map((s) => s.trim()).filter(Boolean);
+  const last = parts[parts.length - 1] ?? "";
+  if (/present|current|now|ongoing/i.test(last)) return Number.MAX_SAFE_INTEGER;
+  const m = last.match(/([A-Za-z]{3,})?\s*(\d{4})/);
+  if (!m) return undefined;
+  const month = m[1] ? (MONTHS[m[1].slice(0, 3).toLowerCase()] ?? 11) : 11;
+  return Date.UTC(Number(m[2]), month);
+}
+
+/** Newest first by period; `order` (higher first) breaks ties or fills gaps. */
+function sortWorks(list: Work[]): Work[] {
+  return [...list].sort((a, b) => {
+    const ta = periodEnd(a.metadata.period);
+    const tb = periodEnd(b.metadata.period);
+    if (ta !== undefined && tb !== undefined && ta !== tb) return tb - ta;
+    return (b.metadata.order ?? 0) - (a.metadata.order ?? 0);
+  });
+}
+
 export async function getWorks(): Promise<Work[]> {
   const sanity = await fetchSanity<WorkMetadata>("work");
-  if (sanity.length > 0) return sanity;
+  if (sanity.length > 0) return sortWorks(sanity);
   const remote = await getPostsByCollection<WorkMetadata>("work");
   const list = remote.length > 0 ? remote : await readLocalWorks();
-  return list.sort(
-    (a, b) => (b.metadata.order ?? 0) - (a.metadata.order ?? 0),
-  );
+  return sortWorks(list);
 }
 
 export async function getWorkBySlug(slug: string): Promise<Work | undefined> {
