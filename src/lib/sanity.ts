@@ -8,11 +8,19 @@ const projectId = import.meta.env.SANITY_PROJECT_ID;
 const dataset = import.meta.env.SANITY_DATASET ?? "production";
 const token = import.meta.env.SANITY_TOKEN;
 
+// A token lets the API return drafts as well as published documents, and with
+// no perspective set that is exactly what happens — unpublished work leaks into
+// production builds. Pin builds to published content, and opt into drafts only
+// for a preview run via SANITY_PERSPECTIVE=drafts.
+const perspective =
+  (import.meta.env.SANITY_PERSPECTIVE as "published" | "drafts" | "raw") ?? "published";
+
 const client = projectId
   ? createClient({
       projectId,
       dataset,
       token,
+      perspective,
       apiVersion: "2026-01-01",
       useCdn: false, // build-time fetch — always fresh
     })

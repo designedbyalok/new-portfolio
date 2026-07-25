@@ -321,6 +321,7 @@ const navItems = [
     gap: clamp(20px, 3vw, 32px);
   }
   .nav-link {
+    position: relative;
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 500;
@@ -329,17 +330,60 @@ const navItems = [
     color: var(--fg);
     text-decoration: none;
     letter-spacing: -0.01em;
-    transition: opacity 0.18s ease, transform 0.22s ease;
-    transform: translateY(8px);
     opacity: 0;
+    /* Hover-only transitions. The entrance is a keyframe (below) so the two
+       never fight over `transform`, and hover stays instant — a staggered
+       transition-delay here would lag hover by up to 220ms. */
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.25s ease;
   }
+  /* Staggered fade-up on open. `backwards` fill holds the start state through
+     the delay but releases once done, handing control back to the hover rules. */
   .nav-menu.is-open .nav-link {
     opacity: 1;
-    transform: translateY(0);
-    transition-delay: calc(0.04s * var(--i, 0) + 0.06s);
+    animation: navLinkIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(0.05s * var(--i, 0) + 0.06s);
   }
-  .nav-link:hover {
-    opacity: 0.6;
+  @keyframes navLinkIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Underline draws out from the left. Lives on ::after, so it's independent
+     of whatever transform the link itself is running. */
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.12em;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* The hovered item swells slightly; its siblings recede — the same
+     "focus one, dim the rest" motion the site's list rows use. */
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    transform: scale(1.05);
+  }
+  .nav-list:has(.nav-link:hover) .nav-link:not(:hover) {
+    opacity: 0.3;
+    filter: blur(1.5px);
   }
 
   /* Web: a panel in the top-left gutter instead of a full-screen takeover, so
