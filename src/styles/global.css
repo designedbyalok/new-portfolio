@@ -81,6 +81,9 @@ html { scrollbar-gutter: stable; }
     /* Frosted background for the fixed chrome buttons (back / search / theme) —
        opaque enough to hide content scrolling behind them. */
     --chrome-btn-bg: rgba(245, 245, 240, 0.78);
+    /* Elevated surface for the nav panel — a step lighter than the page in
+       light mode, a step darker in dark mode (matches the design). */
+    --nav-panel-bg: #ffffff;
   }
 
   [data-theme="dark"] {
@@ -96,6 +99,7 @@ html { scrollbar-gutter: stable; }
     --accent: #FCF2E1;
     --thumb-border: #d9cdb8;
     --chrome-btn-bg: rgba(43, 40, 37, 0.75);
+    --nav-panel-bg: #060807;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -111,6 +115,7 @@ html { scrollbar-gutter: stable; }
       --accent: #FCF2E1;
       --thumb-border: #d9cdb8;
       --chrome-btn-bg: rgba(43, 40, 37, 0.75);
+      --nav-panel-bg: #060807;
     }
   }
 
@@ -745,6 +750,9 @@ html { scrollbar-gutter: stable; }
   }
   .blur-item:hover {
     background-color: var(--hover-bg);
+    /* Rounded highlight on hover; at rest the row's border-bottom stays a
+       straight, full-width divider (border-radius: 0 below). */
+    border-radius: 8px;
   }
   .blur-item {
     display: flex;

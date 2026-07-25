@@ -150,6 +150,14 @@ const navItems = [
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && !menu.hidden) close();
     });
+    // On web the menu is a panel, not a full-screen layer, so a click on the
+    // page lands outside it — treat that as a dismiss.
+    document.addEventListener("pointerdown", (e) => {
+      if (menu.hidden) return;
+      const target = e.target as Node;
+      if (menu.contains(target) || openBtn.contains(target)) return;
+      close();
+    });
     // Same-page nav link clicks close the overlay (view transitions will run)
     menu.querySelectorAll<HTMLAnchorElement>(".nav-link").forEach((link) => {
       link.addEventListener("click", () => {
@@ -332,6 +340,35 @@ const navItems = [
   }
   .nav-link:hover {
     opacity: 0.6;
+  }
+
+  /* Web: a panel in the top-left gutter instead of a full-screen takeover, so
+     the page stays visible behind it. Offset by -24px (the panel's own padding)
+     from the logo's inset, which lands the close button exactly on the logo. */
+  @media (min-width: 1024px) {
+    .nav-menu {
+      inset: auto;
+      top: calc(var(--chrome-top, 32px) - 24px);
+      left: calc(var(--chrome-side, 24px) - 24px);
+      width: 480px;
+      max-width: calc(100vw - 2 * var(--chrome-side, 24px));
+      padding: 24px;
+      gap: 32px;
+      align-items: flex-start;
+      justify-content: flex-start;
+      border-radius: 24px;
+      background: var(--nav-panel-bg);
+      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
+    }
+    /* In-flow inside the panel — the 24px padding puts it on the logo's spot. */
+    .nav-menu .nav-close {
+      position: static;
+      flex-shrink: 0;
+    }
+    .nav-menu .nav-list {
+      align-self: stretch;
+      justify-content: center;
+    }
   }
 
   /* Mobile: full-page menu with the ALOK badge at the bottom */

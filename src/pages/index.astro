@@ -679,11 +679,14 @@ const resources = [
     margin-right: -12px;
     border-bottom: 1px solid var(--border);
     text-decoration: none;
-    border-radius: 8px;
-    transition: background 0.2s ease;
+    /* Straight divider at rest — same as the Writing rows. The rounding is a
+       hover affordance only (see .row:hover). */
+    border-radius: 0;
+    transition: background 0.2s ease, border-radius 0.2s ease;
   }
   .row:hover {
     background: var(--hover-bg);
+    border-radius: 8px;
   }
   .row-thumb {
     width: 80px;
