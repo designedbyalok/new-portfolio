@@ -199,12 +199,40 @@ html { scrollbar-gutter: stable; }
   }
   .prose a:hover { text-decoration-color: var(--fg); }
 
-  /* Images */
-  .prose img {
-    margin: 2em 0;
-    border-radius: 8px;
+  /* Media — any uploaded image, GIF or video fills the article width instead of
+     rendering at whatever intrinsic size it happens to have (max-width alone
+     leaves anything narrower than the column undersized). */
+  .prose :is(img, video, picture) {
+    display: block;
+    width: 100%;
     max-width: 100%;
     height: auto;
+    margin: 2em 0;
+    border-radius: 8px;
+  }
+  /* Embeds (YouTube/Vimeo) carry no intrinsic ratio, so height: auto would
+     collapse them to nothing — give them a 16:9 box. */
+  .prose iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+    margin: 2em 0;
+    border-radius: 8px;
+  }
+  /* Browsers inset <figure> by 40px each side; keep captioned media flush. */
+  .prose figure {
+    width: 100%;
+    margin: 2em 0;
+  }
+  .prose figure :is(img, video, picture, iframe) {
+    margin: 0;
+  }
+  .prose figcaption {
+    margin-top: 0.6em;
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
   }
 
   /* Blockquote */
