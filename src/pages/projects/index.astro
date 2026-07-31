@@ -118,6 +118,10 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     width: 100%;
     margin-bottom: 24px;
     position: relative;
+    /* .animate leaves a filter on both this and .idea-grid, and a filter makes
+       a stacking context — which traps .cat-menu's z-index in here and lets the
+       later grid paint over the open menu. Lift the whole filter above it. */
+    z-index: 20;
   }
   .cat-btn {
     display: inline-flex;
@@ -144,10 +148,12 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     margin: 0;
     padding: 6px;
     list-style: none;
-    background: var(--bg);
+    /* Same tint as the .cat-btn badge (var(--tag-bg)), but composited over an
+       opaque base so nothing shows through — --tag-bg alone is translucent. */
+    background: linear-gradient(var(--tag-bg), var(--tag-bg)), var(--bg);
     border: 1px solid var(--border);
     border-radius: 12px;
-    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 18px 44px -12px rgba(0, 0, 0, 0.55);
     min-width: 180px;
     z-index: 50;
   }
@@ -162,11 +168,13 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
   .cat-menu li:hover,
   .cat-menu li[aria-selected="true"] { background: var(--hover-bg); }
 
+  /* One card per row. Two columns inside the ~544px content column left each
+     card too narrow for the previews to read. */
   .idea-grid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px 24px;
+    grid-template-columns: 1fr;
+    gap: 48px;
   }
   .idea-card {
     display: flex;
@@ -176,7 +184,7 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
   .idea-card[hidden] { display: none; }
 
   .idea-preview {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
     border-radius: 24px;
     background: var(--tag-bg);
     border: 1px solid var(--border);
@@ -367,16 +375,9 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
     background: #181818;
   }
 
-  @media (max-width: 960px) {
-    .idea-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px 20px;
-    }
-  }
   @media (max-width: 600px) {
     .idea-grid {
-      grid-template-columns: 1fr;
-      gap: 28px;
+      gap: 32px;
     }
     .idea-preview { border-radius: 20px; }
   }
