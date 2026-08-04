@@ -25,11 +25,38 @@ export interface IdeaMetadata {
 
 export type Idea = CMSPost<IdeaMetadata>;
 
+/**
+ * Merge by slug. `overlay` wins on conflicts; `base` fills slugs that
+ * overlay doesn't have — so local markdown can ship new case studies while
+ * Sanity/WriterPro still only hold the older set.
+ */
+function mergeBySlug(base: Idea[], overlay: Idea[]): Idea[] {
+  const map = new Map<string, Idea>();
+  for (const item of base) map.set(item.slug, item);
+  for (const item of overlay) map.set(item.slug, item);
+  return [...map.values()];
+}
+
 export async function getIdeas(): Promise<Idea[]> {
+  // Local markdown is always the floor. Without this, a non-empty but stale
+  // WriterPro "ideas" collection (or a partial Sanity dataset) hides every
+  // case study that only exists in src/content/projects/.
+  const local = await readLocalIdeas();
   const sanity = await fetchSanity<IdeaMetadata>("idea");
-  if (sanity.length > 0) return sanity;
+  if (sanity.length > 0) {
+    return mergeBySlug(local, sanity).sort(
+      (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
+    );
+  }
   const remote = await getPostsByCollection<IdeaMetadata>("ideas");
-  const list = remote.length > 0 ? remote : await readLocalIdeas();
+  // Prefer local over WriterPro when both exist: the repo is where new case
+  // studies are authored; WriterPro may lag. CMS still fills empty local sets.
+  const list =
+    local.length > 0
+      ? remote.length > 0
+        ? mergeBySlug(remote, local)
+        : local
+      : remote;
   return list.sort(
     (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
   );

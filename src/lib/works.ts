@@ -71,11 +71,32 @@ function sortWorks(list: Work[]): Work[] {
   });
 }
 
+/**
+ * Merge by slug. `overlay` wins on conflicts; `base` keeps entries the
+ * overlay is missing (e.g. local `kind: "project"` entries when WriterPro
+ * still has the older untyped work docs).
+ */
+function mergeBySlug(base: Work[], overlay: Work[]): Work[] {
+  const map = new Map<string, Work>();
+  for (const item of base) map.set(item.slug, item);
+  for (const item of overlay) map.set(item.slug, item);
+  return [...map.values()];
+}
+
 async function getAllWorks(): Promise<Work[]> {
+  // Same trap as case studies: a non-empty WriterPro "work" collection used
+  // to short-circuit past local MDX, which meant `kind: "project"` never
+  // applied and the Projects page stayed empty in production.
+  const local = await readLocalWorks();
   const sanity = await fetchSanity<WorkMetadata>("work");
-  if (sanity.length > 0) return sortWorks(sanity);
+  if (sanity.length > 0) return sortWorks(mergeBySlug(local, sanity));
   const remote = await getPostsByCollection<WorkMetadata>("work");
-  const list = remote.length > 0 ? remote : await readLocalWorks();
+  const list =
+    local.length > 0
+      ? remote.length > 0
+        ? mergeBySlug(remote, local)
+        : local
+      : remote;
   return sortWorks(list);
 }
 
