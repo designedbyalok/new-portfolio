@@ -22,6 +22,8 @@ export default defineConfig({
     '/projects/worklists': '/case-studies/worklists',
     '/work/writrpro': '/projects/writrpro',
     '/work/jobstax': '/projects/jobstax',
+    // WriterPro used the slug "foldhealth"; local content is "fold-health".
+    '/work/foldhealth': '/work/fold-health',
   },
   prefetch: {
     prefetchAll: true,

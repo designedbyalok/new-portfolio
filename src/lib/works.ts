@@ -72,37 +72,40 @@ function sortWorks(list: Work[]): Work[] {
 }
 
 /**
- * Merge by slug. `overlay` wins on conflicts; `base` keeps entries the
- * overlay is missing. When both have the same slug, prefer overlay but
- * backfill `kind` from base so a CMS doc that predates the field still
- * picks up `kind: "project"` from local markdown.
+ * Local markdown wins on slug and on company name. CMS-only rows are kept
+ * only when they introduce a company the repo doesn't already cover — so a
+ * stale WriterPro/Sanity slug like `foldhealth` can't sit next to local
+ * `fold-health` as a second Fold Health card.
  */
-function mergeBySlug(base: Work[], overlay: Work[]): Work[] {
-  const map = new Map<string, Work>();
-  for (const item of base) map.set(item.slug, item);
-  for (const item of overlay) {
-    const prev = map.get(item.slug);
-    if (prev?.metadata.kind && !item.metadata.kind) {
-      map.set(item.slug, {
-        ...item,
-        metadata: { ...item.metadata, kind: prev.metadata.kind },
-      });
-    } else {
-      map.set(item.slug, item);
-    }
+function preferLocal(local: Work[], remote: Work[]): Work[] {
+  const bySlug = new Map<string, Work>();
+  const companies = new Set<string>();
+  for (const item of local) {
+    bySlug.set(item.slug, item);
+    companies.add(item.metadata.company.trim().toLowerCase());
   }
-  return [...map.values()];
+  for (const item of remote) {
+    if (bySlug.has(item.slug)) continue;
+    if (companies.has(item.metadata.company.trim().toLowerCase())) continue;
+    bySlug.set(item.slug, item);
+  }
+  return [...bySlug.values()];
 }
 
 async function getAllWorks(): Promise<Work[]> {
-  // Local markdown is authoritative for work when present. A non-empty
-  // WriterPro "work" collection used to replace it entirely, which dropped
-  // `kind: "project"` and left /projects empty while /work still listed
-  // WritrPro and JobStax.
+  // Repo markdown is the source of truth for work + side projects. CMS
+  // sources may still hold pre-restructure docs (no `kind`, old slugs) that
+  // used to hide /projects and duplicate Fold Health on /work.
   const local = await readLocalWorks();
+  if (local.length > 0) {
+    // Only consult Sanity for *additional* companies; never WriterPro when
+    // local content exists — WriterPro still has the pre-restructure set.
+    const sanity = await fetchSanity<WorkMetadata>("work");
+    if (sanity.length > 0) return sortWorks(preferLocal(local, sanity));
+    return sortWorks(local);
+  }
   const sanity = await fetchSanity<WorkMetadata>("work");
-  if (sanity.length > 0) return sortWorks(mergeBySlug(local, sanity));
-  if (local.length > 0) return sortWorks(local);
+  if (sanity.length > 0) return sortWorks(sanity);
   return sortWorks(await getPostsByCollection<WorkMetadata>("work"));
 }
 
