@@ -73,31 +73,37 @@ function sortWorks(list: Work[]): Work[] {
 
 /**
  * Merge by slug. `overlay` wins on conflicts; `base` keeps entries the
- * overlay is missing (e.g. local `kind: "project"` entries when WriterPro
- * still has the older untyped work docs).
+ * overlay is missing. When both have the same slug, prefer overlay but
+ * backfill `kind` from base so a CMS doc that predates the field still
+ * picks up `kind: "project"` from local markdown.
  */
 function mergeBySlug(base: Work[], overlay: Work[]): Work[] {
   const map = new Map<string, Work>();
   for (const item of base) map.set(item.slug, item);
-  for (const item of overlay) map.set(item.slug, item);
+  for (const item of overlay) {
+    const prev = map.get(item.slug);
+    if (prev?.metadata.kind && !item.metadata.kind) {
+      map.set(item.slug, {
+        ...item,
+        metadata: { ...item.metadata, kind: prev.metadata.kind },
+      });
+    } else {
+      map.set(item.slug, item);
+    }
+  }
   return [...map.values()];
 }
 
 async function getAllWorks(): Promise<Work[]> {
-  // Same trap as case studies: a non-empty WriterPro "work" collection used
-  // to short-circuit past local MDX, which meant `kind: "project"` never
-  // applied and the Projects page stayed empty in production.
+  // Local markdown is authoritative for work when present. A non-empty
+  // WriterPro "work" collection used to replace it entirely, which dropped
+  // `kind: "project"` and left /projects empty while /work still listed
+  // WritrPro and JobStax.
   const local = await readLocalWorks();
   const sanity = await fetchSanity<WorkMetadata>("work");
   if (sanity.length > 0) return sortWorks(mergeBySlug(local, sanity));
-  const remote = await getPostsByCollection<WorkMetadata>("work");
-  const list =
-    local.length > 0
-      ? remote.length > 0
-        ? mergeBySlug(remote, local)
-        : local
-      : remote;
-  return sortWorks(list);
+  if (local.length > 0) return sortWorks(local);
+  return sortWorks(await getPostsByCollection<WorkMetadata>("work"));
 }
 
 /** Employment history — the Work Experience page. */

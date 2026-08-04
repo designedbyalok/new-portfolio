@@ -38,9 +38,9 @@ function mergeBySlug(base: Idea[], overlay: Idea[]): Idea[] {
 }
 
 export async function getIdeas(): Promise<Idea[]> {
-  // Local markdown is always the floor. Without this, a non-empty but stale
-  // WriterPro "ideas" collection (or a partial Sanity dataset) hides every
-  // case study that only exists in src/content/projects/.
+  // Local markdown is authoritative when present. A non-empty but stale
+  // WriterPro "ideas" collection used to hide every case study that only
+  // lives in src/content/projects/ (Agent Builder, HCC Coding, Worklists).
   const local = await readLocalIdeas();
   const sanity = await fetchSanity<IdeaMetadata>("idea");
   if (sanity.length > 0) {
@@ -48,16 +48,12 @@ export async function getIdeas(): Promise<Idea[]> {
       (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
     );
   }
-  const remote = await getPostsByCollection<IdeaMetadata>("ideas");
-  // Prefer local over WriterPro when both exist: the repo is where new case
-  // studies are authored; WriterPro may lag. CMS still fills empty local sets.
-  const list =
-    local.length > 0
-      ? remote.length > 0
-        ? mergeBySlug(remote, local)
-        : local
-      : remote;
-  return list.sort(
+  if (local.length > 0) {
+    return local.sort(
+      (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
+    );
+  }
+  return (await getPostsByCollection<IdeaMetadata>("ideas")).sort(
     (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
   );
 }
