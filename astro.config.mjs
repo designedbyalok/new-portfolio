@@ -10,6 +10,19 @@ export default defineConfig({
   site: 'https://designedbyalok.com',
   trailingSlash: 'never',
   adapter: vercel(),
+  // Nav restructure (Jul 2026): case studies moved from /projects/* to
+  // /case-studies/*, and the personal products moved from /work/* to
+  // /projects/*. Keep every previously shared URL alive.
+  redirects: {
+    '/projects/roots-design-system': '/case-studies/roots-design-system',
+    '/projects/fold-rule-builder': '/case-studies/fold-rule-builder',
+    '/projects/posture-canvas': '/case-studies/posture-canvas',
+    '/projects/agent-builder': '/case-studies/agent-builder',
+    '/projects/hcc-coding': '/case-studies/hcc-coding',
+    '/projects/worklists': '/case-studies/worklists',
+    '/work/writrpro': '/projects/writrpro',
+    '/work/jobstax': '/projects/jobstax',
+  },
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',

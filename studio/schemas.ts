@@ -134,6 +134,13 @@ export const schemaTypes = [
     type: "document",
     fields: [
       { name: "company", type: "string", validation: (r: any) => r.required() },
+      {
+        name: "kind",
+        type: "string",
+        description: "experience = employment (Work Experience page); project = personal product (Projects page)",
+        options: { list: ["experience", "project"], layout: "radio" },
+        initialValue: "experience",
+      },
       { ...slug, options: { source: "company", maxLength: 96 } },
       { name: "role", type: "string" },
       { name: "period", type: "string", description: 'e.g. "Jun 2023 — Present"' },

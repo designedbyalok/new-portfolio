@@ -1,5 +1,6 @@
 ---
 company: WritrPro
+kind: project
 role: Creator & Solo Builder
 period: "2026"
 summary: A privacy-first markdown writing app and headless CMS — end-to-end encrypted notes, one-click publish to a public blog, and an editor designed to disappear.

@@ -9,6 +9,9 @@ const work = defineCollection({
     period: z.string(),
     summary: z.string(),
     website: z.string().url(),
+    /* "experience" = employment (Work Experience page); "project" = personal
+       product (Projects page). One collection, two surfaces. */
+    kind: z.enum(["experience", "project"]).default("experience"),
     order: z.number().default(0),
     hero: z.string().optional(),
     logo: z.string().optional(),

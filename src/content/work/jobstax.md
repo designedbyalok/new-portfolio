@@ -1,5 +1,6 @@
 ---
 company: JobStax
+kind: project
 role: Creator & Solo Builder
 period: "May 2026"
 summary: Designed and shipped Stax — a single-canvas tracker that turns a chaotic multi-tab process into one quiet board. Built end-to-end in eight days.

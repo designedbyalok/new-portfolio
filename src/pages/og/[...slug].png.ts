@@ -3,7 +3,7 @@ import { renderOgImage } from "../../lib/og";
 import { getAllPosts } from "../../lib/cms";
 import { getBooks } from "../../lib/books";
 import { getFilms } from "../../lib/films";
-import { getWorks } from "../../lib/works";
+import { getWorks, getSideProjects } from "../../lib/works";
 import { getIdeas } from "../../lib/ideas";
 import { getArchive } from "../../lib/archive";
 
@@ -12,11 +12,12 @@ export const prerender = true;
 type OgProps = { title: string; eyebrow: string };
 
 export async function getStaticPaths() {
-  const [posts, books, films, works, ideas, archive] = await Promise.all([
+  const [posts, books, films, works, sideProjects, ideas, archive] = await Promise.all([
     getAllPosts(),
     getBooks(),
     getFilms(),
     getWorks(),
+    getSideProjects(),
     getIdeas(),
     getArchive(),
   ]);
@@ -30,7 +31,8 @@ export async function getStaticPaths() {
   for (const f of films)
     add(`films/${f.slug}`, `${f.title} (${f.metadata.year})`, "Cinema");
   for (const w of works) add(`work/${w.slug}`, w.metadata.company, "Work");
-  for (const i of ideas) add(`projects/${i.slug}`, i.title, "Ideas");
+  for (const w of sideProjects) add(`projects/${w.slug}`, w.metadata.company, "Projects");
+  for (const i of ideas) add(`case-studies/${i.slug}`, i.title, "Case studies");
   for (const a of archive) add(`archive/${a.slug}`, a.title, "Archive");
 
   return paths;

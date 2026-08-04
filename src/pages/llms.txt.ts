@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { getAllPosts } from "../lib/cms";
-import { getWorks } from "../lib/works";
+import { getWorks, getSideProjects } from "../lib/works";
 import { getIdeas } from "../lib/ideas";
 import { getBooks } from "../lib/books";
 import { getFilms } from "../lib/films";
@@ -17,7 +17,8 @@ export async function GET(context: APIContext) {
   const abs = (path: string) => new URL(path, site).href;
 
   const work = await getWorks();
-  const projects = await getIdeas();
+  const sideProjects = await getSideProjects();
+  const caseStudies = await getIdeas();
   const books = await getBooks();
   const films = (await getFilms()).sort(
     (a, b) => (b.metadata.year ?? 0) - (a.metadata.year ?? 0),
@@ -30,7 +31,7 @@ export async function GET(context: APIContext) {
     "",
     "> Alok Kumar is a product designer simplifying digital healthcare, based in Pune, India. He has been a Product Designer at Fold Health since June 2023, designing for Primary & Chronic Care — clinical workflows, an automation rule-builder, and the design system behind them. Before that he was the founding designer at Banyan Cloud (enterprise cloud security), where he built and open-sourced the Roots Design System. He has a background in Computer Science (B.E., Anna University), and integrates design and development to deliver holistic, impactful solutions.",
     "",
-    "## Work",
+    "## Work Experience",
     "",
     ...work.map(
       (w) =>
@@ -39,8 +40,15 @@ export async function GET(context: APIContext) {
     "",
     "## Projects",
     "",
-    ...projects.map(
-      (p) => `- [${p.title}](${abs(`/projects/${p.slug}`)}): ${p.metadata.tagline}`,
+    ...sideProjects.map(
+      (w) =>
+        `- [${w.metadata.company}](${abs(`/projects/${w.slug}`)}): ${w.metadata.summary}`,
+    ),
+    "",
+    "## Case Studies",
+    "",
+    ...caseStudies.map(
+      (p) => `- [${p.title}](${abs(`/case-studies/${p.slug}`)}): ${p.metadata.tagline}`,
     ),
     "",
     "## Writing",

@@ -2,59 +2,61 @@
 import "@fontsource/jetbrains-mono/400.css";
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getIdeas, type Idea } from "../../lib/ideas";
+import { getSideProjects, type Work } from "../../lib/works";
 import { marked } from "marked";
 
 export async function getStaticPaths() {
-  const ideas = await getIdeas();
-  return ideas.map((idea) => ({ params: { slug: idea.slug }, props: { idea } }));
+  const works = await getSideProjects();
+  return works.map((work) => ({ params: { slug: work.slug }, props: { work } }));
 }
 
-type Props = { idea: Idea };
-const { idea } = Astro.props;
-const m = idea.metadata;
+type Props = { work: Work };
+const { work } = Astro.props;
+const m = work.metadata;
 const photos = m.photos ?? [];
-const heroSrc = m.hero ?? idea.thumbnail;
-const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
+const projects = m.projects ?? [];
+const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
 ---
 
 <Layout
-  title={`${idea.title} — Alok Kumar`}
-  description={m.tagline}
-  image={`/og/projects/${idea.slug}.png`}
+  title={`${m.company} — Alok Kumar`}
+  description={m.summary}
+  article={true}
+  image={`/og/projects/${work.slug}.png`}
 >
-  <div class="container container-content page detail-page" style="align-items: flex-start; justify-content: flex-start;">
+  <div class="container container-content page work-detail-page detail-page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />
     <div class="back-wrapper animate a1">
-      <a class="back-link-circle" href="/projects" aria-label="Back to Ideas">
+      <a class="back-link-circle" href="/projects" aria-label="Back to Projects">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </a>
     </div>
 
-    {m.external && (
-      <div class="pill-wrapper animate a3">
-        <a class="link-pill" href={m.external} target="_blank" rel="noopener noreferrer" aria-label="Visit project">
-          <span class="pill-label">Visit project</span> <span class="pill-icon">↗</span>
+    {m.website && (
+      <div class="pill-wrapper animate a4">
+        <a class="link-pill" href={m.website} target="_blank" rel="noopener noreferrer" aria-label="View project">
+          <span class="pill-label">View project</span> <span class="pill-icon">↗</span>
         </a>
       </div>
     )}
 
     <header class="post-header">
-      <h1 class="name animate a1" style="margin-bottom: 8px; font-size: 48px; line-height: 48px; font-family: var(--font-serif); font-style: italic;">{idea.title}</h1>
-      <p class="title animate a2">{m.tagline} · {m.period}</p>
+      <h1 class="post-title animate a1">{m.company}</h1>
+      <p class="post-date animate a2">{m.role} · {m.period}</p>
+      <p class="post-summary animate a3">{m.summary}</p>
 
-      {m.external && (
-        <a class="link-pill animate a3" href={m.external} target="_blank" rel="noopener noreferrer" aria-label="Visit project">
-          <span class="pill-label">Visit project</span> <span class="pill-icon">↗</span>
+      {m.website && (
+        <a class="link-pill animate a4" href={m.website} target="_blank" rel="noopener noreferrer" aria-label="View project">
+          <span class="pill-label">View project</span> <span class="pill-icon">↗</span>
         </a>
       )}
     </header>
 
-    {heroSrc && (
+    {m.hero && (
       <div class="post-hero-image animate a4" style="margin-top: 32px; width: 100%;">
         <img
-          src={heroSrc}
-          alt={`${idea.title} — hero image`}
+          src={m.hero}
+          alt={`${m.company} — hero image`}
           loading="eager"
           decoding="async"
           style="width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border);"
@@ -62,31 +64,13 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
       </div>
     )}
 
-    <section class="animate a5" style="margin-top: 40px; width: 100%; display: flex; flex-direction: column; gap: 32px;">
-      <div>
-        <p class="eyebrow" style="margin-bottom: 8px;">The idea</p>
-        <p style="font-size: 16px; margin: 0;">{m.idea}</p>
-      </div>
-      <div>
-        <p class="eyebrow" style="margin-bottom: 8px;">The problem</p>
-        <p style="font-size: 16px; margin: 0;">{m.problem}</p>
-      </div>
-      <div>
-        <p class="eyebrow" style="margin-bottom: 8px;">The solution</p>
-        <p style="font-size: 16px; margin: 0;">{m.solution}</p>
-      </div>
-      <div>
-        <p class="eyebrow" style="margin-bottom: 8px;">Why this is unique</p>
-        <p style="font-size: 16px; margin: 0;">{m.whyUnique}</p>
-      </div>
-    </section>
-
     {htmlBody && (
-      <div class="prose animate a6" style="margin-top: 40px; width: 100%;" set:html={htmlBody}></div>
+      <div class="prose animate a5" style="margin-top: 40px; width: 100%;" set:html={htmlBody}></div>
     )}
 
     {photos.length > 0 && (
-      <section class="animate a7" style="margin-top: 60px; width: 100%;">
+      <section class="animate a6" style="margin-top: 60px; width: 100%;">
+        <p class="eyebrow" style="margin-bottom: 16px;">Visuals</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
           {photos.map((photo) => (
             <figure style="margin: 0;">
@@ -109,7 +93,93 @@ const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
         </div>
       </section>
     )}
+
+    {projects.length > 0 && (
+      <section class="animate a7" style="margin-top: 60px; width: 100%;">
+        <p class="eyebrow" style="margin-bottom: 16px;">Key metrics</p>
+        <div class="work-list">
+          {projects.map((project) => (
+            <div class="work-item" style="flex-direction: column; align-items: flex-start; padding: 16px 0; margin: 0; gap: 8px;">
+              <h3 style="font-size: 16px; font-weight: 500; margin: 0;">{project.title}</h3>
+              <p style="font-size: 14px; color: var(--fg-secondary); margin: 0;">{project.description}</p>
+              {project.href && (
+                <a href={project.href} target="_blank" rel="noopener noreferrer" style="font-size: 12px; color: var(--fg); text-decoration: underline; text-underline-offset: 4px;">
+                  Read more ↗
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {m.testimonial && (
+      <section class="animate a8" style="margin-top: 60px; padding: 32px; border: 1px solid var(--border); border-radius: 8px; background: var(--tag-bg); width: 100%;">
+        <blockquote style="font-size: 16px; margin: 0; color: var(--fg);">
+          "{m.testimonial.quote}"
+        </blockquote>
+        <p style="margin-top: 16px; font-size: 14px; color: var(--fg-secondary); margin-bottom: 0;">
+          — {m.testimonial.author}
+          {m.testimonial.role && `, ${m.testimonial.role}`}
+        </p>
+      </section>
+    )}
   </div>
 </Layout>
 
+<style>
 
+  .post-header {
+    margin-bottom: 40px;
+  }
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--fg);
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .post-date {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--fg-secondary);
+    margin-bottom: 0;
+  }
+  .post-summary {
+    margin-top: 16px;
+    font-size: var(--text-base);
+    color: var(--fg-secondary);
+    line-height: 1.6;
+    max-width: 60ch;
+  }
+
+
+  .prose {
+    max-width: 100% !important;
+  }
+
+  .prose :global(h1),
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4),
+  .prose :global(h5),
+  .prose :global(h6) {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .prose :global(a) {
+    text-decoration: underline;
+    text-decoration-color: var(--fg);
+    text-underline-offset: 3px;
+  }
+  .prose :global(a:hover) {
+    opacity: 0.65;
+  }
+</style>

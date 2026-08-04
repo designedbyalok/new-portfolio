@@ -25,6 +25,8 @@ export interface WorkMetadata {
   role: string;
   period: string;
   summary: string;
+  /** "experience" = employment; "project" = personal product. */
+  kind?: "experience" | "project";
   website?: string;
   order?: number;
   hero?: string;
@@ -69,7 +71,7 @@ function sortWorks(list: Work[]): Work[] {
   });
 }
 
-export async function getWorks(): Promise<Work[]> {
+async function getAllWorks(): Promise<Work[]> {
   const sanity = await fetchSanity<WorkMetadata>("work");
   if (sanity.length > 0) return sortWorks(sanity);
   const remote = await getPostsByCollection<WorkMetadata>("work");
@@ -77,8 +79,18 @@ export async function getWorks(): Promise<Work[]> {
   return sortWorks(list);
 }
 
+/** Employment history — the Work Experience page. */
+export async function getWorks(): Promise<Work[]> {
+  return (await getAllWorks()).filter((w) => (w.metadata.kind ?? "experience") !== "project");
+}
+
+/** Personal products (WritrPro, JobStax, ...) — the Projects page. */
+export async function getSideProjects(): Promise<Work[]> {
+  return (await getAllWorks()).filter((w) => w.metadata.kind === "project");
+}
+
 export async function getWorkBySlug(slug: string): Promise<Work | undefined> {
-  const all = await getWorks();
+  const all = await getAllWorks();
   return all.find((w) => w.slug === slug);
 }
 
@@ -95,6 +107,7 @@ async function readLocalWorks(): Promise<Work[]> {
       collection: "work",
       metadata: {
         company: d.company,
+        kind: d.kind,
         role: d.role,
         period: d.period,
         summary: d.summary,

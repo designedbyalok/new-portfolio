@@ -1,36 +1,33 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
-import { getIdeas } from "../../lib/ideas";
+import { getSideProjects, type Work } from "../../lib/works";
 
-const entries = await getIdeas();
+const entries = await getSideProjects();
 
-const yearOf = (period: string) => {
-  const m = period.match(/(\d{4})(?!.*\d{4})/);
-  return m ? m[1] : "";
+const getImages = (work: Work) => {
+  const images: string[] = [];
+  if (work.metadata.hero) images.push(work.metadata.hero);
+  const photos = work.metadata.photos ?? [];
+  if (photos.length > 0) {
+    images.push(photos[0].src);
+    if (photos.length > 1) images.push(photos[1].src);
+  }
+  if (work.metadata.logo) images.push(work.metadata.logo);
+
+  // Ensure we have exactly 3 images by repeating if necessary
+  while (images.length > 0 && images.length < 3) {
+    images.push(images[images.length - 1]);
+  }
+  return images;
 };
-
-// Each card gets a small interactive demo in its preview area.
-// Widgets cycle by index so new CMS entries automatically get one.
-const WIDGETS = ["menu", "save", "theme"] as const;
-
-const cards = entries.map((e, i) => ({
-  slug: e.slug,
-  title: e.title,
-  tagline: e.metadata.tagline,
-  year: yearOf(e.metadata.period),
-  category: e.metadata.tags?.[0] ?? "All",
-  widget: WIDGETS[i % WIDGETS.length],
-}));
-
-const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))];
 ---
 
 <Layout
-  title="Ideas — Alok Kumar"
-  description="A glimpse into my creative mind — explorations, side projects, and ideas worth sharing."
+  title="Projects — Alok Kumar"
+  description="Personal products I design and build — WritrPro, JobStax."
 >
-  <div class="container container-content page ideas-page" style="align-items: flex-start; justify-content: flex-start;">
+  <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />
     <div class="back-wrapper animate a1">
       <a class="back-link-circle" href="/" aria-label="Back Home">
@@ -38,434 +35,75 @@ const categories = ["All", ...Array.from(new Set(cards.map((c) => c.category)))]
       </a>
     </div>
 
-    <div style="width: 100%; margin-bottom: 1.5rem;">
-      <h1 class="page-heading animate a2">ideas</h1>
+    <div style="width: 100%; margin-bottom: 3rem;">
+      <h1 class="page-heading animate a2">projects</h1>
     </div>
 
-    <div class="ideas-filter animate a3">
-      <button
-        type="button"
-        class="cat-btn"
-        id="catBtn"
-        aria-haspopup="listbox"
-        aria-expanded="false"
-      >
-        <span id="catLabel">Category</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </button>
-      <ul class="cat-menu" id="catMenu" role="listbox" hidden>
-        {categories.map((c) => <li role="option" data-value={c}>{c}</li>)}
-      </ul>
-    </div>
-
-    <div class="idea-grid animate a4">
+    <div class="blur-list animate a3">
       {
-        cards.map((c) => (
-          <article class="idea-card" data-category={c.category}>
-            {/* Interactive demo — deliberately NOT inside the link */}
-            <div class="idea-preview" data-widget={c.widget}>
-              {c.widget === "menu" && (
-                <div class="w-menu">
-                  <button type="button" class="w-menu-btn" aria-expanded="false">
-                    <span class="w-menu-bar" />
-                    <span class="w-menu-bar" />
-                  </button>
-                  <nav class="w-menu-list" aria-hidden="true">
-                    <span>Home</span>
-                    <span>Work</span>
-                    <span>Ideas</span>
-                    <span>About</span>
-                  </nav>
+        entries.map((work) => {
+          const imgs = getImages(work);
+          return (
+            <a class="blur-item" href={`/projects/${work.slug}`}>
+              <div class="blur-item-left">
+                <div class="card-stack">
+                  {imgs.length >= 3 ? (
+                    <>
+                      <img src={imgs[2]} alt="" class="card card-bottom" loading="lazy" decoding="async" />
+                      <img src={imgs[1]} alt="" class="card card-middle" loading="lazy" decoding="async" />
+                      <img src={imgs[0]} alt="" class="card card-top" loading="lazy" decoding="async" />
+                    </>
+                  ) : work.metadata.logo ? (
+                    <img src={work.metadata.logo} alt="" class="card card-top" loading="lazy" decoding="async" />
+                  ) : (
+                    <div class="card card-top" style="background: var(--border);"></div>
+                  )}
                 </div>
-              )}
-              {c.widget === "save" && (
-                <button type="button" class="w-save" aria-pressed="false">
-                  <svg class="w-save-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                  <span class="w-save-label">Save</span>
-                  <span class="w-save-count">128</span>
-                </button>
-              )}
-              {c.widget === "theme" && (
-                <div class="w-card" data-mode="dark">
-                  <div class="w-card-head">
-                    <span class="w-card-dot" />
-                    <span class="w-card-lines">
-                      <span class="w-line" />
-                      <span class="w-line short" />
-                    </span>
-                  </div>
-                  <button type="button" class="w-switch" role="switch" aria-checked="false" aria-label="Toggle preview theme">
-                    <span class="w-knob" />
-                  </button>
-                </div>
-              )}
-            </div>
-            <a class="idea-meta" href={`/projects/${c.slug}`}>
-              <span class="idea-title">
-                {c.title} <span class="idea-year">{c.year}</span>
-              </span>
-              <span class="idea-desc">{c.tagline}</span>
+                <span class="blur-item-title">{work.metadata.company}</span>
+              </div>
+              <span class="blur-item-meta">{work.metadata.period}</span>
             </a>
-          </article>
-        ))
+          );
+        })
       }
     </div>
   </div>
 </Layout>
-
 <style>
-  .ideas-filter {
-    width: 100%;
-    margin-bottom: 24px;
+  .card-stack {
     position: relative;
-    /* .animate leaves a filter on both this and .idea-grid, and a filter makes
-       a stacking context — which traps .cat-menu's z-index in here and lets the
-       later grid paint over the open menu. Lift the whole filter above it. */
-    z-index: 20;
-  }
-  .cat-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--tag-bg);
-    color: var(--fg-secondary);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-  .cat-btn:hover {
-    background: var(--hover-bg);
-    color: var(--fg);
-  }
-  .cat-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    margin: 0;
-    padding: 6px;
-    list-style: none;
-    /* Same tint as the .cat-btn badge (var(--tag-bg)), but composited over an
-       opaque base so nothing shows through — --tag-bg alone is translucent. */
-    background: linear-gradient(var(--tag-bg), var(--tag-bg)), var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 18px 44px -12px rgba(0, 0, 0, 0.55);
-    min-width: 180px;
-    z-index: 50;
-  }
-  .cat-menu[hidden] { display: none; }
-  .cat-menu li {
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: var(--text-sm);
-    color: var(--fg);
-    cursor: pointer;
-  }
-  .cat-menu li:hover,
-  .cat-menu li[aria-selected="true"] { background: var(--hover-bg); }
-
-  /* One card per row. Two columns inside the ~544px content column left each
-     card too narrow for the previews to read. */
-  .idea-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 48px;
-  }
-  .idea-card {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .idea-card[hidden] { display: none; }
-
-  .idea-preview {
-    aspect-ratio: 4 / 3;
-    border-radius: 24px;
-    background: var(--tag-bg);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .idea-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 0 4px;
-    text-decoration: none;
-    color: inherit;
-  }
-  .idea-title {
-    font-size: var(--text-lg);
-    font-weight: 600;
-    color: var(--fg);
-    letter-spacing: -0.01em;
-  }
-  .idea-meta:hover .idea-title { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--border); }
-  .idea-year {
-    font-weight: 400;
-    color: var(--fg-tertiary);
-    margin-left: 4px;
-  }
-  .idea-desc {
-    font-size: var(--text-base);
-    line-height: 1.5;
-    color: var(--fg-secondary);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* ---- Widget: morphing menu ---- */
-  .w-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-  }
-  .w-menu-btn {
-    width: 56px;
-    height: 40px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
-  .w-menu-btn:hover { transform: scale(1.05); }
-  .w-menu-bar {
-    width: 20px;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--fg);
-    transition: transform 0.25s ease;
-  }
-  .w-menu.open .w-menu-bar:first-child { transform: translateY(3.5px) rotate(45deg); }
-  .w-menu.open .w-menu-bar:last-child { transform: translateY(-3.5px) rotate(-45deg); }
-  .w-menu-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    padding: 14px 26px;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--fg);
-    opacity: 0;
-    transform: translateY(-6px) scale(0.96);
-    transition: opacity 0.22s ease, transform 0.22s ease;
-    pointer-events: none;
-  }
-  .w-menu.open .w-menu-list {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  .w-menu-list span { opacity: 0.55; transition: opacity 0.15s ease; cursor: default; }
-  .w-menu-list span:hover { opacity: 1; }
-
-  /* ---- Widget: save button ---- */
-  .w-save {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    height: 48px;
-    padding: 0 20px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--fg);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    cursor: pointer;
-    transition: transform 0.15s ease, background 0.2s ease;
-  }
-  .w-save:hover { background: var(--hover-bg); }
-  .w-save:active { transform: scale(0.94); }
-  .w-save.saved .w-save-icon { fill: var(--fg); }
-  .w-save.saved { animation: w-pop 0.3s ease; }
-  @keyframes w-pop {
-    40% { transform: scale(1.08); }
-  }
-  .w-save-count {
-    font-variant-numeric: tabular-nums;
-    color: var(--fg-tertiary);
-    border-left: 1px solid var(--border);
-    padding-left: 10px;
-  }
-
-  /* ---- Widget: theme switch card ---- */
-  .w-card {
-    width: 72%;
-    border-radius: 16px;
-    border: 1px solid #3a352f;
-    background: #211e1b;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    transition: background 0.35s ease, border-color 0.35s ease;
-  }
-  .w-card[data-mode="light"] {
-    background: #f5f5f0;
-    border-color: #dcdcd6;
-  }
-  .w-card-head { display: flex; align-items: center; gap: 10px; }
-  .w-card-dot {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #FCF2E1;
+    width: 72px;
+    height: 44px;
     flex-shrink: 0;
-    transition: background 0.35s ease;
-  }
-  .w-card[data-mode="light"] .w-card-dot { background: #181818; }
-  .w-card-lines { display: flex; flex-direction: column; gap: 5px; flex: 1; }
-  .w-line {
-    height: 4px;
-    border-radius: 999px;
-    background: rgba(252, 242, 225, 0.55);
-    transition: background 0.35s ease;
-  }
-  .w-line.short { width: 60%; }
-  .w-card[data-mode="light"] .w-line { background: rgba(24, 24, 24, 0.4); }
-  .w-switch {
-    width: 46px;
-    height: 26px;
-    border-radius: 999px;
-    border: 1px solid #3a352f;
-    background: #2c2823;
-    position: relative;
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.3s ease, border-color 0.3s ease;
-  }
-  .w-card[data-mode="light"] .w-switch {
-    background: #e6e6df;
-    border-color: #d3d3cb;
-  }
-  .w-knob {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #FCF2E1;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
-  }
-  .w-card[data-mode="light"] .w-knob {
-    transform: translateX(20px);
-    background: #181818;
   }
 
-  @media (max-width: 600px) {
-    .idea-grid {
-      gap: 32px;
-    }
-    .idea-preview { border-radius: 20px; }
+  .card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 3px solid var(--thumb-border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 2px;
+    display: block;
+    background: var(--tag-bg);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center center;
+  }
+
+  .card-bottom { z-index: 1; }
+  .card-middle { z-index: 2; }
+  .card-top { z-index: 3; }
+
+  .blur-item:hover .card-bottom {
+    transform: rotate(-12deg) translateX(-12px) translateY(2px);
+  }
+  .blur-item:hover .card-middle {
+    transform: rotate(12deg) translateX(12px) translateY(2px);
+  }
+  .blur-item:hover .card-top {
+    transform: scale(1.05);
   }
 </style>
-
-<script>
-  function initCategoryFilter() {
-    const btn = document.getElementById("catBtn");
-    const menu = document.getElementById("catMenu");
-    const label = document.getElementById("catLabel");
-    const cards = document.querySelectorAll<HTMLElement>(".idea-card");
-    if (!btn || !menu || !label) return;
-    if (menu.dataset.bound === "true") return;
-    menu.dataset.bound = "true";
-
-    const close = () => {
-      menu.hidden = true;
-      btn.setAttribute("aria-expanded", "false");
-    };
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      menu.hidden = !menu.hidden;
-      btn.setAttribute("aria-expanded", String(!menu.hidden));
-    });
-    document.addEventListener("click", (e) => {
-      if (!menu.hidden && !menu.contains(e.target as Node) && e.target !== btn) close();
-    });
-    menu.querySelectorAll<HTMLLIElement>("li").forEach((li) => {
-      li.addEventListener("click", () => {
-        const value = li.dataset.value ?? "All";
-        label.textContent = value === "All" ? "Category" : value;
-        menu.querySelectorAll("li").forEach((x) =>
-          x.setAttribute("aria-selected", x === li ? "true" : "false"),
-        );
-        cards.forEach((card) => {
-          const cat = card.dataset.category ?? "";
-          card.hidden = value !== "All" && cat !== value;
-        });
-        close();
-      });
-    });
-  }
-
-  function initIdeaWidgets() {
-    // Morphing menu
-    document.querySelectorAll<HTMLElement>(".w-menu").forEach((w) => {
-      if (w.dataset.bound === "true") return;
-      w.dataset.bound = "true";
-      const btn = w.querySelector<HTMLButtonElement>(".w-menu-btn")!;
-      const list = w.querySelector<HTMLElement>(".w-menu-list")!;
-      btn.addEventListener("click", () => {
-        const open = w.classList.toggle("open");
-        btn.setAttribute("aria-expanded", String(open));
-        list.setAttribute("aria-hidden", String(!open));
-      });
-    });
-
-    // Save button with counter
-    document.querySelectorAll<HTMLButtonElement>(".w-save").forEach((btn) => {
-      if (btn.dataset.bound === "true") return;
-      btn.dataset.bound = "true";
-      const label = btn.querySelector<HTMLElement>(".w-save-label")!;
-      const count = btn.querySelector<HTMLElement>(".w-save-count")!;
-      btn.addEventListener("click", () => {
-        const saved = btn.classList.toggle("saved");
-        btn.setAttribute("aria-pressed", String(saved));
-        label.textContent = saved ? "Saved" : "Save";
-        count.textContent = String(Number(count.textContent) + (saved ? 1 : -1));
-      });
-    });
-
-    // Theme switch card
-    document.querySelectorAll<HTMLElement>(".w-card").forEach((card) => {
-      if (card.dataset.bound === "true") return;
-      card.dataset.bound = "true";
-      const sw = card.querySelector<HTMLButtonElement>(".w-switch")!;
-      sw.addEventListener("click", () => {
-        const light = card.dataset.mode !== "light";
-        card.dataset.mode = light ? "light" : "dark";
-        sw.setAttribute("aria-checked", String(light));
-      });
-    });
-  }
-
-  initCategoryFilter();
-  initIdeaWidgets();
-  document.addEventListener("astro:after-swap", () => {
-    initCategoryFilter();
-    initIdeaWidgets();
-  });
-</script>

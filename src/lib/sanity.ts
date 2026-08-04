@@ -55,7 +55,7 @@ const QUERIES: Record<string, string> = {
   work: `*[_type == "work"] | order(order desc) {
     "title": company, "slug": slug.current, "markdownContent": coalesce(body, ""),
     "description": summary, "thumbnail": hero.asset->url, "collection": "work",
-    "metadata": { company, role, period, summary, website, "order": order,
+    "metadata": { company, kind, role, period, summary, website, "order": order,
       "hero": hero.asset->url, "logo": logo.asset->url,
       "photos": photos[]{ "src": image.asset->url, caption, aspect },
       projects, testimonial }
