@@ -7,6 +7,7 @@ import "@fontsource/ibm-plex-sans/latin-600.css";
 import "@fontsource/averia-serif-libre/latin-700-italic.css";
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
+import DialKitRoot from "../components/DialKitRoot.tsx";
 import ibmPlexSansWoff2 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url";
 import averiaItalicWoff2 from "@fontsource/averia-serif-libre/files/averia-serif-libre-latin-700-italic.woff2?url";
 
@@ -208,5 +209,8 @@ const websiteSchema = {
     <main id="main">
       <slot />
     </main>
+    {/* Dev-only tuning harness: the island (and React/DialKit with it) is
+        compiled out of production builds entirely. */}
+    {import.meta.env.DEV && <DialKitRoot client:only="react" />}
   </body>
 </html>

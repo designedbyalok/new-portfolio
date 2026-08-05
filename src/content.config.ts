@@ -12,6 +12,9 @@ const work = defineCollection({
     /* "experience" = employment (Work Experience page); "project" = personal
        product (Projects page). One collection, two surfaces. */
     kind: z.enum(["experience", "project"]).default("experience"),
+    /* Slugs of related case studies (projects collection) — rendered as a
+       "Case studies" section on the work detail page, in this order. */
+    caseStudies: z.array(z.string()).default([]),
     order: z.number().default(0),
     hero: z.string().optional(),
     logo: z.string().optional(),

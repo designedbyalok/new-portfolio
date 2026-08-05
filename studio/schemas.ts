@@ -130,7 +130,7 @@ export const schemaTypes = [
   },
   {
     name: "work",
-    title: "Work / case study",
+    title: "Work / Project",
     type: "document",
     fields: [
       { name: "company", type: "string", validation: (r: any) => r.required() },
@@ -147,6 +147,13 @@ export const schemaTypes = [
       { name: "summary", type: "text", rows: 3 },
       { name: "website", type: "url" },
       { name: "order", type: "number", initialValue: 0, description: "Higher = listed first" },
+      {
+        name: "caseStudies",
+        title: "Case studies",
+        type: "array",
+        description: "Related case studies, shown on this work page in this order",
+        of: [{ type: "reference", to: [{ type: "idea" }] }],
+      },
       { name: "hero", type: "image", options: { hotspot: true } },
       { name: "logo", type: "image" },
       photoArray,
@@ -179,8 +186,8 @@ export const schemaTypes = [
     preview: { select: { title: "company", subtitle: "period", media: "logo" } },
   },
   {
-    name: "idea",
-    title: "Idea / project",
+    name: "idea", // kept for data compatibility — these are the Case studies
+    title: "Case study",
     type: "document",
     fields: [
       { name: "title", type: "string", validation: (r: any) => r.required() },

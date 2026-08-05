@@ -12,7 +12,7 @@ photos:
   - src: https://picsum.photos/seed/rulebuilder-trigger/1400/900
     caption: Trigger configuration. Care-ops teams now build this themselves, in minutes.
     aspect: 14 / 9
-order: 5
+order: 6
 idea: Build a no-code rule engine that feels like a familiar diagram tool, not a developer's IDE — so a nurse manager can automate the work they used to delegate to Slack.
 problem: Care-ops teams at our customer clinics were drowning in repetitive coordination — chart prep, follow-up calls, lab review nudges. They knew exactly what they wanted automated, but every existing "rule engine" we evaluated assumed the user was a developer.
 solution: Designed a visual canvas around two primitives — triggers and actions — connected by simple branches. Every node has a one-line summary, so a rule reads like a sentence even when collapsed. Built it with a heavy lean on keyboard shortcuts (clinicians live on the keyboard), an undo history that survives accidental deletes, and a "preview the next 24 hours" simulator so users can see what the rule would actually do before they enable it.

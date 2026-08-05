@@ -348,15 +348,15 @@ html { scrollbar-gutter: stable; }
   .prose strong { font-weight: 600; color: var(--fg); }
   .prose em { font-style: italic; color: var(--fg); }
 
-  /* Tables — scrollable container */
+  /* Tables — full width of the article column. (display: block would make
+     the wrapper full-width but let the table box inside shrink to content,
+     which is exactly the narrow-table bug.) Cells wrap, so overflow is a
+     non-issue at this column width. */
   .prose table {
     width: 100%;
     border-collapse: collapse;
     margin: 2em 0;
     font-size: var(--text-sm);
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
   .prose th {
     text-align: left;
@@ -365,7 +365,11 @@ html { scrollbar-gutter: stable; }
     border: 1px solid var(--border);
     font-weight: 600;
     color: var(--fg);
-    white-space: nowrap;
+  }
+  /* Markdown tables must declare a header row even when there isn't one —
+     hide rows whose cells are all empty instead of rendering a blank strip. */
+  .prose tr:not(:has(th:not(:empty), td:not(:empty))) {
+    display: none;
   }
   .prose td {
     padding: 0.6em 1em;

@@ -1,5 +1,10 @@
 ---
 company: Fold Health
+caseStudies:
+  - agent-builder
+  - hcc-coding
+  - worklists
+  - email-builder
 role: Product Designer
 period: Jun 2023 — Present
 summary: Redesigning Primary & Chronic Care for clinicians and patients. Building the design system and rule-builder that lets care teams automate repetitive work.

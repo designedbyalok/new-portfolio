@@ -3,6 +3,7 @@ import "@fontsource/jetbrains-mono/400.css";
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import { getWorks, type Work } from "../../lib/works";
+import { getIdeas } from "../../lib/ideas";
 import { marked } from "marked";
 
 export async function getStaticPaths() {
@@ -16,6 +17,17 @@ const m = work.metadata;
 const photos = m.photos ?? [];
 const projects = m.projects ?? [];
 const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
+
+// Related case studies — resolved from slugs, keeping the frontmatter order.
+const allCaseStudies = await getIdeas();
+const caseStudies = (m.caseStudies ?? [])
+  .map((slug) => allCaseStudies.find((c) => c.slug === slug))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+const yearOf = (period: string) => {
+  const match = period.match(/(\d{4})(?!.*\d{4})/);
+  return match ? match[1] : "";
+};
 ---
 
 <Layout
@@ -66,6 +78,30 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
 
     {htmlBody && (
       <div class="prose animate a5" style="margin-top: 40px; width: 100%;" set:html={htmlBody}></div>
+    )}
+
+    {caseStudies.length > 0 && (
+      <section class="animate a6" style="margin-top: 60px; width: 100%;">
+        <p class="eyebrow" style="margin-bottom: 16px;">Case studies</p>
+        <div class="blur-list">
+          {caseStudies.map((c) => (
+            <a class="blur-item" href={`/case-studies/${c.slug}`} data-astro-prefetch="hover">
+              <div class="blur-item-left">
+                {c.metadata.hero ? (
+                  <img class="thumb-frame" src={c.metadata.hero} alt="" width="64" height="40" loading="lazy" decoding="async" />
+                ) : (
+                  <div class="thumb-frame" aria-hidden="true"></div>
+                )}
+                <span class="cs-row-text">
+                  <span class="blur-item-title">{c.title}</span>
+                  <span class="cs-row-sub">{c.metadata.tagline}</span>
+                </span>
+              </div>
+              <span class="blur-item-meta">{yearOf(c.metadata.period)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
     )}
 
     {photos.length > 0 && (
@@ -128,6 +164,21 @@ const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
 </Layout>
 
 <style>
+
+  .cs-row-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .cs-row-sub {
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
   .post-header {
     margin-bottom: 40px;

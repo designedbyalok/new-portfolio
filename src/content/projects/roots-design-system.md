@@ -13,7 +13,7 @@ photos:
     caption: A slice of the component library, paired with usage guidance.
     aspect: 14 / 9
 external: https://zeroheight.com/390a61fea/p/195fc2-roots-design-system
-order: 4
+order: 5
 idea: A single source of truth that lives in the same shape across design tools and code — so a designer and an engineer never argue about which token is correct.
 problem: At an early-stage enterprise startup, design and engineering had to ship at speed without giving up consistency. A Figma library alone goes stale the moment engineering renames a token. A component library alone leaves design drifting in Figma. We needed both, kept honest.
 solution: Built Roots as paired artifacts — a Figma library and a React component library — with shared design tokens generated from one config. Documented every component with intent (when to use, when not to), states, and accessibility notes. Open-sourced it so the community could pressure-test and contribute.

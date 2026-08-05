@@ -6,6 +6,7 @@ import NowWorking from "../components/NowWorking.astro";
 import NowPlaying from "../components/NowPlaying.astro";
 import XProfileCard from "../components/XProfileCard.astro";
 import { getAllPosts } from "../lib/cms";
+import { getIdeas } from "../lib/ideas";
 
 // The project currently in focus — shown in the bottom-left "Currently Working
 // on" widget, linking to its case study.
@@ -17,6 +18,12 @@ const nowWorking = {
 };
 
 const posts = (await getAllPosts()).slice(0, 5);
+const caseStudies = (await getIdeas()).slice(0, 3);
+
+const yearOf = (period: string) => {
+  const m = period.match(/(\d{4})(?!.*\d{4})/);
+  return m ? m[1] : "";
+};
 
 const fmtDate = (iso?: string) =>
   iso
@@ -98,7 +105,12 @@ const resources = [
 
       <!-- Projects -->
       <section class="block animate a4">
-        <h2 class="block-label">Projects</h2>
+        <div class="block-head">
+          <h2 class="block-label">Projects</h2>
+          <a class="view-all" href="/projects" data-astro-prefetch="hover">
+            View all <span aria-hidden="true">→</span>
+          </a>
+        </div>
         <div class="project-grid">
           {
             projects.map((p) => (
@@ -126,13 +138,40 @@ const resources = [
         </div>
       </section>
 
+      <!-- Case studies — top three, mirroring the Writing rows -->
+      <section class="block animate a4">
+        <div class="block-head">
+          <h2 class="block-label">Case studies</h2>
+          <a class="view-all" href="/case-studies" data-astro-prefetch="hover">
+            View all <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div class="blur-list">
+          {
+            caseStudies.map((c) => (
+              <a class="blur-item" href={`/case-studies/${c.slug}`} data-astro-prefetch="hover">
+                <div class="blur-item-left">
+                  {c.metadata.hero ? (
+                    <img class="thumb-frame" src={c.metadata.hero} alt="" width="64" height="40" loading="lazy" decoding="async" />
+                  ) : (
+                    <div class="thumb-frame" aria-hidden="true"></div>
+                  )}
+                  <span class="blur-item-title">{c.title}</span>
+                </div>
+                <span class="blur-item-meta">{yearOf(c.metadata.period)}</span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+
       <!-- Writing + Resources share one blur scope: hovering an item
            blurs siblings across both sections, not just within one. -->
       <div class="blur-scope">
         <!-- Writing — same listing as the blog index -->
         <section class="block animate a5">
           <div class="block-head">
-            <h2 class="block-label">Writing</h2>
+            <h2 class="block-label">Blog</h2>
             <a class="view-all" href="/blog" data-astro-prefetch="hover">
               View all <span aria-hidden="true">→</span>
             </a>
@@ -595,16 +634,37 @@ const resources = [
     gap: 16px;
   }
   .project-card {
+    /* Spring hover, tuned with DialKit (visualDuration 0.3, bounce 0.25) and
+       exported to CSS via Motion's spring().toString() — regenerate with
+       `bun -e 'import { spring } from "motion"; console.log(spring({ keyframes: [0, 1], visualDuration: 0.3, bounce: 0.25 }).toString())'` */
+    --spring: linear(
+      0, 0.1195, 0.3552, 0.5913, 0.7781, 0.9047, 0.9789, 1.0152, 1.0275,
+      1.0271, 1.0212, 1.0142, 1.0083, 1.004, 1.0013, 0.9999, 1, 1
+    );
     display: block;
     background: var(--tag-bg);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 4px;
     text-decoration: none;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    box-shadow: 0 12px 0 rgba(0, 0, 0, 0);
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      transform 550ms var(--spring),
+      box-shadow 550ms var(--spring);
   }
   .project-card:hover {
     border-color: var(--fg-tertiary);
+    transform: scale(1.03);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .project-card,
+    .project-card:hover {
+      transform: none;
+      transition-property: border-color, background;
+    }
   }
   .project-card-inner {
     border: 1px solid var(--border);

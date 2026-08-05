@@ -26,7 +26,7 @@ export async function getStaticPaths() {
   const add = (slug: string, title: string, eyebrow: string) =>
     paths.push({ params: { slug }, props: { title, eyebrow } });
 
-  for (const p of posts) add(`blog/${p.slug}`, p.title, "Writing");
+  for (const p of posts) add(`blog/${p.slug}`, p.title, "Blog");
   for (const b of books) add(`books/${b.slug}`, b.title, "Reading");
   for (const f of films)
     add(`films/${f.slug}`, `${f.title} (${f.metadata.year})`, "Cinema");

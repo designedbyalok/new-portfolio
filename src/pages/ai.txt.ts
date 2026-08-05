@@ -70,7 +70,7 @@ ${projects
   )
   .join("\n\n")}
 
-${underline("Writing")}
+${underline("Blog")}
 ${posts
   .map((post) => `${post.title}\n  ${abs(`/blog/${post.slug}`)}`)
   .join("\n\n")}

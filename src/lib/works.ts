@@ -27,6 +27,8 @@ export interface WorkMetadata {
   summary: string;
   /** "experience" = employment; "project" = personal product. */
   kind?: "experience" | "project";
+  /** Related case-study slugs, shown on the detail page. */
+  caseStudies?: string[];
   website?: string;
   order?: number;
   hero?: string;
@@ -138,6 +140,7 @@ async function readLocalWorks(): Promise<Work[]> {
       metadata: {
         company: d.company,
         kind: d.kind,
+        caseStudies: d.caseStudies,
         role: d.role,
         period: d.period,
         summary: d.summary,

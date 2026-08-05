@@ -51,7 +51,7 @@ export async function GET(context: APIContext) {
       (p) => `- [${p.title}](${abs(`/case-studies/${p.slug}`)}): ${p.metadata.tagline}`,
     ),
     "",
-    "## Writing",
+    "## Blog",
     "",
     ...posts.map(
       (post) => `- [${post.title}](${abs(`/blog/${post.slug}`)}): ${post.description}`,
