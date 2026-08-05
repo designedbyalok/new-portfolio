@@ -28,6 +28,12 @@ const navItems = [
     aria-controls="navMenu"
   >
     <img src="/favicon.svg" alt="Alok Logo" class="logo-avatar" />
+    <!-- Hover morph: the logo crossfades into this hamburger (Paper ref 2RB-0) -->
+    <span class="menu-morph" aria-hidden="true">
+      <span class="bar bar-1"></span>
+      <span class="bar bar-2"></span>
+      <span class="bar bar-3"></span>
+    </span>
   </button>
 
   <div class="top-bar-actions">
@@ -61,7 +67,10 @@ const navItems = [
     id="navCloseBtn"
     aria-label="Close menu"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+    <!-- Same hamburger as the logo hover; morphs into an X once the menu is open -->
+    <span class="bar bar-1"></span>
+    <span class="bar bar-2"></span>
+    <span class="bar bar-3"></span>
   </button>
 
   <nav class="nav-list" aria-label="Primary">
@@ -200,6 +209,7 @@ const navItems = [
   }
 
   .logo-btn {
+    position: relative;
     background: none;
     border: 0;
     padding: 0;
@@ -219,6 +229,70 @@ const navItems = [
     object-fit: cover;
     display: block;
     animation-delay: 0.05s;
+    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ---- Logo ↔ hamburger morph ----
+     The morph layer is the same dark rounded square as the logo mark, so on
+     hover the letters read as dissolving into menu lines rather than a swap. */
+  .menu-morph {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: #060807;
+    border: 1px solid #2a2a2a;
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.22s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  /* Hamburger bars — staggered widths per the design (12 / 16 / 8 on a 24 grid) */
+  .bar {
+    position: absolute;
+    left: 15px;
+    height: 2px;
+    border-radius: 2px;
+    background: #fff;
+  }
+  .bar-1 { top: 15px; width: 12px; }
+  .bar-2 { top: 22px; width: 16px; }
+  .bar-3 { top: 29px; width: 8px; }
+  .menu-morph .bar {
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .logo-btn:hover .logo-avatar,
+  .logo-btn:focus-visible .logo-avatar {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  .logo-btn:hover .menu-morph,
+  .logo-btn:focus-visible .menu-morph {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .logo-btn:hover .menu-morph .bar,
+  .logo-btn:focus-visible .menu-morph .bar {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  /* Bars slide in one after another; leave together (no delay off-hover) */
+  .logo-btn:hover .menu-morph .bar-2,
+  .logo-btn:focus-visible .menu-morph .bar-2 {
+    transition-delay: 0.05s;
+  }
+  .logo-btn:hover .menu-morph .bar-3,
+  .logo-btn:focus-visible .menu-morph .bar-3 {
+    transition-delay: 0.1s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-avatar,
+    .menu-morph,
+    .bar {
+      transition: none !important;
+    }
   }
 
   .top-bar-actions {
@@ -294,26 +368,45 @@ const navItems = [
     opacity: 1;
   }
 
+  /* Sits exactly where the logo is, styled as the same dark square, so the
+     open feels like the hovered hamburger carrying over — then its bars fold
+     into an X once .is-open lands (one frame after unhide, so it animates). */
   .nav-close {
     position: fixed;
     top: var(--chrome-top, 32px);
     left: var(--chrome-side, 24px);
     width: 48px;
     height: 48px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--tag-bg);
-    color: var(--fg);
+    border-radius: 12px;
+    border: 1px solid #2a2a2a;
+    background: #060807;
+    color: #fff;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
     padding: 0;
     z-index: 1;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
   }
   .nav-close:hover,
   .nav-close:focus-visible {
-    background: var(--hover-bg);
+    background: #16181a;
+    transform: scale(1.05);
+  }
+  .nav-close .bar {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  }
+  .nav-menu.is-open .nav-close .bar-1 {
+    width: 16px;
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-menu.is-open .nav-close .bar-2 {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  .nav-menu.is-open .nav-close .bar-3 {
+    width: 16px;
+    transform: translateY(-7px) rotate(-45deg);
   }
 
   .nav-list {
@@ -406,9 +499,12 @@ const navItems = [
       background: var(--nav-panel-bg);
       box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
     }
-    /* In-flow inside the panel — the 24px padding puts it on the logo's spot. */
+    /* In-flow inside the panel — the 24px padding puts it on the logo's spot.
+       Stays `relative` (not static) so the absolute bars anchor to the button. */
     .nav-menu .nav-close {
-      position: static;
+      position: relative;
+      top: auto;
+      left: auto;
       flex-shrink: 0;
     }
     .nav-menu .nav-list {
