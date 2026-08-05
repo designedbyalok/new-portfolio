@@ -545,12 +545,13 @@ const resources = [
        crossing a dead zone that would close it. */
     bottom: 100%;
     padding-bottom: 8px;
-    transform: translateY(6px) scale(0.97);
+    transform: translateY(10px) scale(0.9);
     transform-origin: bottom left;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+    /* Closing: quick and springless — a reverse overshoot reads as jitter. */
+    transition: opacity 0.15s ease, transform 0.18s ease, visibility 0.18s;
     z-index: 60;
   }
   .gh-wrap:hover .gh-hover-card,
@@ -559,6 +560,16 @@ const resources = [
     visibility: visible;
     transform: translateY(0) scale(1);
     pointer-events: auto;
+    /* Opening: same spring as the project-card hover. */
+    transition: opacity 0.2s ease, transform 550ms var(--spring), visibility 0.2s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gh-hover-card,
+    .gh-wrap:hover .gh-hover-card,
+    .gh-wrap:focus-within .gh-hover-card {
+      transform: none;
+      transition: opacity 0.15s ease, visibility 0.15s;
+    }
   }
 
   /* X (Twitter) — profile-card popover, same hover pattern as GitHub. */
@@ -633,14 +644,18 @@ const resources = [
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
-  .project-card {
-    /* Spring hover, tuned with DialKit (visualDuration 0.3, bounce 0.25) and
-       exported to CSS via Motion's spring().toString() — regenerate with
-       `bun -e 'import { spring } from "motion"; console.log(spring({ keyframes: [0, 1], visualDuration: 0.3, bounce: 0.25 }).toString())'` */
+  /* Spring easing, tuned with DialKit (visualDuration 0.3, bounce 0.25) and
+     exported to CSS via Motion's spring().toString() — regenerate with
+     `bun -e 'import { spring } from "motion"; console.log(spring({ keyframes: [0, 1], visualDuration: 0.3, bounce: 0.25 }).toString())'`
+     Shared by the project-card hover and the GitHub hover popover. */
+  .project-card,
+  .gh-hover-card {
     --spring: linear(
       0, 0.1195, 0.3552, 0.5913, 0.7781, 0.9047, 0.9789, 1.0152, 1.0275,
       1.0271, 1.0212, 1.0142, 1.0083, 1.004, 1.0013, 0.9999, 1, 1
     );
+  }
+  .project-card {
     display: block;
     background: var(--tag-bg);
     border: 1px solid var(--border);
