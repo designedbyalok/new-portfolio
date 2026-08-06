@@ -1,0 +1,263 @@
+---
+// A reading Table of Contents for the long-form pages (blog, case studies,
+// work, projects). It builds itself from the rendered `.prose` headings on the
+// client, so it works the same on every template regardless of how that page
+// generated its HTML. The active section's tick line grows and darkens as you
+// scroll — the signature interaction from the design.
+//
+// Shown only where there's gutter room (>= 1200px); below that it's hidden and
+// the article reads on its own.
+---
+
+<nav class="toc" aria-label="Table of contents" hidden>
+  <div class="toc-head">
+    <svg class="toc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="8" y1="6" x2="20" y2="6" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      <line x1="4" y1="18" x2="14" y2="18" />
+    </svg>
+    <span class="toc-title">Table of Contents</span>
+  </div>
+  <ol class="toc-list"></ol>
+</nav>
+
+<script>
+  const MIN_WIDTH = 1200; // needs gutter room; matches the CSS breakpoint
+  const OFFSET = 120; // px below the viewport top where a heading "activates"
+
+  let cleanup: (() => void) | null = null;
+
+  function slugify(text: string, used: Set<string>): string {
+    const base =
+      text
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "section";
+    let slug = base;
+    let n = 2;
+    while (used.has(slug)) slug = `${base}-${n++}`;
+    used.add(slug);
+    return slug;
+  }
+
+  function initToc() {
+    // Tear down any wiring from the previous page (view transitions reuse the
+    // module without re-running this script).
+    cleanup?.();
+    cleanup = null;
+
+    const toc = document.querySelector<HTMLElement>(".toc");
+    const prose = document.querySelector<HTMLElement>(".prose");
+    const list = toc?.querySelector<HTMLOListElement>(".toc-list");
+    if (!toc || !prose || !list) return;
+
+    const headings = Array.from(
+      prose.querySelectorAll<HTMLHeadingElement>("h2, h3"),
+    );
+
+    // A one- or zero-heading article doesn't need an outline.
+    if (headings.length < 2) {
+      toc.hidden = true;
+      return;
+    }
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const used = new Set<string>();
+
+    list.replaceChildren();
+    const links: { id: string; li: HTMLLIElement; heading: HTMLElement }[] = [];
+
+    for (const heading of headings) {
+      if (!heading.id) heading.id = slugify(heading.textContent || "", used);
+      else used.add(heading.id);
+      heading.classList.add("toc-anchor");
+
+      const li = document.createElement("li");
+      li.className = "toc-item";
+      li.dataset.level = heading.tagName === "H3" ? "3" : "2";
+
+      const tick = document.createElement("span");
+      tick.className = "toc-tick";
+      tick.setAttribute("aria-hidden", "true");
+
+      const a = document.createElement("a");
+      a.className = "toc-link";
+      a.href = `#${heading.id}`;
+      a.textContent = heading.textContent;
+
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        heading.scrollIntoView({
+          behavior: reduced ? "auto" : "smooth",
+          block: "start",
+        });
+        history.replaceState(null, "", `#${heading.id}`);
+        setActive(heading.id);
+      });
+
+      li.append(tick, a);
+      list.append(li);
+      links.push({ id: heading.id, li, heading });
+    }
+
+    let activeId = "";
+    function setActive(id: string) {
+      if (id === activeId) return;
+      activeId = id;
+      for (const { id: linkId, li } of links) {
+        li.classList.toggle("is-active", linkId === id);
+      }
+    }
+
+    // Scroll spy: the active heading is the last one whose top has passed the
+    // activation line. Reading the DOM every frame is cheap here (a handful of
+    // headings) and stays correct through uneven spacing, top, and bottom.
+    let ticking = false;
+    function update() {
+      ticking = false;
+      let current = links[0].id;
+      for (const { id, heading } of links) {
+        if (heading.getBoundingClientRect().top <= OFFSET) current = id;
+        else break;
+      }
+      // Snap to the last item once the page is scrolled to the bottom.
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2
+      ) {
+        current = links[links.length - 1].id;
+      }
+      setActive(current);
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+
+    toc.hidden = false;
+    // Next frame: flip the entrance animation on.
+    requestAnimationFrame(() => toc.classList.add("is-ready"));
+
+    cleanup = () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      toc.classList.remove("is-ready");
+    };
+  }
+
+  // Fires on first load and after every view-transition navigation.
+  document.addEventListener("astro:page-load", initToc);
+</script>
+
+<style is:global>
+  .toc {
+    /* Flush-left under the logo, at a fixed offset below it (per the design:
+       logo bar at y:80, ToC at y:208 → 128px down from the chrome top). Width
+       is capped but shrinks so it never reaches the centered content column. */
+    position: fixed;
+    top: calc(var(--chrome-top) + 128px);
+    left: var(--chrome-side);
+    width: min(
+      280px,
+      calc(50% - (var(--content-width) / 2) - var(--chrome-side) - 24px)
+    );
+    max-height: calc(100vh - var(--chrome-top) - 128px - 40px);
+    overflow-y: auto;
+    z-index: 150;
+    /* Entrance: fade in once built. */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    scrollbar-width: none;
+  }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc.is-ready { opacity: 1; }
+
+  /* Only render where the gutter can hold it without crowding the column. */
+  @media (max-width: 1199px) {
+    .toc { display: none !important; }
+  }
+
+  .toc-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--fg-secondary);
+  }
+  .toc-icon { flex-shrink: 0; }
+  .toc-title {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 0;
+  }
+  .toc-item[data-level="3"] {
+    padding-left: 16px;
+  }
+
+  .toc-tick {
+    flex-shrink: 0;
+    height: 1px;
+    width: 12px;
+    background: var(--border);
+    /* The grow/settle that reads as "you are here". */
+    transition: width 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.3s ease;
+  }
+  .toc-item[data-level="3"] .toc-tick { width: 8px; }
+
+  .toc-link {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    /* Clamp long headings to one line. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    transition: color 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Hover on a non-active item previews the active treatment. */
+  .toc-item:not(.is-active):hover .toc-link { color: var(--fg); }
+  .toc-item:not(.is-active):hover .toc-tick {
+    width: 20px;
+    background: var(--fg-tertiary);
+  }
+
+  .toc-item.is-active .toc-tick {
+    width: 28px;
+    background: var(--fg);
+  }
+  .toc-item.is-active .toc-link { color: var(--fg); }
+
+  /* Land clicked headings below the fixed chrome. */
+  .prose .toc-anchor { scroll-margin-top: 100px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc,
+    .toc-tick,
+    .toc-link { transition: none; }
+  }
+</style>
