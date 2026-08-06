@@ -36,7 +36,15 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [mdx(), react(), sitemap()],
+  integrations: [
+    mdx(),
+    react(),
+    sitemap({
+      // /search is noindex — advertising it in the sitemap sends Google
+      // contradictory signals and it shows up in Search Console as unindexed.
+      filter: (page) => !page.startsWith('https://designedbyalok.com/search'),
+    }),
+  ],
   markdown: {
     shikiConfig: {
       theme: 'github-light-default',
