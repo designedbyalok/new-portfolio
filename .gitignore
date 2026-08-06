@@ -2,6 +2,8 @@
 dist/
 # generated types
 .astro/
+# Sanity Studio generated runtime cache
+studio/.sanity/
 
 # dependencies
 node_modules/
