@@ -1,5 +1,5 @@
 import { getCollection } from "astro:content";
-import { getPostsByCollection, type CMSPost } from "./cms";
+import { type CMSPost } from "./cms";
 import { fetchSanity } from "./sanity";
 
 export interface WorkPhoto {
@@ -74,10 +74,10 @@ function sortWorks(list: Work[]): Work[] {
 }
 
 /**
- * Local markdown wins on slug and on company name. CMS-only rows are kept
+ * Local markdown wins on slug and on company name. Sanity-only rows are kept
  * only when they introduce a company the repo doesn't already cover — so a
- * stale WriterPro/Sanity slug like `foldhealth` can't sit next to local
- * `fold-health` as a second Fold Health card.
+ * stale Sanity slug like `foldhealth` can't sit next to local `fold-health`
+ * as a second Fold Health card.
  */
 function preferLocal(local: Work[], remote: Work[]): Work[] {
   const bySlug = new Map<string, Work>();
@@ -95,20 +95,18 @@ function preferLocal(local: Work[], remote: Work[]): Work[] {
 }
 
 async function getAllWorks(): Promise<Work[]> {
-  // Repo markdown is the source of truth for work + side projects. CMS
-  // sources may still hold pre-restructure docs (no `kind`, old slugs) that
-  // used to hide /projects and duplicate Fold Health on /work.
+  // Repo markdown is the source of truth for work + side projects. Sanity may
+  // still hold pre-restructure docs (no `kind`, old slugs) that used to hide
+  // /projects and duplicate Fold Health on /work — so it only contributes
+  // *additional* companies the repo doesn't already cover.
   const local = await readLocalWorks();
-  if (local.length > 0) {
-    // Only consult Sanity for *additional* companies; never WriterPro when
-    // local content exists — WriterPro still has the pre-restructure set.
-    const sanity = await fetchSanity<WorkMetadata>("work");
-    if (sanity.length > 0) return sortWorks(preferLocal(local, sanity));
-    return sortWorks(local);
-  }
   const sanity = await fetchSanity<WorkMetadata>("work");
-  if (sanity.length > 0) return sortWorks(sanity);
-  return sortWorks(await getPostsByCollection<WorkMetadata>("work"));
+  if (local.length > 0) {
+    return sanity.length > 0
+      ? sortWorks(preferLocal(local, sanity))
+      : sortWorks(local);
+  }
+  return sortWorks(sanity);
 }
 
 /** Employment history — the Work Experience page. */

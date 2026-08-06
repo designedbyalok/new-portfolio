@@ -10,7 +10,7 @@ export const prerender = true;
 
 /**
  * /llms.txt — machine-readable site map for LLMs, per https://llmstxt.org.
- * Everything below is generated from WriterPro collections — nothing hardcoded.
+ * Everything below is generated from the content collections — nothing hardcoded.
  */
 export async function GET(context: APIContext) {
   const site = context.site ?? new URL("https://designedbyalok.com");

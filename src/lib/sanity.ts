@@ -80,7 +80,7 @@ const cache = new Map<string, Promise<CMSPost[]>>();
 /**
  * Fetch a Sanity document type, shaped as CMSPost[]. Returns [] when Sanity
  * isn't configured or the query fails, so callers fall through to their
- * existing source (WriterPro / local MDX) during the migration window.
+ * local MDX fallback.
  */
 export function fetchSanity<M = Record<string, unknown>>(
   type: keyof typeof QUERIES,

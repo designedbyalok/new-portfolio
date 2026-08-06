@@ -1,9 +1,9 @@
 import { getCollection } from "astro:content";
-import { getPostsByCollection, type CMSPost } from "./cms";
+import { type CMSPost } from "./cms";
 import { fetchBookMeta } from "./openlibrary";
 import { fetchSanity } from "./sanity";
 
-/** Per-book metadata stored on the WriterPro post. Mirrors the old MDX frontmatter. */
+/** Per-book metadata. Mirrors the MDX frontmatter. */
 export interface BookMetadata {
   author: string;
   status: "currently-reading" | "finished" | "paused" | "abandoned" | "wishlist";
@@ -23,15 +23,12 @@ export interface BookMetadata {
 export type Book = CMSPost<BookMetadata>;
 
 /**
- * Returns the bookshelf from WriterPro's "books" collection.
- * Falls back to local MDX content if WriterPro has no books yet,
- * so the page keeps working during the migration.
+ * Returns the bookshelf from Sanity, falling back to local MDX content so the
+ * page keeps working if Sanity is empty or unreachable.
  */
 export async function getBooks(): Promise<Book[]> {
   const sanity = await fetchSanity<BookMetadata>("book");
-  if (sanity.length > 0) return enrichBooks(sanity);
-  const remote = await getPostsByCollection<BookMetadata>("books");
-  const base = remote.length > 0 ? remote : await readLocalBooks();
+  const base = sanity.length > 0 ? sanity : await readLocalBooks();
   return enrichBooks(base);
 }
 
@@ -56,7 +53,7 @@ export async function getBookBySlug(slug: string): Promise<Book | undefined> {
   return books.find((book) => book.slug === slug);
 }
 
-/** Fallback: reads the legacy MDX collection and shapes it like a WriterPro post. */
+/** Fallback: reads the local MDX collection and shapes it like a CMS post. */
 async function readLocalBooks(): Promise<Book[]> {
   const entries = await getCollection("books");
   return entries.map((entry) => {

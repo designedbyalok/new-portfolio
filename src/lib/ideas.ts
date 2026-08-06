@@ -1,5 +1,5 @@
 import { getCollection } from "astro:content";
-import { getPostsByCollection, type CMSPost } from "./cms";
+import { type CMSPost } from "./cms";
 import { fetchSanity } from "./sanity";
 
 export interface IdeaPhoto {
@@ -26,9 +26,9 @@ export interface IdeaMetadata {
 export type Idea = CMSPost<IdeaMetadata>;
 
 /**
- * Merge by slug. `overlay` wins on conflicts; `base` fills slugs that
- * overlay doesn't have — so local markdown can ship new case studies while
- * Sanity/WriterPro still only hold the older set.
+ * Merge by slug. `overlay` (Sanity) wins on conflicts; `base` (local) fills
+ * slugs Sanity doesn't have — so local markdown can ship a new case study
+ * before it's mirrored into Sanity.
  */
 function mergeBySlug(base: Idea[], overlay: Idea[]): Idea[] {
   const map = new Map<string, Idea>();
@@ -38,22 +38,10 @@ function mergeBySlug(base: Idea[], overlay: Idea[]): Idea[] {
 }
 
 export async function getIdeas(): Promise<Idea[]> {
-  // Local markdown is authoritative when present. A non-empty but stale
-  // WriterPro "ideas" collection used to hide every case study that only
-  // lives in src/content/projects/ (Agent Builder, HCC Coding, Worklists).
   const local = await readLocalIdeas();
   const sanity = await fetchSanity<IdeaMetadata>("idea");
-  if (sanity.length > 0) {
-    return mergeBySlug(local, sanity).sort(
-      (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
-    );
-  }
-  if (local.length > 0) {
-    return local.sort(
-      (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
-    );
-  }
-  return (await getPostsByCollection<IdeaMetadata>("ideas")).sort(
+  const merged = sanity.length > 0 ? mergeBySlug(local, sanity) : local;
+  return merged.sort(
     (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
   );
 }

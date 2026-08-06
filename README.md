@@ -7,37 +7,34 @@ Static-first: every page is prerendered except `/api/spotify.json`.
 
 | Content | Source of truth | How to edit |
 | :--- | :--- | :--- |
-| Blog posts | [WriterPro CMS](https://writerpro.vercel.app) | Write/edit in WriterPro → redeploy (see below) |
+| Blog posts | [Sanity Studio](https://designedbyalok.sanity.studio) | Write/edit in Studio → Publish (auto-redeploys, see below) |
+| Books / reading | Sanity Studio | Edit in Studio, or `bun scripts/import-fable.ts` into `src/content/books/*.md` |
+| Films / cinema | Sanity Studio | Edit in Studio, or `bun scripts/import-letterboxd.ts` into `src/content/films/*.md` |
+| Books / films / archive / photos (local fallback) | `src/content/**/*.md` | Edit, push — used when Sanity is empty/unreachable |
 | Work case studies | `src/content/work/*.md` | Edit frontmatter + markdown, push |
 | Projects | `src/content/projects/*.md` | Edit, push |
-| Books / reading | `src/content/books/*.md` | Edit, push — or `bun scripts/import-fable.ts` |
-| Films / cinema | `src/content/films/*.md` | Edit, push — or `bun scripts/import-letterboxd.ts` |
-| Archive (notes, quotes, models) | `src/content/archive/*.md` | Edit, push |
 | Resume / About | `src/pages/resume.astro`, `src/pages/about.astro` | Edit, push |
 
-### WriterPro → site updates
+### Sanity → site updates
 
-The blog is fetched from WriterPro **at build time** (`src/lib/cms.ts`). The site
-is static, so publishing in WriterPro does not update the site until a new build
-runs. To make WriterPro edits go live automatically:
+Content is fetched from Sanity **at build time** (`src/lib/sanity.ts`, consumed
+by `src/lib/cms.ts` and the per-collection libs). The site is static, so
+publishing in Studio does not update the site until a new build runs — which is
+automatic: a Sanity GROQ webhook (filter `!(_id in path("drafts.**"))`) calls a
+Vercel Deploy Hook on every publish, so a change is live ~1–2 min later.
 
-1. In Vercel: Project → Settings → Git → **Deploy Hooks** → create a hook
-   (e.g. `writerpro-publish`, branch `main`). Copy the URL.
-2. Have WriterPro call that URL on publish (webhook), or just open the URL
-   yourself after publishing — it triggers a rebuild.
-
-If WriterPro is down or `CMS_API_KEY` is missing, the build **does not fail** —
-it falls back to the local posts in `src/content/blog/`.
-
-> The local MDX files in `src/content/blog/` are the offline fallback, not the
-> primary source. Posts in WriterPro with the same slug win.
+If Sanity is empty or unreachable, the build **does not fail** — each section
+falls back to its local MDX in `src/content/`. Sanity documents with the same
+slug win over the local fallback.
 
 ## Environment variables
 
 Copy `.env.example` to `.env`. Set the same values in Vercel → Project →
 Settings → Environment Variables.
 
-- `CMS_API_KEY` — WriterPro API key (blog). **Rotate the old committed key.**
+- `SANITY_PROJECT_ID` / `SANITY_DATASET` — the content source. Without
+  `SANITY_PROJECT_ID` the client is disabled and every section uses its local
+  MDX fallback. `SANITY_TOKEN` is only needed to read drafts (preview builds).
 - `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` / `SPOTIFY_REFRESH_TOKEN` —
   power the "Listening to…" card (see `docs/spotify-setup.md`). Optional:
   without them the card shows a quiet offline state.

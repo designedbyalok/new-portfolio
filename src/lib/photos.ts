@@ -1,4 +1,4 @@
-import { getPostsByCollection, type CMSPost } from "./cms";
+import { type CMSPost } from "./cms";
 import { fetchSanity } from "./sanity";
 
 export interface PhotoMetadata {
@@ -31,13 +31,11 @@ const DEFAULT_PLACEHOLDERS: Photo[] = [
 ];
 
 /**
- * Returns the photo gallery from WriterPro's "photos" collection.
- * Falls back to placeholders during the migration so the about page never breaks.
+ * Returns the photo gallery from Sanity.
+ * Falls back to placeholders so the about page never breaks when empty.
  */
 export async function getPhotos(): Promise<Photo[]> {
-  const sanity = await fetchSanity<PhotoMetadata>("photo");
-  const remote =
-    sanity.length > 0 ? sanity : await getPostsByCollection<PhotoMetadata>("photos");
+  const remote = await fetchSanity<PhotoMetadata>("photo");
   if (remote.length === 0) return DEFAULT_PLACEHOLDERS;
   return remote
     .filter((p) => Boolean(p.thumbnail))
