@@ -1,14 +1,16 @@
 ---
-// Ideas — a home for future explorations and experiments. The in-depth work
-// lives under /case-studies; this page collects the looser, playful stuff.
-// Currently an intentional empty state until entries exist.
+// Ideas — looser explorations and interactive experiments. The in-depth work
+// lives under /case-studies; this page collects the playful stuff. Each entry
+// is a self-contained experiment; the first is an interactive self-portrait.
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
+import GazePortrait from "../../components/GazePortrait.astro";
+import EyeContactModal from "../../components/EyeContactModal.astro";
 ---
 
 <Layout
   title="Ideas — Alok Kumar"
-  description="Explorations, experiments, and ideas in progress."
+  description="Explorations, experiments, and interactive toys in progress."
 >
   <div class="container container-content page" style="align-items: flex-start; justify-content: flex-start;">
     <TopBar />
@@ -20,73 +22,153 @@ import TopBar from "../../components/TopBar.astro";
 
     <div style="width: 100%; margin-bottom: 1.5rem;">
       <h1 class="page-heading animate a2">ideas</h1>
-    </div>
-
-    <div class="ideas-empty animate a3">
-      <div class="ideas-empty-card" aria-hidden="true">
-        <span class="spark">✦</span>
-      </div>
-      <p class="ideas-empty-title">Nothing here yet — on purpose.</p>
-      <p class="ideas-empty-copy">
-        This is where the looser explorations will live: experiments, sketches,
-        and half-formed things worth sharing before they're finished. For the
-        in-depth work, see the <a href="/case-studies">case studies</a>.
+      <p class="ideas-intro animate a3">
+        Looser explorations and interactive toys. For the in-depth work, see the <a href="/case-studies">case studies</a>.
       </p>
     </div>
+
+    <ul class="idea-list">
+      <li class="idea animate a4">
+        <button class="idea-trigger" data-ec-open type="button" aria-label="Open “Eye Contact” in fullscreen">
+          <GazePortrait />
+          <span class="idea-expand" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" /><line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" /></svg>
+            Fullscreen
+          </span>
+        </button>
+        <div class="idea-meta">
+          <h2 class="idea-name">Eye Contact</h2>
+          <p class="idea-desc">
+            A self-portrait that turns to keep looking at you. Move your cursor
+            around — the head follows. Click to open it fullscreen.
+          </p>
+          <p class="idea-credit">
+            Inspired by <a href="https://x.com/dahbiahmed" target="_blank" rel="noopener noreferrer">@dahbiahmed</a> on X.
+          </p>
+        </div>
+      </li>
+    </ul>
   </div>
+
+  <EyeContactModal />
 </Layout>
 
 <style>
-  .ideas-empty {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 48px 24px 24px;
-  }
-  .ideas-empty-card {
-    width: 120px;
-    height: 120px;
-    border-radius: 24px;
-    border: 1px dashed var(--border);
-    background: var(--tag-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-  }
-  .spark {
-    font-size: 28px;
-    color: var(--fg-tertiary);
-    animation: sparkFloat 3s ease-in-out infinite;
-  }
-  @keyframes sparkFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
-    50% { transform: translateY(-6px) rotate(12deg); opacity: 1; }
-  }
-  .ideas-empty-title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: var(--text-xl);
-    color: var(--fg);
-    margin: 0 0 8px;
-  }
-  .ideas-empty-copy {
-    max-width: 44ch;
-    margin: 0;
+  .ideas-intro {
+    max-width: 52ch;
+    margin: 0.75rem 0 0;
     font-size: var(--text-base);
     color: var(--fg-secondary);
     line-height: 1.6;
   }
-  .ideas-empty-copy a {
+  .ideas-intro a {
     color: var(--fg);
     text-decoration: underline;
     text-decoration-color: var(--border);
     text-underline-offset: 3px;
   }
-  .ideas-empty-copy a:hover {
+  .ideas-intro a:hover {
+    text-decoration-color: var(--fg);
+  }
+
+  .idea-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+  .idea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-top: 16px;
+  }
+
+  /* The portrait doubles as the trigger for the fullscreen viewer. Sized to the
+     portrait box so the expand affordance lands on its corner. */
+  .idea-trigger {
+    display: block;
+    position: relative;
+    width: min(420px, 100%);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+    border-radius: 12px;
+  }
+  .idea-trigger:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 4px;
+  }
+  .idea-expand {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--chrome-btn-bg);
+    backdrop-filter: blur(2.5px);
+    -webkit-backdrop-filter: blur(2.5px);
+    color: var(--fg);
+    font-size: 12px;
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .idea-trigger:hover .idea-expand,
+  .idea-trigger:focus-visible .idea-expand {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .idea-expand { transition: none; }
+  }
+  .idea-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    max-width: 46ch;
+  }
+  .idea-name {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--text-xl);
+    color: var(--fg);
+    margin: 0;
+  }
+  .idea-desc {
+    margin: 0;
+    font-size: var(--text-base);
+    color: var(--fg-secondary);
+    line-height: 1.6;
+  }
+  .idea-credit {
+    margin: 4px 0 0;
+    font-size: var(--text-sm);
+    color: var(--fg-tertiary);
+  }
+  .idea-credit a {
+    color: var(--fg-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+  }
+  .idea-credit a:hover {
+    color: var(--fg);
     text-decoration-color: var(--fg);
   }
 </style>

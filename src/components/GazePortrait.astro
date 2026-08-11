@@ -1,0 +1,189 @@
+---
+// An interactive portrait whose head turns to follow the visitor's cursor.
+// Nine head-turn frames arranged on a 3×3 gaze grid cross-fade so the subject
+// always looks toward the pointer, with a subtle parallax between frames.
+//
+// Reimplemented in vanilla JS from a Claude Design piece (x-dc/React runtime).
+// Inspired by @dahbiahmed on X.
+interface Props {
+  /** Max width of the square portrait box. */
+  maxWidth?: string;
+}
+const { maxWidth = "420px" } = Astro.props;
+const base = "/ideas/eye-contact";
+// layer index → [frame file, mirrored?]. The grid: 0 center, then 8 compass
+// directions. Up-left reuses the up-right frame, mirrored.
+const layers: [string, boolean][] = [
+  ["frame-29", false], // 0 · center
+  ["frame-32", false], // 1 · right
+  ["frame-31", false], // 2 · up-right
+  ["frame-28", false], // 3 · up
+  ["frame-31", true],  // 4 · up-left (mirror of up-right)
+  ["frame-26", false], // 5 · left
+  ["frame-27", false], // 6 · down-left
+  ["frame-30", false], // 7 · down
+  ["frame-33", false], // 8 · down-right
+];
+---
+
+<div class="gaze" data-gaze style={`--gp-max:${maxWidth}`}>
+  <div class="gaze-box" data-gaze-box>
+    <div class="gaze-wrap" data-gaze-wrap>
+      {
+        layers.map(([file, mirror], i) => (
+          <img
+            class="gaze-layer"
+            src={`${base}/${file}.webp`}
+            alt={i === 0 ? "Alok Kumar" : ""}
+            draggable={false}
+            loading={i === 0 ? "eager" : "lazy"}
+            decoding="async"
+            width="418"
+            height="418"
+            data-mirror={mirror ? "1" : null}
+            style={`opacity:${i === 0 ? 1 : 0};z-index:${i === 0 ? 2 : 0};${mirror ? "transform:scaleX(-1);" : ""}`}
+          />
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  // Grid coords per layer: x right+, y down+ (index 0 = center).
+  const COORDS: [number, number][] = [
+    [0, 0], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1],
+  ];
+  const SECTOR_TO_IDX: Record<string, number> = {
+    "0": 1, "-1": 2, "-2": 3, "-3": 4, "-4": 5, "4": 5, "3": 6, "2": 7, "1": 8,
+  };
+  const SPEED_MS = 220;
+  const DEADZONE = 110;
+
+  const idxOf = (x: number, y: number) =>
+    COORDS.findIndex((c) => c[0] === x && c[1] === y);
+
+  const cleanups: (() => void)[] = [];
+
+  function initOne(root: HTMLElement) {
+    const box = root.querySelector<HTMLElement>("[data-gaze-box]");
+    const wrap = root.querySelector<HTMLElement>("[data-gaze-wrap]");
+    const layers = Array.from(root.querySelectorAll<HTMLImageElement>(".gaze-layer"));
+    if (!box || !wrap || layers.length !== 9) return;
+
+    // Coarse pointers can't hover and reduced-motion asks us not to animate:
+    // leave the calm, forward-facing center frame in place.
+    const still =
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (still) return;
+
+    let active = 0;
+    let prev = 0;
+    let target = 0;
+    let tx = 0;
+    let ty = 0;
+    let stepTimer: number | null = null;
+
+    const render = () => {
+      wrap.style.transform = `translate(${tx}px,${ty}px) scale(1.06)`;
+      layers.forEach((im, i) => {
+        const isActive = active === i;
+        const isPrev = prev === i && !isActive;
+        const mir = im.dataset.mirror ? " scaleX(-1)" : "";
+        im.style.opacity = isActive || isPrev ? "1" : "0";
+        im.style.zIndex = isActive ? "2" : isPrev ? "1" : "0";
+        // Only the incoming frame fades; the outgoing one stays opaque
+        // underneath until it's covered, so there's never a flash.
+        im.style.transition = isActive ? `opacity ${SPEED_MS}ms ease` : "none";
+        im.style.transform = `translateZ(0)${mir}`;
+      });
+    };
+
+    // Walk one grid-neighbour at a time toward the target so large jumps pass
+    // through the intermediate head positions instead of snapping.
+    const step = () => {
+      stepTimer = null;
+      if (active === target) return;
+      const [cx, cy] = COORDS[active];
+      const [gx, gy] = COORDS[target];
+      const next = idxOf(cx + Math.sign(gx - cx), cy + Math.sign(gy - cy));
+      prev = active;
+      active = next;
+      render();
+      stepTimer = window.setTimeout(step, Math.max(60, SPEED_MS * 0.55));
+    };
+
+    const onMove = (e: MouseEvent) => {
+      const r = box.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      let idx: number;
+      if (Math.hypot(dx, dy) < DEADZONE) idx = 0;
+      else {
+        const a = (Math.atan2(dy, dx) * 180) / Math.PI; // -180..180, 0 = right
+        idx = SECTOR_TO_IDX[String(Math.round(a / 45))];
+      }
+      target = idx;
+      if (!stepTimer && idx !== active) step();
+      // Subtle parallax toward the cursor sells continuous motion between frames.
+      const px = Math.round(Math.max(-1, Math.min(1, dx / (r.width * 1.2))) * 7);
+      const py = Math.round(Math.max(-1, Math.min(1, dy / (r.height * 1.2))) * 7);
+      if (px !== tx || py !== ty) {
+        tx = px;
+        ty = py;
+        render();
+      }
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    root.classList.add("is-live");
+    cleanups.push(() => {
+      window.removeEventListener("mousemove", onMove);
+      if (stepTimer) clearTimeout(stepTimer);
+    });
+  }
+
+  function init() {
+    while (cleanups.length) cleanups.pop()!();
+    document.querySelectorAll<HTMLElement>("[data-gaze]").forEach(initOne);
+  }
+
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style>
+  .gaze {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .gaze-box {
+    position: relative;
+    width: min(var(--gp-max, 420px), 100%);
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--tag-bg);
+    box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.06));
+  }
+  .gaze-wrap {
+    position: absolute;
+    inset: 0;
+    transform: scale(1.06);
+    transition: transform 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .gaze-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,257 @@
+---
+// Fullscreen viewer for the Eye Contact portrait. Opens from any element with
+// [data-ec-open]. The portrait sits centred over a dot-grid canvas whose dots
+// grow, brighten, and lean toward the cursor — a lightweight vanilla-canvas
+// take on an interactive shader (no WebGL, no dependencies, theme-aware).
+import GazePortrait from "./GazePortrait.astro";
+---
+
+<div class="ec-modal" data-ec-modal hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Eye Contact, fullscreen">
+  <canvas class="ec-grid" data-ec-canvas aria-hidden="true"></canvas>
+
+  <button class="ec-close" data-ec-close type="button" aria-label="Close fullscreen">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+  </button>
+
+  <div class="ec-stage" data-ec-stage>
+    <GazePortrait maxWidth="460px" />
+    <p class="ec-hint">Move your cursor — the portrait follows.</p>
+  </div>
+</div>
+
+<script>
+  const STEP = 34; // grid spacing (css px)
+  const RADIUS = 180; // cursor influence radius
+  const DOT_MIN = 1.3;
+  const DOT_MAX = 3.9;
+  const A_MIN = 0.12;
+  const A_MAX = 0.55;
+  const LEAN = 6; // px pull toward cursor
+
+  let teardown: (() => void) | null = null;
+
+  function hexToRgb(h: string): [number, number, number] | null {
+    if (!h) return null;
+    let s = h.trim().replace("#", "");
+    if (s.length === 3) s = s.split("").map((c) => c + c).join("");
+    if (s.length !== 6) return null;
+    const n = parseInt(s, 16);
+    if (Number.isNaN(n)) return null;
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  function initModal() {
+    teardown?.();
+    teardown = null;
+
+    const modal = document.querySelector<HTMLElement>("[data-ec-modal]");
+    if (!modal) return;
+    const canvas = modal.querySelector<HTMLCanvasElement>("[data-ec-canvas]");
+    const closeBtn = modal.querySelector<HTMLElement>("[data-ec-close]");
+    const stage = modal.querySelector<HTMLElement>("[data-ec-stage]");
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !closeBtn || !stage || !ctx) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let W = 0, H = 0;
+    let rgb: [number, number, number] = [136, 136, 136];
+    const tgt = { x: -9999, y: -9999 };
+    const cur = { x: -9999, y: -9999 };
+    let raf: number | null = null;
+    let lastFocused: HTMLElement | null = null;
+
+    const readColor = () => {
+      const v = getComputedStyle(document.documentElement)
+        .getPropertyValue("--fg")
+        .trim();
+      const c = hexToRgb(v);
+      if (c) rgb = c;
+    };
+
+    const resize = () => {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (reduce) draw();
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      const [r, g, b] = rgb;
+      const cx = cur.x, cy = cur.y;
+      for (let y = STEP / 2; y < H; y += STEP) {
+        for (let x = STEP / 2; x < W; x += STEP) {
+          const dx = x - cx, dy = y - cy;
+          const d = Math.hypot(dx, dy);
+          let f = d < RADIUS ? 1 - d / RADIUS : 0;
+          f *= f; // ease-in falloff
+          const rad = DOT_MIN + f * (DOT_MAX - DOT_MIN);
+          const a = A_MIN + f * (A_MAX - A_MIN);
+          const ox = d > 0 ? (-dx / d) * f * LEAN : 0;
+          const oy = d > 0 ? (-dy / d) * f * LEAN : 0;
+          ctx.beginPath();
+          ctx.arc(x + ox, y + oy, rad, 0, 6.2832);
+          ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+          ctx.fill();
+        }
+      }
+    };
+
+    const loop = () => {
+      cur.x += (tgt.x - cur.x) * 0.12;
+      cur.y += (tgt.y - cur.y) * 0.12;
+      draw();
+      raf = requestAnimationFrame(loop);
+    };
+
+    const onMove = (e: MouseEvent) => {
+      const r = canvas.getBoundingClientRect();
+      tgt.x = e.clientX - r.left;
+      tgt.y = e.clientY - r.top;
+    };
+
+    const open = () => {
+      lastFocused = document.activeElement as HTMLElement;
+      modal.hidden = false;
+      modal.setAttribute("aria-hidden", "false");
+      requestAnimationFrame(() => modal.classList.add("is-open"));
+      document.body.style.overflow = "hidden";
+      readColor();
+      resize();
+      if (!reduce) {
+        window.addEventListener("mousemove", onMove, { passive: true });
+        if (!raf) raf = requestAnimationFrame(loop);
+      }
+      closeBtn.focus();
+    };
+
+    const close = () => {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      window.removeEventListener("mousemove", onMove);
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+      const done = () => (modal.hidden = true);
+      reduce ? done() : window.setTimeout(done, 300);
+      lastFocused?.focus?.();
+    };
+
+    const triggers = Array.from(document.querySelectorAll<HTMLElement>("[data-ec-open]"));
+    const onTrigger = (e: Event) => { e.preventDefault(); open(); };
+    triggers.forEach((t) => t.addEventListener("click", onTrigger));
+
+    const onClose = () => close();
+    closeBtn.addEventListener("click", onClose);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !modal.hidden) close();
+    };
+    document.addEventListener("keydown", onKey);
+
+    // Click on the backdrop (anywhere but the portrait or close button) dismisses.
+    const onBackdrop = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (!stage.contains(t) && !closeBtn.contains(t)) close();
+    };
+    modal.addEventListener("click", onBackdrop);
+
+    const onResize = () => resize();
+    window.addEventListener("resize", onResize);
+
+    // Keep the dot colour in step with the theme toggle while open.
+    const mo = new MutationObserver(readColor);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    teardown = () => {
+      triggers.forEach((t) => t.removeEventListener("click", onTrigger));
+      closeBtn.removeEventListener("click", onClose);
+      document.removeEventListener("keydown", onKey);
+      modal.removeEventListener("click", onBackdrop);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("mousemove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+      mo.disconnect();
+      document.body.style.overflow = "";
+    };
+  }
+
+  document.addEventListener("astro:page-load", initModal);
+</script>
+
+<style>
+  .ec-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .ec-modal[hidden] { display: none; }
+  .ec-modal.is-open { opacity: 1; }
+
+  .ec-grid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .ec-close {
+    position: fixed;
+    top: var(--chrome-top, 32px);
+    right: var(--chrome-side, 24px);
+    z-index: 2;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--chrome-btn-bg);
+    backdrop-filter: blur(2.5px);
+    -webkit-backdrop-filter: blur(2.5px);
+    color: var(--fg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .ec-close:hover,
+  .ec-close:focus-visible {
+    background: var(--hover-bg);
+    transform: scale(1.05);
+  }
+
+  .ec-stage {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 24px;
+    transform: scale(0.96);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ec-modal.is-open .ec-stage { transform: scale(1); }
+
+  .ec-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--fg-tertiary);
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ec-modal,
+    .ec-stage { transition: none; }
+  }
+</style>
