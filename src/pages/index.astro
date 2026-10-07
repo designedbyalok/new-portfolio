@@ -11,10 +11,10 @@ import { getIdeas } from "../lib/ideas";
 // The project currently in focus — shown in the bottom-left "Currently Working
 // on" widget, linking to its case study.
 const nowWorking = {
-  title: "WritrPro",
-  sub: "Improving UX",
-  href: "/projects/writrpro",
-  icon: "/icon-writerpro.svg",
+  title: "Plastic",
+  sub: "Building a design tool",
+  href: "/projects/plastic",
+  icon: "/projects/plastic/logo.webp",
 };
 
 const posts = (await getAllPosts()).slice(0, 5);
@@ -37,6 +37,13 @@ const fmtDate = (iso?: string) =>
 // Each card links to the case study page (/work/<slug>). The detail page
 // shows the "View project" link to the live URL.
 const projects = [
+  {
+    title: "Plastic",
+    sub: "A Design Tool for Real Interfaces",
+    href: "/projects/plastic",
+    icon: "/projects/plastic/logo.webp",
+    external: false,
+  },
   {
     title: "WritrPro",
     sub: "A Minimal Editor & CMS",
