@@ -12,34 +12,37 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "6.0.3",
-    "@astrojs/react": "^6.0.2",
-    "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "3.7.3",
-    "@astrojs/vercel": "^10.0.8",
-    "@fontsource-variable/fraunces": "^5.2.9",
-    "@fontsource-variable/geist": "^5.2.9",
-    "@fontsource-variable/inter": "^5.2.8",
-    "@fontsource/averia-serif-libre": "^5.2.7",
-    "@fontsource/ibm-plex-sans": "^5.2.8",
-    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@astrojs/mdx": "8.0.3",
+    "@astrojs/react": "^7.0.1",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "@astrojs/vercel": "^11.0.12",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/averia-serif-libre": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@sanity/cli": "^7.5.0",
-    "@sanity/client": "^7.23.0",
-    "@tailwindcss/vite": "^4.3.2",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "astro": "^7.0.6",
+    "@sanity/client": "^7.27.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "astro": "^7.3.6",
     "dialkit": "^1.4.3",
-    "marked": "^18.0.5",
+    "marked": "^18.1.0",
     "motion": "^12.43.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "satori": "^0.26.0",
-    "tailwindcss": "^4.3.2"
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "pagefind": "^1.5.2",
-    "yaml": "^2.9.0"
+    "yaml": "^2.9.1",
+    "sharp": "^0.35.5"
+  },
+  "overrides": {
+    "path-to-regexp": "6.3.0"
   }
 }

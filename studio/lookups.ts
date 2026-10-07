@@ -47,7 +47,7 @@ export type FilmResult = {
 // access (env[name]) can come back undefined in the built bundle. So read the
 // exact key statically from both possible sources.
 const RAW_KEY: string | undefined =
-  (import.meta as any)?.env?.SANITY_STUDIO_TMDB_API_KEY ||
+  import.meta.env.SANITY_STUDIO_TMDB_API_KEY ||
   (typeof process !== "undefined"
     ? (process as any)?.env?.SANITY_STUDIO_TMDB_API_KEY
     : undefined);

@@ -8,11 +8,19 @@
     "deploy": "sanity deploy"
   },
   "dependencies": {
-    "@sanity/cli": "^7.5.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "sanity": "^6.9.0",
-    "sanity-plugin-markdown": "^5.0.0",
-    "styled-components": "^6.1.15"
+    "@sanity/cli": "^8.14.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sanity": "^6.18.0",
+    "sanity-plugin-markdown": "^9.0.14",
+    "styled-components": "^6.5.3",
+    "@sanity/ui": "^4.3.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "overrides": {
+    "js-yaml": "3.15.2",
+    "smol-toml": "1.9.0"
   }
 }

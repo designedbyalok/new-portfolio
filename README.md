@@ -1,6 +1,6 @@
 # designedbyalok.com
 
-Personal portfolio of Alok Kumar — Astro 6, Tailwind 4, deployed on Vercel.
+Personal portfolio of Alok Kumar — Astro 7, Tailwind 4, deployed on Vercel.
 Static-first: every page is prerendered except `/api/spotify.json`.
 
 ## Editing content
@@ -47,7 +47,9 @@ Settings → Environment Variables.
 
 | Command | Action |
 | :--- | :--- |
-| `bun install` | Install dependencies |
+| `bun install --frozen-lockfile` | Install the locked site dependencies |
+| `cd studio && bun install --frozen-lockfile` | Install the locked Studio dependencies |
+| `cd studio && bun run build` | Build Sanity Studio |
 | `bun dev` | Dev server at `localhost:4321` (search is disabled in dev) |
 | `bun run build` | Build to `./dist/` + generate the Pagefind search index |
 | `bun preview` | Preview the production build (search works here) |
@@ -58,3 +60,15 @@ Settings → Environment Variables.
 The site exposes `/rss.xml`, `/sitemap-index.xml`, `/llms.txt` (machine-readable
 site map for AI agents) and `/ai.txt` (plain-text profile). These build from the
 content collections — they update themselves when content changes.
+
+## Dependency maintenance
+
+The site and `studio/` are separate Bun projects with separate lockfiles. Both
+require Node.js 22.12 or newer. Run `bun outdated` and `bun audit` in each
+directory, check framework/plugin peer requirements before major upgrades, and
+commit both updated lockfiles alongside their manifests. Validate each with
+`bun install --frozen-lockfile` and `bun run build`. The site build needs network
+access for remote images and configured content services.
+
+See [the October 2026 dependency review](docs/dependency-review-2026-10-08.md)
+for update decisions, security overrides, and remaining Studio advisories.
