@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 import { type CMSPost } from "./cms";
 import { fetchFilmMeta, tmdbConfigured } from "./tmdb";
+import { fetchMantel } from "./mantel";
 import { fetchSanity } from "./sanity";
 
 export interface FilmMetadata {
@@ -19,6 +20,8 @@ export interface FilmMetadata {
 export type Film = CMSPost<FilmMetadata>;
 
 export async function getFilms(): Promise<Film[]> {
+  const mantel = await fetchMantel<FilmMetadata>("films");
+  if (mantel) return enrichFilms(mantel);
   const sanity = await fetchSanity<FilmMetadata>("film");
   const base = sanity.length > 0 ? sanity : await readLocalFilms();
   return enrichFilms(base);

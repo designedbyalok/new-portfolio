@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 import { type CMSPost } from "./cms";
 import { fetchBookMeta } from "./openlibrary";
+import { fetchMantel } from "./mantel";
 import { fetchSanity } from "./sanity";
 
 /** Per-book metadata. Mirrors the MDX frontmatter. */
@@ -27,6 +28,8 @@ export type Book = CMSPost<BookMetadata>;
  * page keeps working if Sanity is empty or unreachable.
  */
 export async function getBooks(): Promise<Book[]> {
+  const mantel = await fetchMantel<BookMetadata>("books");
+  if (mantel) return enrichBooks(mantel);
   const sanity = await fetchSanity<BookMetadata>("book");
   const base = sanity.length > 0 ? sanity : await readLocalBooks();
   return enrichBooks(base);

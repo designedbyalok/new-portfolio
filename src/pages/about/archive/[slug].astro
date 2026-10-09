@@ -2,7 +2,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import TopBar from "../../../components/TopBar.astro";
 import { getArchive, type ArchiveEntry } from "../../../lib/archive";
-import { marked } from "marked";
+import { renderMarkdown } from "../../../lib/markdown";
 
 export async function getStaticPaths() {
   const entries = await getArchive();
@@ -25,7 +25,7 @@ const date = a.date ? new Date(a.date) : undefined;
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-const html = entry.markdownContent ? marked.parse(entry.markdownContent) : "";
+const html = entry.markdownContent ? renderMarkdown(entry.markdownContent) : "";
 const tags = a.tags ?? [];
 ---
 

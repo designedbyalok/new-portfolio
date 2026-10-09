@@ -5,7 +5,7 @@ import TopBar from "../../components/TopBar.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import { getWorks, type Work } from "../../lib/works";
 import { getIdeas } from "../../lib/ideas";
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 
 export async function getStaticPaths() {
   const works = await getWorks();
@@ -17,7 +17,7 @@ const { work } = Astro.props;
 const m = work.metadata;
 const photos = m.photos ?? [];
 const projects = m.projects ?? [];
-const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
+const htmlBody = work.markdownContent ? renderMarkdown(work.markdownContent) : "";
 
 // Related case studies — resolved from slugs, keeping the frontmatter order.
 const allCaseStudies = await getIdeas();

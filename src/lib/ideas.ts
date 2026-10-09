@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { type CMSPost } from "./cms";
+import { fetchMantel } from "./mantel";
 import { fetchSanity } from "./sanity";
 
 export interface IdeaPhoto {
@@ -38,12 +39,16 @@ function mergeBySlug(base: Idea[], overlay: Idea[]): Idea[] {
 }
 
 export async function getIdeas(): Promise<Idea[]> {
+  const mantel = await fetchMantel<IdeaMetadata>("ideas", { compare: byOrder });
+  if (mantel) return mantel;
   const local = await readLocalIdeas();
   const sanity = await fetchSanity<IdeaMetadata>("idea");
   const merged = sanity.length > 0 ? mergeBySlug(local, sanity) : local;
-  return merged.sort(
-    (a, b) => (a.metadata.order ?? 0) - (b.metadata.order ?? 0),
-  );
+  return merged.sort(byOrder);
+}
+
+function byOrder(a: Idea, b: Idea): number {
+  return (a.metadata.order ?? 0) - (b.metadata.order ?? 0);
 }
 
 export async function getIdeaBySlug(slug: string): Promise<Idea | undefined> {

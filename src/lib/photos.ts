@@ -1,4 +1,5 @@
 import { type CMSPost } from "./cms";
+import { fetchMantel } from "./mantel";
 import { fetchSanity } from "./sanity";
 
 export interface PhotoMetadata {
@@ -35,7 +36,7 @@ const DEFAULT_PLACEHOLDERS: Photo[] = [
  * Falls back to placeholders so the about page never breaks when empty.
  */
 export async function getPhotos(): Promise<Photo[]> {
-  const remote = await fetchSanity<PhotoMetadata>("photo");
+  const remote = (await fetchMantel<PhotoMetadata>("photos")) ?? (await fetchSanity<PhotoMetadata>("photo"));
   if (remote.length === 0) return DEFAULT_PLACEHOLDERS;
   return remote
     .filter((p) => Boolean(p.thumbnail))

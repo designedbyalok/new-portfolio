@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import { getIdeas, type Idea } from "../../lib/ideas";
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 
 export async function getStaticPaths() {
   const ideas = await getIdeas();
@@ -16,7 +16,7 @@ const { idea } = Astro.props;
 const m = idea.metadata;
 const photos = m.photos ?? [];
 const heroSrc = m.hero ?? idea.thumbnail;
-const htmlBody = idea.markdownContent ? marked.parse(idea.markdownContent) : "";
+const htmlBody = idea.markdownContent ? renderMarkdown(idea.markdownContent) : "";
 ---
 
 <Layout

@@ -2,13 +2,13 @@
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import { getArchive, type ArchiveEntry } from "../../lib/archive";
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 
 const entries = await getArchive();
 
 const rendered = entries.map((entry) => ({
   entry,
-  html: entry.markdownContent ? marked.parse(entry.markdownContent) : "",
+  html: entry.markdownContent ? renderMarkdown(entry.markdownContent) : "",
 }));
 
 const toDate = (iso?: string) => (iso ? new Date(iso) : undefined);
