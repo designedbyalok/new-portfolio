@@ -10,7 +10,10 @@ export async function getStaticPaths() {
 }
 
 type Props = { entry: ArchiveEntry };
-const { entry } = Astro.props;
+// The dev server caches getStaticPaths, so look the piece up again there: a CMS edit shows on refresh.
+const entry = import.meta.env.DEV
+  ? ((await getArchive()).find((candidate) => candidate.slug === Astro.params.slug) ?? Astro.props.entry)
+  : Astro.props.entry;
 const a = entry.metadata;
 
 const typeLabel: Record<string, string> = {

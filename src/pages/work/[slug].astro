@@ -13,7 +13,10 @@ export async function getStaticPaths() {
 }
 
 type Props = { work: Work };
-const { work } = Astro.props;
+// The dev server caches getStaticPaths, so look the piece up again there: a CMS edit shows on refresh.
+const work = import.meta.env.DEV
+  ? ((await getWorks()).find((candidate) => candidate.slug === Astro.params.slug) ?? Astro.props.work)
+  : Astro.props.work;
 const m = work.metadata;
 const photos = m.photos ?? [];
 const projects = m.projects ?? [];

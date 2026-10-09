@@ -50,14 +50,17 @@ export interface MantelContent {
 /** The site's own collection names, as the readers use them. */
 export type SiteCollection = "blog" | "books" | "films" | "archive" | "work" | "ideas" | "photos";
 
-/** Which Mantel collections feed each site collection. The site's /projects pages are Mantel's projects and case studies. */
+/**
+ * Which Mantel collections feed each site collection. Work experience and side projects share the
+ * site's work reader (split by kind); Mantel's case studies are the site's /case-studies.
+ */
 export const SOURCES: Record<SiteCollection, MantelCollection[]> = {
   blog: ["blog"],
   books: ["books"],
   films: ["films"],
   archive: ["archive"],
-  work: ["work"],
-  ideas: ["projects", "caseStudies"],
+  work: ["work", "projects"],
+  ideas: ["caseStudies"],
   photos: ["photos"],
 };
 
@@ -207,7 +210,7 @@ function toPost(piece: MantelPiece, collection: SiteCollection, assets: MantelAs
         thumbnail: hero,
         metadata: {
           company,
-          kind: str(m, "kind") === "project" ? "project" : "experience",
+          kind: piece.collection === "projects" || str(m, "kind") === "project" ? "project" : "experience",
           caseStudies: slugList(m.caseStudies, slugs),
           role: str(m, "role") ?? "",
           period: str(m, "period") ?? "",
