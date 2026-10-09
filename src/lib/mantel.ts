@@ -11,9 +11,13 @@ const PREVIEW_SECRET = import.meta.env.MANTEL_PREVIEW_SECRET;
 const PREVIEW = ["1", "true"].includes(String(import.meta.env.MANTEL_PREVIEW ?? ""));
 
 let pending: Promise<MantelContent | null> | null = null;
+let loadedAt = 0;
 
 function load(): Promise<MantelContent | null> {
   if (!CONTENT_URL) return Promise.resolve(null);
+  // A build reads once. The dev server re-reads after a moment, so a publish shows on refresh.
+  if (import.meta.env.DEV && Date.now() - loadedAt > 2000) pending = null;
+  if (!pending) loadedAt = Date.now();
   pending ??= (async () => {
     try {
       const url = new URL(PREVIEW ? CONTENT_URL.replace(/\/content\/?$/, "/preview") : CONTENT_URL);

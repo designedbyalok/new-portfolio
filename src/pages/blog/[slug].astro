@@ -17,7 +17,10 @@ export async function getStaticPaths() {
 }
 
 type Props = { post: CMSPost };
-const { post } = Astro.props;
+// The dev server caches getStaticPaths, so look the piece up again there: a CMS edit shows on refresh.
+const post = import.meta.env.DEV
+  ? ((await getAllPosts()).find((candidate) => candidate.slug === Astro.params.slug) ?? Astro.props.post)
+  : Astro.props.post;
 
 // The layout already renders the post title as the page <h1>. Post bodies are
 // authored inconsistently (some start at #, some at ###), so normalize every

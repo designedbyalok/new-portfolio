@@ -30,7 +30,7 @@ const content: MantelContent = {
       },
     }),
     piece({ id: "w2", collection: "work", slug: "roots", title: "Roots", metadata: { company: "Roots", order: 5 } }),
-    piece({ id: "i1", collection: "projects", slug: "rules", title: "Rule builder", metadata: { tagline: "Rules for care", order: 2 } }),
+    piece({ id: "i1", collection: "caseStudies", slug: "rules", title: "Rule builder", metadata: { tagline: "Rules for care", order: 2 } }),
     piece({ id: "i2", collection: "caseStudies", slug: "north", title: "North", description: "A study.", metadata: { role: "Design", outcome: "Shipped", order: 1 } }),
     piece({ id: "ph1", collection: "photos", slug: "coast", title: "Coast", description: "The coast", metadata: { image: `${MEDIA}/asset_coast/coast.jpg`, takenAt: "2026-03-01" } }),
   ],
@@ -74,7 +74,7 @@ test("work keeps its gallery and testimonial, ordered like the old query", () =>
   assert.equal(fold?.description, "Clinical tools.");
 });
 
-test("the site's projects come from Mantel projects and case studies", () => {
+test("the site's case studies come from Mantel case studies", () => {
   const ideas = piecesFor(content, "ideas");
   assert.deepEqual(ideas.map((idea) => idea.slug), ["north", "rules"]);
   assert.equal(ideas[0]?.collection, "ideas");
@@ -119,9 +119,9 @@ test("a preview keeps one page per slug, preferring the published piece", () => 
 test("work carries its kind and links case studies by slug, whatever the source", () => {
   const linked: MantelContent = {
     items: [
-      piece({ id: "cs", collection: "projects", slug: "rule-builder", metadata: { sanityId: "idea-rules" } }),
+      piece({ id: "cs", collection: "caseStudies", slug: "rule-builder", metadata: { sanityId: "idea-rules" } }),
       piece({ id: "w1", collection: "work", slug: "fold", metadata: { company: "Fold", caseStudies: [{ _ref: "idea-rules", _type: "reference" }, { _ref: "drafts.idea-missing" }] } }),
-      piece({ id: "w2", collection: "work", slug: "jobstax", metadata: { company: "JobStax", kind: "project", caseStudies: ["rule-builder"] } }),
+      piece({ id: "w2", collection: "projects", slug: "jobstax", metadata: { company: "JobStax", caseStudies: ["rule-builder"] } }),
     ],
   };
   const [fold, jobstax] = piecesFor(linked, "work");

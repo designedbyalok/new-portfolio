@@ -10,7 +10,10 @@ export async function getStaticPaths() {
 }
 
 type Props = { film: Film };
-const { film } = Astro.props;
+// The dev server caches getStaticPaths, so look the piece up again there: a CMS edit shows on refresh.
+const film = import.meta.env.DEV
+  ? ((await getFilms()).find((candidate) => candidate.slug === Astro.params.slug) ?? Astro.props.film)
+  : Astro.props.film;
 const f = film.metadata;
 
 const fmtDate = (d: Date) =>
