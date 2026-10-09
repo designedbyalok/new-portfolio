@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import BookCover from "../../components/BookCover.astro";
 import { getBooks, type Book } from "../../lib/books";
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 
 export async function getStaticPaths() {
   const books = await getBooks();
@@ -39,7 +39,7 @@ const whenRead = (() => {
 })();
 
 const rating = b.rating ? Math.round(b.rating) : 0;
-const htmlNotes = book.markdownContent ? marked.parse(book.markdownContent) : "";
+const htmlNotes = book.markdownContent ? renderMarkdown(book.markdownContent) : "";
 
 // Book + Review rich-results schema (star snippets in search)
 const bookEntity = {

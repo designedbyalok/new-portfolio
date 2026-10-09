@@ -6,7 +6,7 @@ import TableOfContents from "../../components/TableOfContents.astro";
 import LikeButton from "../../components/LikeButton.astro";
 import { getAllPosts } from "../../lib/cms";
 import type { CMSPost } from "../../lib/cms";
-import { marked } from "marked";
+import { markdown as renderer } from "../../lib/markdown";
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -24,22 +24,22 @@ const { post } = Astro.props;
 // body so its shallowest heading becomes <h2> — keeps one h1 per page and a
 // clean heading outline regardless of how the author wrote it.
 function renderPostBody(markdown: string): string {
-  const tokens = marked.lexer(markdown);
+  const tokens = renderer.lexer(markdown);
   let min = 6;
-  marked.walkTokens(tokens, (t) => {
+  renderer.walkTokens(tokens, (t) => {
     if (t.type === "heading") min = Math.min(min, t.depth);
   });
   if (min < 6) {
     const offset = 2 - min;
     if (offset !== 0) {
-      marked.walkTokens(tokens, (t) => {
+      renderer.walkTokens(tokens, (t) => {
         if (t.type === "heading") {
           t.depth = Math.max(2, Math.min(6, t.depth + offset));
         }
       });
     }
   }
-  return marked.parser(tokens);
+  return renderer.parser(tokens);
 }
 
 const htmlContent = renderPostBody(post.markdownContent);

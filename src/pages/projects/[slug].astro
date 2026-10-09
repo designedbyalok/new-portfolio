@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import { getSideProjects, type Work } from "../../lib/works";
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 
 export async function getStaticPaths() {
   const works = await getSideProjects();
@@ -16,7 +16,7 @@ const { work } = Astro.props;
 const m = work.metadata;
 const photos = m.photos ?? [];
 const projects = m.projects ?? [];
-const htmlBody = work.markdownContent ? marked.parse(work.markdownContent) : "";
+const htmlBody = work.markdownContent ? renderMarkdown(work.markdownContent) : "";
 ---
 
 <Layout

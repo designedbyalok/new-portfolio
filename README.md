@@ -27,6 +27,21 @@ If Sanity is empty or unreachable, the build **does not fail** — each section
 falls back to its local MDX in `src/content/`. Sanity documents with the same
 slug win over the local fallback.
 
+### Mantel
+
+When `MANTEL_CONTENT_URL` is set, every content reader (`src/lib/*.ts`) reads
+Mantel's published snapshot first (`src/lib/mantel.ts`), mapped into the same
+`CMSPost` shapes (`src/lib/mantel-map.ts`), so pages don't change. If Mantel is
+set and reachable it is the only source, so an unpublished piece can't come back
+from Sanity or local files. If it can't be reached, the build warns and falls
+back to Sanity and local MDX as above. `MANTEL_REVISION` pins a build to one
+snapshot. `MANTEL_PREVIEW=1` (with `MANTEL_PREVIEW_SECRET`) builds from drafts
+for a local look; never deploy that build. Archived pieces are left out for now.
+
+All content Markdown renders through `src/lib/markdown.ts`: raw HTML is limited
+to an allowed set of tags and attributes, and links and images must use safe
+protocols. Plain Markdown renders exactly as `marked`'s defaults.
+
 ## Environment variables
 
 Copy `.env.example` to `.env`. Set the same values in Vercel → Project →
@@ -40,6 +55,9 @@ Settings → Environment Variables.
   without them the card shows a quiet offline state.
 - `LETTERBOXD_USERNAME`, `FABLE_USERNAME` — only used by the manual import
   scripts; never used at build/runtime.
+- `MANTEL_CONTENT_URL`, `MANTEL_REVISION`, `MANTEL_PREVIEW_SECRET`,
+  `MANTEL_PREVIEW` — Mantel as the content source (see above). Mantel writes the
+  first three onto the Vercel project when the site is connected.
 - `PLAUSIBLE_DOMAIN` — set (e.g. `www.designedbyalok.com`) to enable
   privacy-first analytics. Unset = no analytics script at all.
 
@@ -53,6 +71,7 @@ Settings → Environment Variables.
 | `bun dev` | Dev server at `localhost:4321` (search is disabled in dev) |
 | `bun run build` | Build to `./dist/` + generate the Pagefind search index |
 | `bun preview` | Preview the production build (search works here) |
+| `bun run test` | Mantel mapping and safe Markdown tests |
 | `bun scripts/generate-og.mjs` | Regenerate the default social share image |
 
 ## Discovery

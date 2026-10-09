@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import TopBar from "../../components/TopBar.astro";
 import { getFilms, type Film } from "../../lib/films";
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 
 export async function getStaticPaths() {
   const films = await getFilms();
@@ -26,7 +26,7 @@ const starParts = (rating: number): ("full" | "half" | "empty")[] =>
 const byline = [f.year, f.director].filter(Boolean).join(" · ");
 const watchedAt = f.watchedAt ? new Date(f.watchedAt) : undefined;
 const lists = f.lists ?? [];
-const htmlNotes = film.markdownContent ? marked.parse(film.markdownContent) : "";
+const htmlNotes = film.markdownContent ? renderMarkdown(film.markdownContent) : "";
 
 // Movie + Review rich-results schema (star snippets in search)
 const movieEntity = {

@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build && pagefind --site .vercel/output/static && pagefind --site dist/client",
     "preview": "astro preview",
+    "test": "bun test tests",
     "astro": "astro"
   },
   "dependencies": {

@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { type CMSPost } from "./cms";
+import { fetchMantel } from "./mantel";
 import { fetchSanity } from "./sanity";
 
 export type ArchiveType =
@@ -20,6 +21,8 @@ export interface ArchiveMetadata {
 export type ArchiveEntry = CMSPost<ArchiveMetadata>;
 
 export async function getArchive(): Promise<ArchiveEntry[]> {
+  const mantel = await fetchMantel<ArchiveMetadata>("archive");
+  if (mantel) return mantel;
   const sanity = await fetchSanity<ArchiveMetadata>("archiveEntry");
   if (sanity.length > 0) return sanity;
   return readLocalArchive();

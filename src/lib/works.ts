@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { type CMSPost } from "./cms";
+import { fetchMantel } from "./mantel";
 import { fetchSanity } from "./sanity";
 
 export interface WorkPhoto {
@@ -64,13 +65,15 @@ function periodEnd(period?: string): number | undefined {
 }
 
 /** Newest first by period; `order` (higher first) breaks ties or fills gaps. */
+function compareWorks(a: Work, b: Work): number {
+  const ta = periodEnd(a.metadata.period);
+  const tb = periodEnd(b.metadata.period);
+  if (ta !== undefined && tb !== undefined && ta !== tb) return tb - ta;
+  return (b.metadata.order ?? 0) - (a.metadata.order ?? 0);
+}
+
 function sortWorks(list: Work[]): Work[] {
-  return [...list].sort((a, b) => {
-    const ta = periodEnd(a.metadata.period);
-    const tb = periodEnd(b.metadata.period);
-    if (ta !== undefined && tb !== undefined && ta !== tb) return tb - ta;
-    return (b.metadata.order ?? 0) - (a.metadata.order ?? 0);
-  });
+  return [...list].sort(compareWorks);
 }
 
 /**
@@ -95,6 +98,9 @@ function preferLocal(local: Work[], remote: Work[]): Work[] {
 }
 
 async function getAllWorks(): Promise<Work[]> {
+  // Mantel, when connected, holds the reconciled list, so it is used as is.
+  const mantel = await fetchMantel<WorkMetadata>("work", { compare: compareWorks });
+  if (mantel) return mantel;
   // Repo markdown is the source of truth for work + side projects. Sanity may
   // still hold pre-restructure docs (no `kind`, old slugs) that used to hide
   // /projects and duplicate Fold Health on /work — so it only contributes
