@@ -4,12 +4,12 @@ tagline: A visual automation canvas that lets care teams turn repeat tasks into 
 period: Apr 2024 — Present
 role: Lead product designer, with two engineers
 tags: ["Product design", "No-code", "Healthcare", "Visual editor"]
-hero: https://picsum.photos/seed/rulebuilder-hero/1600/900
+hero: /images/work/fold-hero.webp
 photos:
-  - src: https://picsum.photos/seed/rulebuilder-canvas/1400/900
+  - src: /images/projects/rule-builder-canvas.webp
     caption: The canvas — branchable, undoable, keyboard-navigable.
     aspect: 14 / 9
-  - src: https://picsum.photos/seed/rulebuilder-trigger/1400/900
+  - src: /images/projects/rule-builder-trigger.webp
     caption: Trigger configuration. Care-ops teams now build this themselves, in minutes.
     aspect: 14 / 9
 order: 6

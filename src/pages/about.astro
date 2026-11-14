@@ -5,12 +5,11 @@ import ListeningTo from "../components/ListeningTo.astro";
 import GithubHeatmap from "../components/GithubHeatmap.astro";
 import BentoGallery from "../components/BentoGallery.astro";
 import { getPhotos } from "../lib/photos";
-import { Image } from "astro:assets";
 
 type Photo = { src: string; aspect: string; caption: string; alt?: string };
 
 const portrait: Photo = {
-  src: "https://picsum.photos/seed/alok-portrait/900/1100",
+  src: "/portrait-sketch.png",
   aspect: "4 / 5",
   caption: "Pune, 2024.",
 };
@@ -28,9 +27,10 @@ const books = [
 ];
 
 const legos: Photo = {
-  src: "https://picsum.photos/seed/about-legos/900/1100",
+  src: "/images/about/legos.webp",
   aspect: "4 / 5",
   caption: "Eiffel Tower, in pieces on the dining table.",
+  alt: "Abstract geometric placeholder suggesting stacked Lego bricks",
 };
 
 const photography = await getPhotos();
@@ -60,7 +60,7 @@ const photography = await getPhotos();
     <section class="section section-hero animate a2">
       <div class="hero-card">
         <div class="hero-head">
-          <Image
+          <img
             src={portrait.src}
             alt="Portrait of Alok Kumar"
             width={176} height={176}
@@ -170,10 +170,10 @@ const photography = await getPhotos();
       <p class="eyebrow">Lego</p>
       <div class="me-grid">
         <figure class="photo-frame" style={`aspect-ratio: ${legos.aspect};`}>
-          <Image
+          <img
             src={legos.src}
-            alt={legos.caption}
-            width={1200} height={1200}
+            alt={legos.alt ?? legos.caption}
+            width={900} height={1100}
             loading="lazy"
             decoding="async"
           />

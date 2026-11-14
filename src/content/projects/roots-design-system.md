@@ -4,12 +4,12 @@ tagline: An open-source design system for enterprise cloud security
 period: Oct 2021 — Jun 2023
 role: Lead designer, in collaboration with the Banyan Cloud engineering team
 tags: ["Design system", "Open source", "Figma + Code", "Enterprise"]
-hero: https://picsum.photos/seed/roots-hero/1600/900
+hero: /images/projects/roots-hero.webp
 photos:
-  - src: https://picsum.photos/seed/roots-tokens/1400/900
+  - src: /images/projects/roots-tokens.webp
     caption: The token system, generated from a single config, consumed by Figma and the React build.
     aspect: 14 / 9
-  - src: https://picsum.photos/seed/roots-components/1400/900
+  - src: /images/projects/roots-components.webp
     caption: A slice of the component library, paired with usage guidance.
     aspect: 14 / 9
 external: https://zeroheight.com/390a61fea/p/195fc2-roots-design-system

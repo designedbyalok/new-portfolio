@@ -6,13 +6,13 @@ period: "May 2026"
 summary: Designed and shipped Stax — a single-canvas tracker that turns a chaotic multi-tab process into one quiet board. Built end-to-end in eight days.
 website: https://jobstax.vercel.app
 order: 4
-hero: https://picsum.photos/seed/jobstax-hero/1600/900
+hero: /images/work/jobstax-hero.webp
 logo: /favicon.svg
 photos:
-  - src: https://picsum.photos/seed/jobstax-board/1400/900
+  - src: /images/work/jobstax-board.webp
     caption: The single-canvas tracker. No modals, no nested screens.
     aspect: 14 / 9
-  - src: https://picsum.photos/seed/jobstax-resume/1400/900
+  - src: /images/work/jobstax-resume.webp
     caption: The full-screen, split-panel resume editor inside the tracker.
     aspect: 14 / 9
 projects:

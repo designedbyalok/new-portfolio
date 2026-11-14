@@ -10,19 +10,19 @@ period: Jun 2023 — Present
 summary: Redesigning Primary & Chronic Care for clinicians and patients. Building the design system and rule-builder that lets care teams automate repetitive work.
 website: https://fold.health
 order: 1
-hero: https://picsum.photos/seed/fold-hero/1600/900
+hero: /images/work/fold-hero.webp
 logo: /foldhealth.svg
 photos:
-  - src: https://picsum.photos/seed/fold-team-1/1200/800
+  - src: /images/work/fold-team.webp
     caption: A walkthrough with the care-ops team after a workflow review, late 2024.
     aspect: 3 / 2
-  - src: https://picsum.photos/seed/fold-room/1000/1200
+  - src: /images/work/fold-room.webp
     caption: The clinical workspace we redesigned around — keyboard-first, no celebratory micro-animations.
     aspect: 5 / 6
-  - src: https://picsum.photos/seed/fold-system/1400/900
+  - src: /images/work/fold-system.webp
     caption: A slice of the design-system tokens, side-by-side with the React build.
     aspect: 14 / 9
-  - src: https://picsum.photos/seed/fold-rule/1200/800
+  - src: /images/work/fold-rule.webp
     caption: The rule-builder canvas — one of the most-used surfaces by ops teams.
     aspect: 3 / 2
 projects:

@@ -23,12 +23,12 @@ export interface Photo {
 }
 
 const DEFAULT_PLACEHOLDERS: Photo[] = [
-  { src: "https://picsum.photos/seed/photo-pune/1200/800", aspect: "3 / 2", caption: "Pune morning" },
-  { src: "https://picsum.photos/seed/photo-goa/900/1100", aspect: "4 / 5", caption: "Goa" },
-  { src: "https://picsum.photos/seed/photo-kerala/1000/1000", aspect: "1 / 1", caption: "Backwaters, Kerala" },
-  { src: "https://picsum.photos/seed/photo-street/1000/1000", aspect: "1 / 1", caption: "Streetlight study" },
-  { src: "https://picsum.photos/seed/photo-mumbai/1200/800", aspect: "3 / 2", caption: "Window, Mumbai" },
-  { src: "https://picsum.photos/seed/photo-delhi/900/1100", aspect: "4 / 5", caption: "Old Delhi" },
+  { src: "/images/photos/pune.webp", aspect: "3 / 2", caption: "Pune morning", alt: "Abstract warm-tone placeholder for a Pune morning photograph" },
+  { src: "/images/photos/goa.webp", aspect: "4 / 5", caption: "Goa", alt: "Abstract sandy-tone placeholder for a Goa photograph" },
+  { src: "/images/photos/kerala.webp", aspect: "1 / 1", caption: "Backwaters, Kerala", alt: "Abstract green-tone placeholder for a Kerala backwaters photograph" },
+  { src: "/images/photos/street.webp", aspect: "1 / 1", caption: "Streetlight study", alt: "Abstract dark-tone placeholder for a streetlight photograph" },
+  { src: "/images/photos/mumbai.webp", aspect: "3 / 2", caption: "Window, Mumbai", alt: "Abstract window-frame placeholder for a Mumbai photograph" },
+  { src: "/images/photos/delhi.webp", aspect: "4 / 5", caption: "Old Delhi", alt: "Abstract terracotta-tone placeholder for an Old Delhi photograph" },
 ];
 
 /**

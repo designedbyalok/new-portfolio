@@ -4,12 +4,12 @@ tagline: A visual map of a customer's cloud-security posture — designed so a C
 period: Jan 2022 — Sep 2022
 role: Lead designer, in close collaboration with the runtime-protection engineering team at Banyan Cloud
 tags: ["Product design", "Data visualization", "Enterprise security"]
-hero: https://picsum.photos/seed/posture-hero/1600/900
+hero: /images/projects/posture-hero.webp
 photos:
-  - src: https://picsum.photos/seed/posture-map/1400/900
+  - src: /images/projects/posture-map.webp
     caption: The posture canvas — every node a resource, every edge a relationship.
     aspect: 14 / 9
-  - src: https://picsum.photos/seed/posture-detail/1400/900
+  - src: /images/projects/posture-detail.webp
     caption: A drill-down on a single resource, with the remediation path highlighted.
     aspect: 14 / 9
 order: 7

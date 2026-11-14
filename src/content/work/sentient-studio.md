@@ -5,13 +5,13 @@ period: Oct 2020 — Jul 2021
 summary: My first role out of engineering school. Designed digital presences — apps and websites — for a portfolio of early-stage startups.
 website: https://www.designsentient.com
 order: 3
-hero: https://picsum.photos/seed/sentient-hero/1600/900
+hero: /images/work/sentient-hero.webp
 logo: /sentient.svg
 photos:
-  - src: https://picsum.photos/seed/sentient-work-1/1200/800
+  - src: /images/work/sentient-work-1.webp
     caption: A client engagement that taught me how short the design-to-deadline window really is.
     aspect: 3 / 2
-  - src: https://picsum.photos/seed/sentient-work-2/1200/1500
+  - src: /images/work/sentient-work-2.webp
     caption: One of the early prototypes that survived to ship — almost.
     aspect: 4 / 5
 projects:

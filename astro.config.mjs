@@ -30,9 +30,6 @@ export default defineConfig({
     prefetchAll: true,
     defaultStrategy: 'hover',
   },
-  image: {
-    domains: ['picsum.photos', 'fastly.picsum.photos'],
-  },
   vite: {
     plugins: [tailwindcss()],
   },

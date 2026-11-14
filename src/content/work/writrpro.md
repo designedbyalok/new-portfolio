@@ -6,13 +6,13 @@ period: "2026"
 summary: A privacy-first markdown writing app and headless CMS — end-to-end encrypted notes, one-click publish to a public blog, and an editor designed to disappear.
 website: https://writrpro.com
 order: 5
-hero: https://picsum.photos/seed/writrpro-hero/1600/900
+hero: /images/work/writrpro-hero.webp
 logo: /icon-writerpro.svg
 photos:
-  - src: https://picsum.photos/seed/writrpro-editor/1400/900
+  - src: /images/work/writrpro-editor.webp
     caption: The distraction-free editor. Focus mode dims everything but the current sentence.
     aspect: 14 / 9
-  - src: https://picsum.photos/seed/writrpro-publish/1400/900
+  - src: /images/work/writrpro-publish.webp
     caption: The publish panel — slug, SEO, thumbnail, and typed metadata, all in one pass.
     aspect: 14 / 9
 projects:

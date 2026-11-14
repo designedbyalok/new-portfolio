@@ -5,16 +5,16 @@ period: Aug 2021 — Jun 2023
 summary: Founding designer at an enterprise cloud security SaaS. Built the MVP across multiple security products, then designed and open-sourced the design system that powered them.
 website: https://banyancloud.io
 order: 2
-hero: https://picsum.photos/seed/banyan-hero/1600/900
+hero: /images/work/banyan-hero.webp
 logo: /banyan.svg
 photos:
-  - src: https://picsum.photos/seed/banyan-screen-1/1400/900
+  - src: /images/work/banyan-screen.webp
     caption: The posture-management dashboard — what we hung our credibility on in the first demos.
     aspect: 14 / 9
-  - src: https://picsum.photos/seed/banyan-team/1200/800
+  - src: /images/work/banyan-team.webp
     caption: Working session with the founders during the MVP push, late 2021.
     aspect: 3 / 2
-  - src: https://picsum.photos/seed/banyan-roots/1200/1200
+  - src: /images/work/banyan-roots.webp
     caption: Roots Design System — Figma library and React components, kept in lockstep.
     aspect: 1 / 1
 projects:
